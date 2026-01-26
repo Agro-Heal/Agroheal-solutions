@@ -4,6 +4,7 @@ const Home = () => {
   return (
     <Box>
       <Text fontSize={"48px"}>Hello world</Text>
+      <Text>Homepage</Text>
     </Box>
   );
 };
