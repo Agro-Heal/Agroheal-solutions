@@ -1,12 +1,25 @@
-import { Box, Text } from "@chakra-ui/react";
+import { HeroSection } from "../../components/webComponents/HeroSection";
+import { HowItWorksSection } from "../../components/webComponents/HowItWorksSection";
+import { BenefitsSection } from "../../components/webComponents/BenefitsSection";
+import { FeaturedCoursesSection } from "../../components/webComponents/FeaturedSection";
+import { TestimonialsSection } from "../../components/webComponents/TestimonialSection";
+import { FAQSection } from "../../components/webComponents/FaqSection";
+import { CTASection } from "../../components/webComponents/CTASection";
 
-const Home = () => {
+const Index = () => {
   return (
-    <Box>
-      <Text fontSize={"48px"}>Hello world</Text>
-      <Text>Homepage</Text>
-    </Box>
+    <div className="min-h-screen bg-background">
+      <main>
+        <HeroSection />
+        <HowItWorksSection />
+        <FeaturedCoursesSection />
+        <BenefitsSection />
+        <TestimonialsSection />
+        <FAQSection />
+        <CTASection />
+      </main>
+    </div>
   );
 };
 
-export default Home;
+export default Index;
