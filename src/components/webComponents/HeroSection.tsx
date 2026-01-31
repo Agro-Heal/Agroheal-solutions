@@ -15,12 +15,17 @@ export function HeroSection() {
           alt="Organic farmland at golden hour"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/35" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#e8b130]/5 via-green-800/80 to-green-800/80" />
         <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent" />
         {/* Soft grain / texture */}
-        <div className="absolute inset-0 opacity-[0.08] mix-blend-overlay bg-[radial-gradient(circle_at_20%_20%,hsl(var(--primary-foreground))_0,transparent_40%),radial-gradient(circle_at_80%_30%,hsl(var(--primary-foreground))_0,transparent_35%),radial-gradient(circle_at_60%_80%,hsl(var(--primary-foreground))_0,transparent_45%)]" />
+        <div
+          className="absolute inset-0 opacity-[0.08] mix-blend-overlay"
+          style={{
+            background:
+              "radial-gradient(circle at 20% 20%, hsl(var(--primary-foreground)) 0%, transparent 40%), radial-gradient(circle at 80% 30%, hsl(var(--primary-foreground)) 0%, transparent 35%), radial-gradient(circle at 60% 80%, hsl(var(--primary-foreground)) 0%, transparent 45%)",
+          }}
+        />
       </div>
-
       {/* Organic glow blobs */}
       <motion.div
         aria-hidden="true"
@@ -45,8 +50,8 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 border border-accent/30 text-accent font-medium text-sm mb-6">
-              <Sparkles className="w-4 h-4" />
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#e8b130]/20 border border-[#e8b130]/30 text-[#e8b130] font-medium text-sm mb-6">
+              <Sparkles className="w-4 h-4 text-[#e8b130]" />
               Premium organic farming education
             </span>
           </motion.div>
@@ -55,7 +60,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.08 }}
-            className="font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-foreground leading-[1.05] mb-6"
+            className=" text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-foreground leading-[1.05] mb-6"
           >
             Grow skills that
             <span className="text-gradient-hero"> grow results</span>.
@@ -77,13 +82,21 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.24 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Button size="lg" asChild>
+            <Button
+              size="lg"
+              asChild
+              className="bg-white text-green-800 hover:text-white hover:bg-transparent cursor-pointer"
+            >
               <Link to="/courses" className="gap-2">
                 Start learning
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>
-            <Button size="lg" asChild>
+            <Button
+              size="lg"
+              asChild
+              className="bg-transparent border-2 border-white hover:text-green-800 hover:bg-white cursor-pointer duration-300"
+            >
               <Link to="/signup" className="gap-2">
                 Create account
                 <BookOpen className="w-5 h-5" />

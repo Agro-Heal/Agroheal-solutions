@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 const normalizePath = (path: string) => path.replace(/\/+$/, "") || "/";
 
-const Layout = () => {
+const DashboardLayout = () => {
   // hiden header and footer logic on some paths
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -31,4 +31,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default DashboardLayout;

@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Courses", href: "/courses" },
-  { name: "Farm Slots", href: "/slots" },
+  { name: "Courses", href: "/dashboard/courses" },
+  { name: "Farm Slots", href: "/dashboard/slots" },
   { name: "About", href: "/about" },
 ];
 
@@ -39,10 +39,10 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Leaf className="w-5 h-5 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-full bg-green-800 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Leaf className="w-5 h-5 text-white" />
             </div>
-            <span className="font-display text-xl font-semibold text-foreground">
+            <span className=" text-xl font-semibold text-foreground">
               Agroheal
             </span>
           </Link>
@@ -53,7 +53,7 @@ export default function Header() {
               <Link
                 key={link.name}
                 to={link.href}
-                className="relative group px-3 py-2 -mx-3 rounded-full text-foreground/80 hover:text-foreground font-medium transition-colors motion-reduce:transition-none"
+                className="relative group px-3 py-2 -mx-3 rounded-full text-green-800/80 hover:text-green-800 font-medium transition-colors motion-reduce:transition-none"
               >
                 {/* Cinematic hover pill */}
                 <span
@@ -63,7 +63,7 @@ export default function Header() {
                 <span className="inline-flex items-center gap-2">
                   {link.name}
                   {link.href === "/courses" && (
-                    <span className="inline-flex items-center rounded-full bg-accent/20 border border-accent/30 px-2 py-0.5 text-[11px] font-semibold text-accent">
+                    <span className="inline-flex items-center rounded-full bg-[#e8b130]/20 border border-[#e8b130]/30 px-2 py-0.5 text-xs font-semibold text-[#e8b130]">
                       Start here
                     </span>
                   )}
@@ -78,8 +78,8 @@ export default function Header() {
             <Button variant="ghost" asChild>
               <Link to="/login">Log In</Link>
             </Button>
-            <Button asChild>
-              <Link to="/courses">Explore Courses</Link>
+            <Button className="bg-[#d17547] text-white">
+              <Link to="/dashboard/courses">Explore Courses</Link>
             </Button>
           </div>
 
@@ -117,8 +117,8 @@ export default function Header() {
                   <Button variant="outline" asChild className="w-full">
                     <Link to="/login">Log In</Link>
                   </Button>
-                  <Button asChild className="w-full">
-                    <Link to="/courses">Explore Courses</Link>
+                  <Button asChild className="bg-[#d17547] text-white">
+                    <Link to="/dashboard/courses">Explore Courses</Link>
                   </Button>
                   <Button variant="ghost" asChild className="w-full">
                     <Link to="/signup">Get Started</Link>

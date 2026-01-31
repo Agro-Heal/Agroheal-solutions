@@ -31,7 +31,7 @@ export function CTASection() {
             <Leaf className="w-8 h-8 text-primary-foreground" />
           </div>
 
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
+          <h2 className=" text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
             Ready to Start Your Organic Farming Journey?
           </h2>
           <p className="text-primary-foreground/80 text-lg md:text-xl mb-10 max-w-2xl mx-auto">

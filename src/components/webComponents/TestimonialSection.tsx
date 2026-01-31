@@ -72,7 +72,7 @@ function TestimonialCard({
               <div className="text-xs text-muted-foreground">{title}</div>
             </div>
           </div>
-          <Quote className="h-5 w-5 text-accent" aria-hidden="true" />
+          <Quote className="h-5 w-5 text-[#e8b130]" aria-hidden="true" />
         </div>
 
         <p className="mt-4 text-sm md:text-base leading-relaxed text-foreground/80">
@@ -84,7 +84,7 @@ function TestimonialCard({
           aria-label="5 out of 5 stars"
         >
           {Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} className="h-4 w-4" />
+            <Star key={i} className="h-4 w-4 text-[#e8b130]" />
           ))}
         </div>
       </CardContent>

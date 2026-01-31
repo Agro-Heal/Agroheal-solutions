@@ -57,9 +57,7 @@ function CourseCard({
               <Leaf className="h-4 w-4" />
               {level}
             </div>
-            <CardTitle className="mt-4 font-display text-2xl">
-              {title}
-            </CardTitle>
+            <CardTitle className="mt-4  text-2xl">{title}</CardTitle>
           </div>
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/50 px-3 py-1 text-xs text-muted-foreground">
             <Clock className="h-4 w-4" />
@@ -98,7 +96,7 @@ export function FeaturedCoursesSection() {
       <SectionDivider position="top" className="text-background" />
       <SectionDivider position="bottom" className="text-background" />
       <div
-        className="absolute inset-0 bg-gradient-to-b from-background via-secondary/20 to-background"
+        className="absolute inset-0 bg-gradient-to-b from-background via-[#f4e2d9] to-background"
         aria-hidden="true"
       />
       <div className="container mx-auto px-4 relative">

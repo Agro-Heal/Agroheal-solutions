@@ -9,21 +9,21 @@ const steps = [
     title: "Learn",
     description:
       "Access comprehensive organic farming courses taught by industry experts. Master sustainable techniques at your own pace.",
-    color: "bg-primary",
+    color: "bg-green-800 text-white",
   },
   {
     icon: Sprout,
     title: "Practice",
     description:
       "Secure your farm slot and apply your knowledge hands-on. Work with real crops on real land with expert guidance.",
-    color: "bg-secondary",
+    color: "bg-[#d17547] text-white",
   },
   {
     icon: Coins,
     title: "Earn",
     description:
       "Reap the rewards of your harvest and build income through sustainable farming practices and affiliate opportunities.",
-    color: "bg-accent",
+    color: "bg-[#e8b130] text-white",
   },
 ];
 
@@ -68,7 +68,7 @@ export function HowItWorksSection() {
               >
                 <div className="relative bg-gradient-card rounded-3xl p-8 shadow-soft transition-all duration-300 h-full border border-border/60 hover:shadow-elevated hover:-translate-y-1">
                   {/* Step Number */}
-                  <div className="absolute -top-4 -left-4 w-11 h-11 rounded-full bg-background/90 border border-border flex items-center justify-center font-display font-bold text-foreground shadow-soft">
+                  <div className="absolute -top-4 -left-4 w-11 h-11 rounded-full bg-background/90 border border-border flex items-center justify-center  font-bold text-foreground shadow-soft">
                     {index + 1}
                   </div>
 
@@ -77,7 +77,7 @@ export function HowItWorksSection() {
                     <div
                       className={`w-16 h-16 rounded-2xl ${step.color} flex items-center justify-center group-hover:scale-110 transition-transform shadow-soft`}
                     >
-                      <step.icon className="w-8 h-8 text-primary-foreground" />
+                      <step.icon className={`w-8 h-8`} />
                     </div>
                     <div
                       aria-hidden="true"
@@ -86,10 +86,10 @@ export function HowItWorksSection() {
                   </div>
 
                   {/* Content */}
-                  <h3 className="font-display text-2xl font-bold text-foreground mb-3">
+                  <h3 className=" text-2xl font-bold text-foreground mb-3">
                     {step.title}
                   </h3>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-green-800 leading-relaxed">
                     {step.description}
                   </p>
 

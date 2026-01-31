@@ -14,10 +14,10 @@ const About = () => {
             transition={{ duration: 0.5 }}
             className="text-center mb-16 max-w-3xl mx-auto"
           >
-            <span className="text-secondary font-semibold text-sm uppercase tracking-wider">
+            <span className="text-[#d17547] font-semibold text-sm uppercase tracking-wider">
               About Agroheal
             </span>
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mt-4">
+            <h1 className=" text-4xl md:text-5xl font-bold text-green-800 mt-4">
               Empowering the Future of Sustainable Agriculture
             </h1>
             <p className="text-muted-foreground text-lg mt-6 leading-relaxed">
@@ -57,9 +57,9 @@ const About = () => {
                 className="bg-card rounded-xl p-8 shadow-soft border border-border/50 text-center"
               >
                 <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                  <item.icon className="w-7 h-7 text-primary" />
+                  <item.icon className="w-7 h-7 text-green-800" />
                 </div>
-                <h3 className="font-display text-xl font-semibold text-foreground mb-3">
+                <h3 className=" text-xl font-semibold text-green-800 mb-3">
                   {item.title}
                 </h3>
                 <p className="text-muted-foreground leading-relaxed">
@@ -79,10 +79,10 @@ const About = () => {
           >
             <div className="bg-gradient-card rounded-2xl p-8 md:p-12 shadow-soft border border-border/50">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
-                  <Leaf className="w-6 h-6 text-primary-foreground" />
+                <div className="w-12 h-12 rounded-full bg-green-800 flex items-center justify-center">
+                  <Leaf className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="font-display text-2xl font-bold text-foreground">
+                <h2 className=" text-2xl font-bold text-foreground">
                   Our Story
                 </h2>
               </div>

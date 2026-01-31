@@ -2,12 +2,73 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Leaf, Mail, Lock } from "lucide-react";
+import { useState } from "react";
+import { supabase } from "@/libs/supabaseClient";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setLoading(false);
+
+    if (error) {
+      const errorNotify = () =>
+        toast.error(`${error?.message}`, {
+          duration: 5000,
+          position: "top-right",
+          icon: "📩",
+          style: {
+            background: "crimson",
+            color: "#fff",
+            borderRadius: "10px",
+            padding: "12px 16px",
+            fontSize: "14px",
+          },
+        });
+      errorNotify();
+      return;
+    }
+
+    const notify = () =>
+      toast.success(
+        "Signup successful, a mail has been sent. Please verify your email.",
+        {
+          duration: 5000,
+          position: "top-right",
+          icon: "📩",
+          style: {
+            background: "#065f46",
+            color: "#fff",
+            borderRadius: "10px",
+            padding: "12px 16px",
+            fontSize: "14px",
+          },
+        },
+      );
+    notify();
+    setTimeout(() => {
+      navigate("/dashboard");
+    }, 2000);
+  };
+
   return (
     <div className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
+      <Toaster />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -16,10 +77,10 @@ const Login = () => {
       >
         {/* Logo */}
         <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
+          <div className="w-12 h-12 rounded-full bg-green-800 flex items-center justify-center">
             <Leaf className="w-6 h-6 text-primary-foreground" />
           </div>
-          <span className="font-display text-2xl font-semibold text-foreground">
+          <span className=" text-2xl font-semibold text-foreground">
             Agroheal
           </span>
         </Link>
@@ -27,7 +88,7 @@ const Login = () => {
         {/* Card */}
         <div className="bg-card rounded-2xl shadow-elevated border border-border/50 p-8">
           <div className="text-center mb-8">
-            <h1 className="font-display text-2xl font-bold text-foreground">
+            <h1 className=" text-2xl font-bold text-foreground">
               Welcome Back
             </h1>
             <p className="text-muted-foreground mt-2">
@@ -35,7 +96,7 @@ const Login = () => {
             </p>
           </div>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleLogin}>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -43,8 +104,11 @@ const Login = () => {
                 <Input
                   id="email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   className="pl-10"
+                  required
                 />
               </div>
             </div>
@@ -63,15 +127,23 @@ const Login = () => {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   type="password"
                   placeholder="••••••••"
                   className="pl-10"
+                  required
                 />
               </div>
             </div>
 
-            <Button variant="default" size="lg" className="w-full">
-              Sign In
+            <Button
+              type="submit"
+              size="lg"
+              disabled={loading}
+              className="w-full bg-green-800 hover:bg-green-800/90 text-white"
+            >
+              {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 
@@ -79,7 +151,7 @@ const Login = () => {
             Don't have an account?{" "}
             <Link
               to="/signup"
-              className="text-primary font-medium hover:underline"
+              className="text-green-800 font-medium hover:underline"
             >
               Sign up
             </Link>
