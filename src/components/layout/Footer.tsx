@@ -37,21 +37,32 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-              Empowering the next generation of organic farmers through
-              education, practice, and community.
+              Empowering a generation of organic farmers through education,
+              practice, and community.
             </p>
             <div className="space-y-3 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4" />
-                <span>hello@agroheal.com</span>
+                <a
+                  href="mailto:admin@agroheal.solutions"
+                  className="cursor-pointer"
+                >
+                  <span>admin@agroheal.solutions</span>
+                </a>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
-                <span>+234 800 123 4567</span>
+                <a href="tel:+2349168055000" className="cursor-pointer">
+                  <span>+234 916 8055 000</span>
+                </a>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
-                <span>Lagos, Nigeria</span>
+                <a href="https://www.google.com/maps/place/Olowe+Farm/@6.8138766,3.9178944,17z/data=!3m1!4b1!4m6!3m5!1s0x103969e8661c18e5:0x7906309f84337a84!8m2!3d6.8138713!4d3.9204693!16s%2Fg%2F11jjm31nr8!5m1!1e1?entry=ttu&g_ep=EgoyMDI2MDIwMS4wIKXMDSoASAFQAw%3D%3D">
+                  <span>
+                    1 Olowu Street, Owu, Ijebu-Ode, Ogun State, Nigeria
+                  </span>
+                </a>
               </div>
             </div>
           </div>
@@ -110,7 +121,9 @@ export default function Footer() {
 
         <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} Agroheal. All rights reserved.
+            © {new Date().getFullYear()} AgroHeal Solutions Ltd., duly
+            incorporated with Nigeria’s Corporate Affairs Commission (RC
+            8231879).
           </p>
           <div className="flex items-center gap-6">
             <a

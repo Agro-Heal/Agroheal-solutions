@@ -122,7 +122,7 @@ export function FeaturedCoursesSection() {
               asChild
               className="w-full sm:w-auto bg-gradient-cta text-primary-foreground font-semibold shadow-elevated hover:shadow-glow hover:scale-105"
             >
-              <Link to="/courses" className="gap-2">
+              <Link to="/dashboard/courses" className="gap-2">
                 Explore all courses
                 <ArrowRight className="h-5 w-5" />
               </Link>

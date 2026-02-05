@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, ChevronDown, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import heroImage from "../../assets/Image/hero-farm.jpg";
 import { SectionDivider } from "../webComponents/SectionDivider";
 
 export function HeroSection() {
@@ -10,12 +9,25 @@ export function HeroSection() {
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
-        <img
+        {/* <img
           src={heroImage}
           alt="Organic farmland at golden hour"
           className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#e8b130]/5 via-green-800/80 to-green-800/80" />
+        /> */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover"
+        >
+          <source
+            src="https://ik.imagekit.io/noah/Untitled%20video%20-%20Made%20with%20Clipchamp.mp4"
+            type="video/mp4"
+          />
+        </video>
+
+        {/* <div className="absolute inset-0 bg-gradient-to-r from-[#e8b130]/5 via-green-800/80 to-green-800/80" /> */}
         <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent" />
         {/* Soft grain / texture */}
         <div
@@ -50,7 +62,7 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#e8b130]/20 border border-[#e8b130]/30 text-[#e8b130] font-medium text-sm mb-6">
+            <span className="hidden items-center gap-2 px-4 py-2 rounded-full bg-[#e8b130]/20 border border-[#e8b130]/30 text-[#e8b130] font-medium text-sm mb-6">
               <Sparkles className="w-4 h-4 text-[#e8b130]" />
               Premium organic farming education
             </span>
@@ -72,8 +84,9 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.16 }}
             className="text-lg md:text-xl text-primary-foreground/85 mb-8 max-w-2xl leading-relaxed"
           >
-            Short, practical lessons—designed to take you from curious to
-            confident.
+            LET'S FARM to cut food costs by over 50% & create an income stream
+            for every participant. Through our Learn to Earn Agribusiness
+            Platform, Agroheal is simplifying farming so everyone can join in.
           </motion.p>
 
           <motion.div
@@ -87,7 +100,7 @@ export function HeroSection() {
               asChild
               className="bg-white text-green-800 hover:text-white hover:bg-transparent cursor-pointer"
             >
-              <Link to="/courses" className="gap-2">
+              <Link to="/dashboard/courses" className="gap-2">
                 Start learning
                 <ArrowRight className="w-5 h-5" />
               </Link>
@@ -108,7 +121,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.32 }}
-            className="mt-6 text-sm text-primary-foreground/70"
+            className="hidden mt-6 text-sm text-primary-foreground/70"
           >
             Built for clarity, confidence, and real-world practice.
           </motion.p>
@@ -116,7 +129,7 @@ export function HeroSection() {
       </div>
 
       {/* Decorative Elements */}
-      <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-background to-transparent" />
+      {/* <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-background to-transparent" /> */}
 
       {/* Scroll cue */}
       <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2">

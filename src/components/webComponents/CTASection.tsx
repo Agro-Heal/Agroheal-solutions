@@ -32,12 +32,12 @@ export function CTASection() {
           </div>
 
           <h2 className=" text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
-            Ready to Start Your Organic Farming Journey?
+            Together we can cut food costs by over 50%
           </h2>
           <p className="text-primary-foreground/80 text-lg md:text-xl mb-10 max-w-2xl mx-auto">
-            Join hundreds of successful farmers who have transformed their lives
-            through sustainable agriculture. Your path to financial freedom
-            starts here.
+            Invite your friends to join the challenge. For every person that
+            signs up through your link, you earn ₦500 instantly. Grow your
+            income while farming to cut food costs!
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -48,13 +48,13 @@ export function CTASection() {
               </Link>
             </Button>
             <Button size={"lg"} asChild>
-              <Link to="/courses">Explore Courses</Link>
+              <Link to="/dashboard/courses">Explore Courses</Link>
             </Button>
           </div>
 
-          <p className="text-primary-foreground/60 text-sm mt-6">
+          {/* <p className="text-primary-foreground/60 text-sm mt-6">
             No credit card required • Free courses available
-          </p>
+          </p> */}
         </motion.div>
       </div>
     </section>

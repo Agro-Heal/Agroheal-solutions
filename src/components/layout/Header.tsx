@@ -27,11 +27,16 @@ export default function Header() {
       [
         "fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-colors duration-300",
         isScrolled
-          ? "bg-background/80 border-b border-border"
-          : "bg-transparent border-b border-transparent",
+          ? "bg-background border-b border-border"
+          : "bg-background border-b border-transparent",
       ].join(" "),
     [isScrolled],
   );
+
+  function handleLogout() {
+    localStorage.clear();
+    window.location.reload();
+  }
 
   return (
     <nav className={navClassName}>
@@ -74,14 +79,28 @@ export default function Header() {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden lg:flex items-center gap-4">
-            <Button variant="ghost" asChild>
-              <Link to="/login">Log In</Link>
-            </Button>
-            <Button className="bg-[#d17547] text-white">
-              <Link to="/dashboard/courses">Explore Courses</Link>
-            </Button>
-          </div>
+          {localStorage.getItem("sb-ptowfacejneezksyhntk-auth-token") ? (
+            <div className="hidden lg:flex items-center gap-4">
+              <Button className="bg-green-800 text-white">
+                <Link to="/dashboard">Dashboard</Link>
+              </Button>
+              <Button
+                className="bg-green-800 text-white"
+                onClick={handleLogout}
+              >
+                <Link to="">Logout</Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="hidden lg:flex items-center gap-4">
+              <Button className="bg-green-800 text-white">
+                <Link to="/dashboard">Login</Link>
+              </Button>
+              <Button className="bg-green-800 text-white">
+                <Link to="/dashboard/courses">Explore Courses</Link>
+              </Button>
+            </div>
+          )}
 
           {/* Mobile Menu Button */}
           <button
@@ -113,17 +132,28 @@ export default function Header() {
                     {link.name}
                   </Link>
                 ))}
-                <div className="pt-4 flex flex-col gap-3">
-                  <Button variant="outline" asChild className="w-full">
-                    <Link to="/login">Log In</Link>
-                  </Button>
-                  <Button asChild className="bg-[#d17547] text-white">
-                    <Link to="/dashboard/courses">Explore Courses</Link>
-                  </Button>
-                  <Button variant="ghost" asChild className="w-full">
-                    <Link to="/signup">Get Started</Link>
-                  </Button>
-                </div>
+                {localStorage.getItem("sb-ptowfacejneezksyhntk-auth-token") ? (
+                  <div className="pt-4 flex flex-col gap-3">
+                    <Button className="bg-green-800 text-white">
+                      <Link to="/dashboard">Dashboard</Link>
+                    </Button>
+                    <Button
+                      className="bg-green-800 text-white"
+                      onClick={handleLogout}
+                    >
+                      <Link to="">Logout</Link>
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="pt-4 flex flex-col gap-3">
+                    <Button className="bg-green-800 text-white">
+                      <Link to="/dashboard">Login</Link>
+                    </Button>
+                    <Button className="bg-green-800 text-white">
+                      <Link to="/dashboard/courses">Explore Courses</Link>
+                    </Button>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}

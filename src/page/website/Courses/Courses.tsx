@@ -149,15 +149,15 @@ const Courses = () => {
             className="bg-gradient-hero rounded-2xl p-8 my-12 text-center"
           >
             <h3 className=" text-2xl font-bold text-primary-foreground mb-2">
-              Unlock All Courses
+              Available Courses
             </h3>
             <p className="text-primary-foreground/80 mb-6 max-w-lg mx-auto">
-              Subscribe to get unlimited access to all courses, new content
-              monthly, and priority support.
+              Monthly access to all courses, new content monthly, and priority
+              support.
             </p>
-            <Button size="lg" className="text-white bg-[#d17547]">
-              <Link to="/signup">Subscribe Now</Link>
-            </Button>
+            {/* <Button size="lg" className="text-white bg-[#d17547]">
+              <Link to="#courses-lists">Start now</Link>
+            </Button> */}
           </motion.div>
 
           {/* Filters */}
@@ -174,7 +174,10 @@ const Courses = () => {
             </div>
 
             {/* Course Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div
+              id="courses-lists"
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
               {COURSESDATA.map((course, index) => (
                 <motion.div
                   key={index}

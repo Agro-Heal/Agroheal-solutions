@@ -6,39 +6,40 @@ import { SectionHeading } from "../webComponents/SectionHeading";
 const benefits = [
   {
     icon: Leaf,
-    title: "Sustainable Practices",
+    title: "Join the platform (₦1,000 yearly)",
     description:
-      "Learn eco-friendly farming methods that protect the environment while maximizing yield.",
+      "Start with a yearly subscription fee of ₦1,000 yearly. This gives you access to all our training courses, from composting to crop management — so you understand the basics before stepping onto the farm.",
   },
   {
     icon: TrendingUp,
-    title: "Real Income Potential",
+    title: "Secure Your Farm Slot (₦2,000 per slot admin fee)",
     description:
-      "Generate sustainable income through harvest sales and our affiliate program.",
+      "Each group farm is one hectare, divided into 1000 slots. Secure one slot with a one-time  N2,000 admin fee. Once you secure your space, you’re officially part of a group farm. Group practicals are scheduled to begin once the slots are filled up.",
   },
   {
     icon: Users,
-    title: "Community Support",
+    title: "Keep Your Slot Active (₦500 monthly per slot)",
     description:
-      "Join a thriving community of like-minded farmers and get help when you need it.",
+      "Just like maintaining a house, farmland has monthly utilities. The monthly fee covers your farmland rent, agronomy fee and Agroheal oversight.",
   },
   {
     icon: Shield,
-    title: "Expert Guidance",
+    title:
+      "Build the Farm Together (₦5,000 monthly for first 5 months/per slot)",
     description:
-      "Learn from experienced organic farmers who have mastered sustainable agriculture.",
+      "For the farm to start producing, everyone chips in equally to cover setup costs — tools, seeds, land/soil prep, irrigation, and more. This contribution is only for the first five months and is managed openly by the group so every naira is accounted for.",
   },
   {
     icon: Clock,
-    title: "Flexible Learning",
+    title: " Your Monthly work rotation (1 day per month)",
     description:
-      "Access courses anytime, anywhere. Learn at your own pace with lifetime access.",
+      "Farming here doesn’t take over your life. You only need to show up one day a month to perform tasks like planting, weeding, nurturing livestock & harvesting. If you can’t make it, there’s a ₦500 charge (per slot) to pay a substitute to do the work.",
   },
   {
     icon: Award,
-    title: "Hands-On Experience",
+    title: "Harvest & Share the Profits (up to 100% returns every six months)",
     description:
-      "Apply your knowledge on real farm slots with dedicated support and resources.",
+      "When crops/livestock are ready, they are harvested and sold directly into trusted markets — cutting out middlemen. And with our innovative low-cost organic inputs, the profits are bigger-such that each farm slot can return a potential 100% returns every six months. Multiple slots multiple income.",
   },
 ];
 
@@ -50,12 +51,12 @@ export function BenefitsSection() {
       <div className="container mx-auto px-4">
         <SectionHeading
           eyebrow="Why Choose Agroheal"
-          title="Benefits of Organic Farming"
+          title="How LEAP works"
           description="Discover why thousands are choosing organic farming as their path to financial freedom and environmental stewardship."
           className="mb-16"
         />
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8">
           {benefits.map((benefit, index) => (
             <motion.div
               key={benefit.title}

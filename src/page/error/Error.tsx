@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Lottie from "lottie-react";
 import NoDataFound from "../../assets/Icon/searching.json";
 
-const NotFound = () => {
+const Error = () => {
   const location = useLocation();
 
   useEffect(() => {
@@ -35,4 +35,4 @@ const NotFound = () => {
   );
 };
 
-export default NotFound;
+export default Error;

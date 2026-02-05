@@ -11,23 +11,69 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { supabase } from "@/libs/supabaseClient";
+
+// interface props
 
 const Dashboard = () => {
-  // Mock data - would come from
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
-    platformSubscription: true,
-    slotSubscription: false,
-    affiliateCode: "JOHN2024",
-    referredUsers: 12,
-    earnings: "₦45,000",
-  };
+  const [profile, setProfile] = useState<any>(null);
 
-  const coursesProgress = {
-    completed: 3,
-    total: 6,
-  };
+  useEffect(() => {
+    const setupProfile = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // get profile row
+      let { data: profileData, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (error) return console.error(error);
+
+      const updatedFields: any = {};
+
+      // Save name if missing
+      if (!profileData.full_name && user.user_metadata?.full_name) {
+        updatedFields.full_name = user.user_metadata.full_name;
+      }
+
+      // Generate referral code if missing
+      if (!profileData.referral_code) {
+        updatedFields.referral_code = Math.random()
+          .toString(36)
+          .substring(2, 8)
+          .toUpperCase();
+      }
+
+      // UpdateDB only if needed
+      if (Object.keys(updatedFields).length > 0) {
+        await supabase.from("profiles").update(updatedFields).eq("id", user.id);
+
+        profileData = { ...profileData, ...updatedFields };
+      }
+
+      const { count, error: countError } = await supabase
+        .from("profiles")
+        .select("id", { count: "exact", head: true })
+        .eq("referred_by", user.id);
+
+      if (countError) console.error(countError);
+
+      profileData.total_referrals = count || 0;
+      // console.log(count);
+
+      setProfile(profileData);
+    };
+
+    setupProfile();
+  }, []);
+
+  if (!profile) return <div className="p-10">Loading dashboard...</div>;
 
   return (
     <div className="min-h-screen bg-background">
@@ -41,7 +87,7 @@ const Dashboard = () => {
             className="mb-8"
           >
             <h1 className=" text-3xl font-bold text-foreground">
-              Welcome back, {user.name.split(" ")[0]}!
+              Welcome back, {profile?.full_name} 👋
             </h1>
             <p className="text-muted-foreground mt-1">
               Here's an overview of your farming journey.
@@ -53,29 +99,32 @@ const Dashboard = () => {
             {[
               {
                 label: "Platform Status",
-                value: user.platformSubscription ? "Active" : "Inactive",
+                // value: profile?.platformSubscription ? "Active" : "Inactive",
+                value: "Active",
                 icon: Leaf,
-                color: user.platformSubscription
-                  ? "text-primary"
-                  : "text-green-800",
+                // color: profile?.platformSubscription
+                //   ? "text-primary"
+                //   : "text-green-800",
+                color: "text-green-800",
               },
               {
-                label: "Courses Progress",
-                value: `${coursesProgress.completed}/${coursesProgress.total}`,
+                label: "Total Courses",
+                value: `${profile?.courses}`,
                 icon: BookOpen,
                 color: "text-[#d17547]",
               },
               {
                 label: "Farm Slot",
-                value: user.slotSubscription ? "Secured" : "Not Secured",
+                // value: profile?.slotSubscription ? "Secured" : "Not Secured",
+                value: "Available",
                 icon: Sprout,
-                color: user.slotSubscription
+                color: profile?.slotSubscription
                   ? "text-green-800"
                   : "text-green-800",
               },
               {
-                label: "Referrals",
-                value: user.referredUsers.toString(),
+                label: "Total Referrals",
+                value: profile?.total_referrals,
                 icon: Users,
                 color: "text-[#e8b130]",
               },
@@ -126,7 +175,7 @@ const Dashboard = () => {
                       </p>
                     </div>
                   </div>
-                  {user.platformSubscription ? (
+                  {/* {profile?.platformSubscription ? (
                     <div className="flex items-center gap-2 text-primary">
                       <CheckCircle className="w-5 h-5 text-green-800" />
                       <span className="font-medium text-green-800">Active</span>
@@ -135,7 +184,7 @@ const Dashboard = () => {
                     <Button size="sm" asChild>
                       <Link to="/pricing">Subscribe</Link>
                     </Button>
-                  )}
+                  )} */}
                 </div>
 
                 {/* Slot Subscription */}
@@ -153,14 +202,14 @@ const Dashboard = () => {
                       </p>
                     </div>
                   </div>
-                  {user.slotSubscription ? (
+                  {profile?.slotSubscription ? (
                     <div className="flex items-center gap-2 text-primary">
                       <CheckCircle className="w-5 h-5" />
                       <span className="font-medium">Secured</span>
                     </div>
                   ) : (
                     <Button size="sm" className="bg-[#d17547] text-white">
-                      <Link to="/slots">Secure Slot</Link>
+                      <Link to="/dashboard/slots">Secure Slot</Link>
                     </Button>
                   )}
                 </div>
@@ -186,7 +235,7 @@ const Dashboard = () => {
                   </label>
                   <div className="flex gap-2">
                     <div className="flex-1 px-3 py-2 bg-muted rounded-lg text-foreground font-mono text-sm">
-                      {user.affiliateCode}
+                      {profile?.referral_code}
                     </div>
                     <Button variant="outline" size="icon">
                       <Copy className="w-4 h-4" />
@@ -201,13 +250,13 @@ const Dashboard = () => {
                       Total Referrals
                     </span>
                     <span className="font-semibold text-foreground">
-                      {user.referredUsers}
+                      {profile?.total_referrals}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-green-800 text-sm">Earnings</span>
                     <span className="font-semibold text-foreground">
-                      {user.earnings}
+                      ₦{Number(profile?.total_referrals) * 500}
                     </span>
                   </div>
                 </div>
@@ -235,7 +284,7 @@ const Dashboard = () => {
               asChild
               className="justify-start gap-3"
             >
-              <Link to="/courses">
+              <Link to="/dashboard/courses">
                 <BookOpen className="w-5 h-5 text-green-800" />
                 Continue Learning
                 <ExternalLink className="w-4 h-4 ml-auto text-muted-foreground" />
@@ -247,7 +296,7 @@ const Dashboard = () => {
               asChild
               className="justify-start gap-3"
             >
-              <Link to="/slots">
+              <Link to="/dashboard/slots">
                 <Sprout className="w-5 h-5 text-[#d17547]" />
                 View Farm Slots
                 <ExternalLink className="w-4 h-4 ml-auto text-muted-foreground" />
@@ -259,7 +308,7 @@ const Dashboard = () => {
               asChild
               className="justify-start gap-3"
             >
-              <Link to="/profile">
+              <Link to="/dashboard/profile">
                 <TrendingUp className="w-5 h-5 text-[#d17547]" />
                 View Profile
                 <ExternalLink className="w-4 h-4 ml-auto text-muted-foreground" />

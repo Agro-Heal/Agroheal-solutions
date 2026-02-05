@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, CreditCard, Shield, Sprout } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,21 +7,43 @@ import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/libs/supabaseClient";
-import { PAYSTACK_KEY, FLUTTERWAVE_KEYS } from "@/config/Index";
 
 const Checkout = () => {
   const { toast } = useToast();
-  const slotPrice = 150000; // fixed price for the slot
+  const slotPrice = 2000; // fixed price for the slot
   const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
-    amount: "",
-    payment_method: "",
-    status: "",
   });
+
+  // Load payment scripts on component mount
+  useEffect(() => {
+    // Load Paystack
+    const loadPaystack = () => {
+      if (document.getElementById("paystack-script")) return;
+      const script = document.createElement("script");
+      script.id = "paystack-script";
+      script.src = "https://js.paystack.co/v1/inline.js";
+      script.async = true;
+      document.body.appendChild(script);
+    };
+
+    // Load Flutterwave
+    const loadFlutterwave = () => {
+      if (document.getElementById("flutterwave-script")) return;
+      const script = document.createElement("script");
+      script.id = "flutterwave-script";
+      script.src = "https://checkout.flutterwave.com/v3.js";
+      script.async = true;
+      document.body.appendChild(script);
+    };
+
+    loadPaystack();
+    loadFlutterwave();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -29,10 +51,24 @@ const Checkout = () => {
   };
 
   const createCheckout = async (paymentMethod: "paystack" | "flutterwave") => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      toast({
+        title: "Login required",
+        description: "You must be logged in to make payment.",
+        variant: "destructive",
+      });
+      return null;
+    }
+
     const { data, error } = await supabase
       .from("checkout")
       .insert([
         {
+          user_id: user.id,
           first_name: formData.firstName,
           last_name: formData.lastName,
           email: formData.email,
@@ -46,6 +82,7 @@ const Checkout = () => {
       .single();
 
     if (error) {
+      console.error("Database error:", error);
       toast({
         title: "Database Error",
         description: error.message,
@@ -61,17 +98,114 @@ const Checkout = () => {
     formData.firstName.trim() &&
     formData.lastName.trim() &&
     formData.email.trim() &&
-    formData.phone.trim() &&
-    formData.payment_method &&
-    formData.status &&
-    formData.amount;
+    formData.phone.trim();
 
-  // handle payment via PAYSTACK
+  // --- Paystack Payment ---
+  // const handlePaystack = async () => {
+  //   if (!isFormValid) {
+  //     toast({
+  //       title: "Please fill all fields",
+  //       description: "All billing details are required.",
+  //       variant: "destructive",
+  //     });
+  //     return;
+  //   }
+
+  //   // Check if Paystack is loaded
+  //   if (!(window as any).PaystackPop) {
+  //     toast({
+  //       title: "Payment Error",
+  //       description: "Paystack is still loading. Please try again.",
+  //       variant: "destructive",
+  //     });
+  //     return;
+  //   }
+
+  //   setIsProcessing(true);
+
+  //   const order = await createCheckout("paystack");
+  //   if (!order) {
+  //     setIsProcessing(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     const handler = (window as any).PaystackPop.setup({
+  //       key: import.meta.env.VITE_PAYSTACK_KEYS,
+  //       email: order.email,
+  //       amount: Number(order.amount) * 100,
+  //       currency: "NGN",
+  //       ref: `SLOT_${order.id}_${Date.now()}`,
+  //       callback: async function (response: any) {
+  //         console.log("Payment successful:", response);
+
+  //         try {
+  //           // Update database
+  //           const { error: updateError } = await supabase
+  //             .from("checkout")
+  //             .update({
+  //               status: "paid",
+  //               transaction_ref: response.reference,
+  //             })
+  //             .eq("id", order.id);
+
+  //           if (updateError) throw updateError;
+
+  //           toast({
+  //             title: "Payment successful 🎉",
+  //             description: "Your slot has been secured!",
+  //           });
+
+  //           // Redirect after success
+  //           setTimeout(() => {
+  //             window.location.href = `${import.meta.env.VITE_WHATSAPP_REDIRECT}`;
+  //           }, 2000);
+  //         } catch (error) {
+  //           console.error("Update error:", error);
+  //           toast({
+  //             title: "Warning",
+  //             description: "Payment received but failed to update record.",
+  //             variant: "destructive",
+  //           });
+  //         }
+  //       },
+  //       onClose: function () {
+  //         console.log("Payment window closed");
+  //         toast({
+  //           title: "Payment cancelled",
+  //           description: "You closed the payment window.",
+  //         });
+  //         setIsProcessing(false);
+  //       },
+  //     });
+
+  //     handler.openIframe();
+  //   } catch (error) {
+  //     console.error("Paystack error:", error);
+  //     toast({
+  //       title: "Payment Error",
+  //       description: "Failed to initialize payment. Please try again.",
+  //       variant: "destructive",
+  //     });
+  //     setIsProcessing(false);
+  //   }
+  // };
+
   const handlePaystack = async () => {
     if (!isFormValid) {
       toast({
         title: "Please fill all fields",
         description: "All billing details are required.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if Paystack is loaded
+    if (!(window as any).PaystackPop) {
+      toast({
+        title: "Payment Error",
+        description: "Paystack is still loading. Please try again.",
         variant: "destructive",
       });
       return;
@@ -85,35 +219,114 @@ const Checkout = () => {
       return;
     }
 
-    const handler = (window as any).PaystackPop.setup({
-      key: PAYSTACK_KEY,
-      email: order.email,
-      amount: order.amount * 100,
-      currency: "NGN",
-      ref: order.id,
-      callback: async function () {
-        await supabase
-          .from("checkout")
-          .update({ status: "paid" })
-          .eq("id", order.id);
+    try {
+      const paystackKey = import.meta.env.VITE_PAYSTACK_KEYS;
 
-        toast({ title: "Payment successful 🎉" });
-      },
-      onClose: function () {
-        toast({ title: "Payment cancelled" });
-      },
-    });
+      // Debug logs
+      console.log("=== Paystack Debug ===");
+      console.log("Key exists:", !!paystackKey);
+      console.log("Key starts with pk_:", paystackKey?.startsWith("pk_"));
+      console.log("Order:", {
+        id: order.id,
+        email: order.email,
+        amount: order.amount,
+        amountInKobo: Number(order.amount) * 100,
+      });
+      console.log("PaystackPop available:", !!(window as any).PaystackPop);
 
-    handler.openIframe();
-    setIsProcessing(false);
+      if (!paystackKey) {
+        throw new Error("Paystack public key is missing");
+      }
+
+      if (!paystackKey.startsWith("pk_")) {
+        throw new Error("Invalid Paystack public key format");
+      }
+
+      const config = {
+        key: paystackKey,
+        email: order.email,
+        amount: Number(order.amount) * 100,
+        currency: "NGN",
+        ref: `SLOT_${order.id}_${Date.now()}`,
+        callback: async function (response: any) {
+          console.log("Payment successful:", response);
+
+          try {
+            const { error: updateError } = await supabase
+              .from("checkout")
+              .update({
+                status: "paid",
+                transaction_ref: response.reference,
+              })
+              .eq("id", order.id);
+
+            if (updateError) throw updateError;
+
+            toast({
+              title: "Payment successful 🎉",
+              description: "Your slot has been secured!",
+            });
+
+            setTimeout(() => {
+              window.location.href = `${import.meta.env.VITE_WHATSAPP_REDIRECT}`;
+            }, 2000);
+          } catch (error) {
+            console.error("Update error:", error);
+            toast({
+              title: "Warning",
+              description: "Payment received but failed to update record.",
+              variant: "destructive",
+            });
+          }
+        },
+        onClose: function () {
+          console.log("Payment window closed");
+          toast({
+            title: "Payment cancelled",
+            description: "You closed the payment window.",
+          });
+          setIsProcessing(false);
+        },
+      };
+
+      console.log("Paystack config:", { ...config, key: "hidden" });
+
+      const handler = (window as any).PaystackPop.setup(config);
+
+      console.log("Handler created:", !!handler);
+      console.log("Opening iframe...");
+
+      handler.openIframe();
+    } catch (error) {
+      console.error("Paystack error:", error);
+      toast({
+        title: "Payment Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to initialize payment.",
+        variant: "destructive",
+      });
+      setIsProcessing(false);
+    }
   };
 
-  // handle payment via FLUTTERWAVE
+  // --- Flutterwave Payment ---
   const handleFlutterwave = async () => {
     if (!isFormValid) {
       toast({
         title: "Please fill all fields",
         description: "All billing details are required.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if Flutterwave is loaded
+    if (!(window as any).FlutterwaveCheckout) {
+      toast({
+        title: "Payment Error",
+        description: "Flutterwave is still loading. Please try again.",
         variant: "destructive",
       });
       return;
@@ -127,37 +340,84 @@ const Checkout = () => {
       return;
     }
 
-    (window as any).FlutterwaveCheckout({
-      public_key: FLUTTERWAVE_KEYS,
-      tx_ref: order.id,
-      amount: order.amount,
-      currency: "NGN",
-      customer: {
-        email: order.email,
-        name: `${order.first_name} ${order.last_name}`,
-        phonenumber: order.phone,
-      },
-      callback: async function () {
-        await supabase
-          .from("checkout")
-          .update({ status: "paid" })
-          .eq("id", order.id);
+    try {
+      (window as any).FlutterwaveCheckout({
+        public_key: import.meta.env.VITE_FLUTTERWAVE_KEY,
+        tx_ref: `SLOT_${order.id}_${Date.now()}`,
+        amount: Number(order.amount),
+        currency: "NGN",
+        payment_options: "card,banktransfer,ussd",
+        customer: {
+          email: order.email,
+          name: `${order.first_name} ${order.last_name}`,
+          phone_number: order.phone,
+        },
+        customizations: {
+          title: "Farm Slot Payment",
+          description: "Payment for practical farm slot",
+          logo: "https://your-logo-url.com/logo.png", // Optional
+        },
+        callback: async function (response: any) {
+          console.log("Payment successful:", response);
 
-        toast({ title: "Payment successful 🎉" });
-      },
-      onclose: function () {
-        toast({ title: "Payment cancelled" });
-      },
-    });
+          if (response.status === "successful") {
+            try {
+              const { error: updateError } = await supabase
+                .from("checkout")
+                .update({
+                  status: "paid",
+                  transaction_ref: response.transaction_id,
+                })
+                .eq("id", order.id);
 
-    setIsProcessing(false);
+              if (updateError) throw updateError;
+
+              toast({
+                title: "Payment successful 🎉",
+                description: "Your slot has been secured!",
+              });
+
+              // Redirect after success
+              setTimeout(() => {
+                // window.location.href = "/dashboard/slots";
+                window.location.href = `${import.meta.env.VITE_WHATSAPP_REDIRECT}`;
+              }, 2000);
+            } catch (error) {
+              console.error("Update error:", error);
+              toast({
+                title: "Warning",
+                description: "Payment received but failed to update record.",
+                variant: "destructive",
+              });
+            }
+          }
+
+          setIsProcessing(false);
+        },
+        onclose: function () {
+          console.log("Payment window closed");
+          toast({
+            title: "Payment cancelled",
+            description: "You closed the payment window.",
+          });
+          setIsProcessing(false);
+        },
+      });
+    } catch (error) {
+      console.error("Flutterwave error:", error);
+      toast({
+        title: "Payment Error",
+        description: "Failed to initialize payment. Please try again.",
+        variant: "destructive",
+      });
+      setIsProcessing(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-background">
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4 max-w-4xl">
-          {/* Back Link */}
           <Link
             to="/dashboard/slots"
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"

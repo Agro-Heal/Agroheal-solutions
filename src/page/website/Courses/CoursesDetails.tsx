@@ -120,7 +120,7 @@ const CourseDetail = () => {
               </div>
 
               {/* Progress Bar */}
-              <div className="mt-4">
+              {/* <div className="mt-4">
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-muted-foreground">Progress</span>
                   <span className="text-foreground font-medium">
@@ -133,7 +133,7 @@ const CourseDetail = () => {
                     style={{ width: `${progress}%` }}
                   />
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <ScrollArea className="h-[calc(100vh-18rem)]">
@@ -235,14 +235,18 @@ const CourseDetail = () => {
                 >
                   {/* Video Player */}
                   <div className="rounded-2xl overflow-hidden bg-muted border border-border shadow-elevated">
-                    <AspectRatio ratio={16 / 9}>
+                    <AspectRatio ratio={16 / 9} className="relative">
+                      {/* YouTube Video */}
                       <iframe
-                        src={`https://www.youtube.com/embed/${activeLesson.videoId}?rel=0`}
+                        src={`https://www.youtube.com/embed/${activeLesson.videoId}?modestbranding=1&rel=0&controls=1&disablekb=1&fs=0&iv_load_policy=3&cc_load_policy=0&playsinline=1`}
                         title={activeLesson.title}
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
+                        allowFullScreen={false}
                         className="w-full h-full"
                       />
+
+                      {/* Top interaction blocker */}
+                      <div className="absolute top-0 left-0 w-full h-14 z-10" />
                     </AspectRatio>
                   </div>
 

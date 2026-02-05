@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const Slots = () => {
   const availableSlots = 23;
   const totalSlots = 50;
-  const slotPrice = "₦150,000";
+  const slotPrice = "₦2,000";
 
   return (
     <div className="min-h-screen bg-background">

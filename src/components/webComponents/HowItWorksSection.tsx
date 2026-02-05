@@ -8,7 +8,7 @@ const steps = [
     icon: BookOpen,
     title: "Learn",
     description:
-      "Access comprehensive organic farming courses taught by industry experts. Master sustainable techniques at your own pace.",
+      "Learn from the comfort of your home how to farm a wide range of crops and livestock including fruity and leafy vegetables, tubers and small livestock.",
     color: "bg-green-800 text-white",
   },
   {
@@ -22,7 +22,7 @@ const steps = [
     icon: Coins,
     title: "Earn",
     description:
-      "Reap the rewards of your harvest and build income through sustainable farming practices and affiliate opportunities.",
+      "Join Practicals on a group farm (through whatsapp) with one day a month work rotation (pay a substitute if unavailable for your rotation). Through collective effort, you can earn up to 100% returns per farm slot every four months. Multiple slots, multiple returns!",
     color: "bg-[#e8b130] text-white",
   },
 ];
@@ -33,8 +33,8 @@ export function HowItWorksSection() {
       <SectionDivider position="bottom" className="text-muted" />
       <div className="container mx-auto px-4">
         <SectionHeading
-          eyebrow="How It Works"
-          title="Your Path to Organic Farming Success"
+          eyebrow="About LEAP"
+          title="Learn to Earn Agribusiness Platform (LEAP)"
           description="A simple three-step journey designed to transform beginners into confident, earning organic farmers."
           className="mb-16"
         />

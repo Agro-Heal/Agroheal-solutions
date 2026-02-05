@@ -22,54 +22,82 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
+    // 1️Sign up user
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: name,
-          referral_code: referral,
         },
       },
     });
 
     setLoading(false);
-    // if it failes throw this error
+
     if (error) {
-      const errorNotify = () =>
-        toast.error(`${error?.message}`, {
-          duration: 5000,
-          position: "top-right",
-          icon: "📩",
-          style: {
-            background: "crimson",
-            color: "#fff",
-            borderRadius: "10px",
-            padding: "12px 16px",
-            fontSize: "14px",
-          },
-        });
-      errorNotify();
+      toast.error(`${error.message}`, {
+        duration: 5000,
+        position: "top-right",
+        icon: "📩",
+        style: {
+          background: "crimson",
+          color: "#fff",
+          borderRadius: "10px",
+          padding: "12px 16px",
+          fontSize: "14px",
+        },
+      });
       return;
     }
 
-    const notify = () =>
-      toast.success(
-        "Signup successful, a mail has been sent. Please verify your email.",
-        {
-          duration: 5000,
-          position: "top-right",
-          icon: "📩",
-          style: {
-            background: "#065f46",
-            color: "#fff",
-            borderRadius: "10px",
-            padding: "12px 16px",
-            fontSize: "14px",
-          },
-        },
-      );
-    notify();
+    const user = data.user;
+    if (!user) return;
+
+    // 2️Handle referral code input
+    let referrerId: string | null = null;
+
+    if (referral) {
+      // search for the referrer by referral code
+      const { data: referrer } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("referral_code", referral.toUpperCase())
+        .single();
+
+      if (referrer) referrerId = referrer.id;
+    }
+
+    // Generate your own referral code
+    const myReferralCode = Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase();
+
+    // Update the new user's profile
+    await supabase
+      .from("profiles")
+      .update({
+        full_name: name,
+        referral_code: myReferralCode,
+        referred_by: referrerId,
+      })
+      .eq("id", user.id);
+
+    // Success toast
+    toast.success("Signup successful! Please verify your email.", {
+      duration: 5000,
+      position: "top-right",
+      icon: "📩",
+      style: {
+        background: "#065f46",
+        color: "#fff",
+        borderRadius: "10px",
+        padding: "12px 16px",
+        fontSize: "14px",
+      },
+    });
+
     setTimeout(() => {
       navigate("/login");
     }, 2000);
