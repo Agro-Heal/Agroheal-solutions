@@ -190,3 +190,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+.course-card {
+  background-image: url("path/to/course-image.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

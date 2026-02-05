@@ -4,7 +4,7 @@ import {
   BookOpen,
   Clock,
   Leaf,
-  Lock,
+  LockOpen,
   Play,
   Star,
 } from "lucide-react";
@@ -192,9 +192,14 @@ const Courses = () => {
                       <div className="aspect-video bg-muted relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-secondary/10 to-accent/10" />
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-14 h-14 rounded-full bg-background/80 border border-border flex items-center justify-center group-hover:scale-110 transition-transform shadow-elevated">
+                          {/* <div className="w-14 h-14 rounded-full bg-background/80 border border-border flex items-center justify-center group-hover:scale-110 transition-transform shadow-elevated">
                             <Play className="w-6 h-6 text-primary ml-1" />
-                          </div>
+                            <img src={course?.Image} alt="" />
+                          </div> */}
+                          <div
+                            className="h-64 w-full bg-cover bg-center rounded-lg"
+                            style={{ backgroundImage: `url(${course?.Image})` }}
+                          ></div>
                         </div>
 
                         <div className="absolute top-3 left-3">
@@ -214,10 +219,10 @@ const Courses = () => {
                         ) : ( */}
                           <Badge
                             variant="outline"
-                            className="rounded-full inline-flex items-center gap-1"
+                            className="rounded-full inline-flex items-center gap-1 bg-white "
                           >
-                            <Lock className="w-3 h-3" />
-                            PRO
+                            <LockOpen className="w-3 h-3" />
+                            Free
                           </Badge>
                           {/* )} */}
                         </div>

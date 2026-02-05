@@ -94,7 +94,7 @@ export default function Header() {
           ) : (
             <div className="hidden lg:flex items-center gap-4">
               <Button className="bg-green-800 text-white">
-                <Link to="/dashboard">Login</Link>
+                <Link to="/login">Login</Link>
               </Button>
               <Button className="bg-green-800 text-white">
                 <Link to="/dashboard/courses">Explore Courses</Link>
@@ -147,7 +147,7 @@ export default function Header() {
                 ) : (
                   <div className="pt-4 flex flex-col gap-3">
                     <Button className="bg-green-800 text-white">
-                      <Link to="/dashboard">Login</Link>
+                      <Link to="/login">Login</Link>
                     </Button>
                     <Button className="bg-green-800 text-white">
                       <Link to="/dashboard/courses">Explore Courses</Link>

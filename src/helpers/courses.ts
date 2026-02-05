@@ -1,3 +1,5 @@
+import { AgrohealImages } from "@/constant/Image";
+
 export interface Lesson {
   id: string;
   title: string;
@@ -9,6 +11,7 @@ export interface Lesson {
 
 export interface Course {
   id: number;
+  Image: string;
   slug: string;
   title: string;
   description: string;
@@ -24,6 +27,7 @@ export const COURSESDATA: Course[] = [
   // Foundation Courses (from original data)
   {
     id: 1,
+    Image: AgrohealImages?.IntroductionFarming,
     slug: "introduction-to-organic-farming",
     title: "Introduction to Organic Farming",
     description:
@@ -117,6 +121,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 2,
+    Image: AgrohealImages?.Biofertilizers,
     slug: "biofertilizer-production",
     title: "Biofertilizer Production",
     description: "Learn more about Biofertilizer Production",
@@ -159,6 +164,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 3,
+    Image: AgrohealImages?.Composting,
     slug: "Composting",
     title: "Composting",
     description: "Learn more about composing.",
@@ -190,6 +196,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 4,
+    Image: AgrohealImages?.BSFL,
     slug: "bkack-soldier-fly-larvae",
     title: "Black Soldier Fly Larvae",
     description: "Black soldier fly larvae.",
@@ -229,6 +236,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 5,
+    Image: AgrohealImages?.OrganicFertilizer,
     slug: "organic-fertilizer-production",
     title: "Organic Fertilizer Production",
     description: "How to produce organic fertilizers.",
@@ -268,6 +276,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 6,
+    Image: AgrohealImages?.BiocarImages,
     slug: "biochar-production",
     title: "Biochar Production",
     description: "How to produce biochar.",
@@ -286,6 +295,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 7,
+    Image: AgrohealImages?.Pesticide,
     slug: "organic-pesticide-production",
     title: "Organic Pesticide Production",
     description: "How to produce organic pesticide.",
@@ -316,6 +326,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 8,
+    Image: AgrohealImages?.Pesticide,
     slug: "organic-pest-management",
     title: "Organic Pest Management",
     description: "Organic pest management .",
@@ -362,6 +373,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 9,
+    Image: AgrohealImages?.Mushroom,
     slug: "mushroom-farming",
     title: "Mushroom Farming",
     description: "How to plant mushroom.",
@@ -404,6 +416,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 10,
+    Image: AgrohealImages?.Tomato,
     slug: "tomato-farming",
     title: "Tomato Farming",
     description: "How to plant tomato from seed to harvest.",
@@ -450,6 +463,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 11,
+    Image: AgrohealImages?.UgwuFarming,
     slug: "ugu-farming",
     title: "Ugu Farming",
     description: "Fluted Pumpkin Multiplication Simplified.",
@@ -494,6 +508,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 12,
+    Image: AgrohealImages?.Pepper,
     slug: "pepper-farming",
     title: "Pepper Farming",
     description: " How To Grow Hot Pepper in Containers and Garden Beds.",
@@ -512,6 +527,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 13,
+    Image: AgrohealImages?.ShokoTete,
     slug: "shoko-tete-&-ewedu-farming",
     title: "Shoko, Tete, and Ewedu Farming",
     description:
@@ -531,6 +547,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 14,
+    Image: AgrohealImages?.Maize,
     slug: "maize-farming",
     title: "How to plant Maize step by step",
     description:
@@ -550,6 +567,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 15,
+    Image: AgrohealImages?.Cucumber,
     slug: "cucumber-farming",
     title: "Cucumber Farming",
     description: " How To Grow Cucumber From Seed To Harvest.",
@@ -568,6 +586,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 16,
+    Image: AgrohealImages?.WaterMelon,
     slug: "watermelon-farming",
     title: "Watermelon Farming",
     description: "Video: How To Grow Watermelon From Seed To Harvest",
@@ -586,6 +605,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 17,
+    Image: AgrohealImages?.OrganicChickes,
     slug: "production-of-organic-chicken",
     title: "Broiler Chicken Farming",
     description:
@@ -605,6 +625,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 18,
+    Image: AgrohealImages?.SweetPotatoe,
     slug: "sweet-potato-farming",
     title: "Sweet Potato Farming",
     description:
@@ -624,6 +645,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 19,
+    Image: AgrohealImages?.YamFarming,
     slug: "how-to-grow-yam",
     title: "Yam Farming",
     description:
@@ -643,6 +665,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 20,
+    Image: AgrohealImages?.Cassava,
     slug: "how-to-grow-cassava",
     title: "Cassava Farming",
     description:
@@ -662,6 +685,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 21,
+    Image: AgrohealImages?.Bean,
     slug: "how-to-grow-beans-step-by-step",
     title: "Beans Farming",
     description:
@@ -681,6 +705,7 @@ export const COURSESDATA: Course[] = [
   },
   {
     id: 22,
+    Image: AgrohealImages?.SoyaBeans,
     slug: "how-to-grow-soyabeans-from-seed-to-harvest",
     title: "Soyabeans Farming",
     description:
