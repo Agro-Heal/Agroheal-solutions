@@ -222,18 +222,6 @@ const Checkout = () => {
     try {
       const paystackKey = import.meta.env.VITE_PAYSTACK_KEYS;
 
-      // Debug logs
-      console.log("=== Paystack Debug ===");
-      console.log("Key exists:", !!paystackKey);
-      console.log("Key starts with pk_:", paystackKey?.startsWith("pk_"));
-      console.log("Order:", {
-        id: order.id,
-        email: order.email,
-        amount: order.amount,
-        amountInKobo: Number(order.amount) * 100,
-      });
-      console.log("PaystackPop available:", !!(window as any).PaystackPop);
-
       if (!paystackKey) {
         throw new Error("Paystack public key is missing");
       }
@@ -248,36 +236,50 @@ const Checkout = () => {
         amount: Number(order.amount) * 100,
         currency: "NGN",
         ref: `SLOT_${order.id}_${Date.now()}`,
-        callback: async function (response: any) {
+        // Remove 'async' - Paystack doesn't support async callbacks
+        callback: function (response: any) {
           console.log("Payment successful:", response);
 
-          try {
-            const { error: updateError } = await supabase
-              .from("checkout")
-              .update({
-                status: "paid",
-                transaction_ref: response.reference,
-              })
-              .eq("id", order.id);
+          // Handle async operations separately
+          const updatePaymentStatus = async () => {
+            try {
+              const { error: updateError } = await supabase
+                .from("checkout")
+                .update({
+                  status: "paid",
+                  transaction_ref: response.reference,
+                })
+                .eq("id", order.id);
 
-            if (updateError) throw updateError;
+              if (updateError) {
+                console.error("Update error:", updateError);
+                toast({
+                  title: "Warning",
+                  description: "Payment received but failed to update record.",
+                  variant: "destructive",
+                });
+                return;
+              }
 
-            toast({
-              title: "Payment successful 🎉",
-              description: "Your slot has been secured!",
-            });
+              toast({
+                title: "Payment successful 🎉",
+                description: "Your slot has been secured!",
+              });
 
-            setTimeout(() => {
-              window.location.href = `${import.meta.env.VITE_WHATSAPP_REDIRECT}`;
-            }, 2000);
-          } catch (error) {
-            console.error("Update error:", error);
-            toast({
-              title: "Warning",
-              description: "Payment received but failed to update record.",
-              variant: "destructive",
-            });
-          }
+              setTimeout(() => {
+                window.location.href = `${import.meta.env.VITE_WHATSAPP_REDIRECT}`;
+              }, 2000);
+            } catch (error: any) {
+              console.error("Update error:", error);
+              toast({
+                title: "Warning",
+                description: "Payment received but failed to update record.",
+                variant: "destructive",
+              });
+            }
+          };
+
+          updatePaymentStatus();
         },
         onClose: function () {
           console.log("Payment window closed");
@@ -289,13 +291,7 @@ const Checkout = () => {
         },
       };
 
-      console.log("Paystack config:", { ...config, key: "hidden" });
-
       const handler = (window as any).PaystackPop.setup(config);
-
-      console.log("Handler created:", !!handler);
-      console.log("Opening iframe...");
-
       handler.openIframe();
     } catch (error) {
       console.error("Paystack error:", error);
