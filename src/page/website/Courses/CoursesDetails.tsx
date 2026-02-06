@@ -238,15 +238,15 @@ const CourseDetail = () => {
                     <AspectRatio ratio={16 / 9} className="relative">
                       {/* YouTube Video */}
                       <iframe
-                        src={`https://www.youtube.com/embed/${activeLesson.videoId}?modestbranding=1&rel=0&controls=1&disablekb=1&fs=0&iv_load_policy=3&cc_load_policy=0&playsinline=1`}
+                        src={`https://www.youtube.com/embed/${activeLesson.videoId}?autoplay=1&mute=0&modestbranding=1&rel=0&controls=0&disablekb=1&fs=0&iv_load_policy=3&cc_load_policy=0&playsinline=1`}
                         title={activeLesson.title}
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen={false}
-                        className="w-full h-full"
+                        className="w-full h-full pointer-events-none"
                       />
 
-                      {/* Top interaction blocker */}
-                      <div className="absolute top-0 left-0 w-full h-14 z-10" />
+                      {/* Full overlay to block all interactions */}
+                      <div className="absolute inset-0 z-10 pointer-events-none" />
                     </AspectRatio>
                   </div>
 
