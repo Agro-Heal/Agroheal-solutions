@@ -42,7 +42,7 @@ export default function Header() {
   return (
     <nav className={navClassName}>
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             {/* <div className="w-10 h-10 rounded-full bg-green-800 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -82,7 +82,7 @@ export default function Header() {
 
           {/* Desktop CTA */}
           {localStorage.getItem("sb-ptowfacejneezksyhntk-auth-token") ? (
-            <div className="hidden lg:flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-4">
               <Button className="bg-green-800 text-white">
                 <Link to="/dashboard">Dashboard</Link>
               </Button>
