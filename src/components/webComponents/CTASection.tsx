@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Leaf } from "lucide-react";
+import { Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -40,16 +40,19 @@ export function CTASection() {
             income while farming to cut food costs!
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button
+              size="lg"
+              className="w-fit bg-green-800 hover:bg-green-800/80 p-6 rounded-full"
+            >
               <Link to="/signup" className="gap-2">
-                Get Started Free
-                <ArrowRight className="w-5 h-5" />
+                Get Started Now
+                {/* <ArrowRight className="w-5 h-5" /> */}
               </Link>
             </Button>
-            <Button size={"lg"} asChild>
+            {/* <Button size={"lg"} asChild>
               <Link to="/dashboard/courses">Explore Courses</Link>
-            </Button>
+            </Button> */}
           </div>
 
           {/* <p className="text-primary-foreground/60 text-sm mt-6">

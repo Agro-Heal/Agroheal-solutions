@@ -30,7 +30,7 @@ export function SectionHeading({
         <span className="h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
         {eyebrow}
       </span>
-      <h2 className=" text-3xl font-medium text-foreground mt-4 leading-[1.1]">
+      <h2 className=" text-3xl font-normal text-foreground mt-4 leading-[1.1]">
         {title}
       </h2>
       {description && (

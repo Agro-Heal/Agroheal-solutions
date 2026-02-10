@@ -35,7 +35,8 @@ export function HowItWorksSection() {
         <SectionHeading
           eyebrow="About LEAP"
           title="Learn to Earn Agribusiness Platform (LEAP)"
-          description="A simple three-step journey designed to transform beginners into confident, earning organic farmers."
+          // description="A simple three-step journey designed to transform beginners into confident, earning organic farmers."
+          description=""
           className="mb-16"
         />
 
@@ -68,17 +69,17 @@ export function HowItWorksSection() {
               >
                 <div className="relative  rounded-3xl p-8 shadow-soft transition-all duration-300 h-full border border-border/60 hover:shadow-elevated hover:-translate-y-1">
                   {/* Step Number */}
-                  <div className=" absolute -top-4 -left-4 w-11 h-11 rounded-full bg-background/90 border border-border flex items-center justify-center  font-bold text-foreground shadow-soft">
+                  {/* <div className=" absolute -top-4 -left-4 w-11 h-11 rounded-full bg-background/90 border border-border flex items-center justify-center  font-bold text-foreground shadow-soft">
                     {index + 1}
-                  </div>
+                  </div> */}
 
                   {/* Icon */}
-                  <div className="relative mb-6">
-                    <div
+                  <div className="relative mb-0">
+                    {/* <div
                       className={`w-16 h-16 rounded-2xl ${step.color} flex items-center justify-center group-hover:scale-110 transition-transform shadow-soft`}
                     >
                       <step.icon className={`w-8 h-8`} />
-                    </div>
+                    </div> */}
                     <div
                       aria-hidden="true"
                       className="absolute -inset-4 rounded-3xl bg-accent/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"
@@ -86,7 +87,7 @@ export function HowItWorksSection() {
                   </div>
 
                   {/* Content */}
-                  <h3 className=" text-2xl font-bold text-foreground mb-3">
+                  <h3 className=" text-xl font-medium text-foreground mb-3">
                     {step.title}
                   </h3>
                   <p className="text-green-800 leading-relaxed">
