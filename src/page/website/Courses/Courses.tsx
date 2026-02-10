@@ -48,8 +48,8 @@ const Courses = () => {
                 className="grid lg:grid-cols-12 gap-10 items-center"
               >
                 <div className="lg:col-span-7">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-[#e8b130]/30 bg-[#e8b130]/15 px-4 py-2 text-sm font-semibold text-[#e8b130]">
-                    <Leaf className="h-4 w-4 text-[#e8b130]" />
+                  <div className="inline-flex items-center gap-2 rounded-full border border-green-800/30 bg-green-800/15 px-4 py-2 text-sm font-semibold text-green-800">
+                    <Leaf className="h-4 w-4 text-green-800" />
                     Featured track
                   </div>
                   <h1 className="mt-5  text-4xl md:text-5xl font-bold text-foreground leading-[1.05]">
@@ -61,10 +61,10 @@ const Courses = () => {
                     ready for full access.
                   </p>
 
-                  <div className="mt-7 flex flex-col sm:flex-row gap-3">
+                  <div className="hidden mt-7 flex-col sm:flex-row gap-3">
                     <Button
                       size="lg"
-                      className="bg-[#d17547] text-white cursor-pointer"
+                      className="bg-green-800 text-white cursor-pointer"
                     >
                       <Link
                         to="#course-list"
@@ -86,7 +86,7 @@ const Courses = () => {
                   </div>
 
                   <div className="mt-6 flex flex-wrap items-center gap-2">
-                    <Badge className="rounded-full text-white bg-[#d17547]">
+                    <Badge className="rounded-full text-white bg-green-800">
                       YouTube video lessons
                     </Badge>
                     <Badge variant="outline" className="rounded-full">
@@ -120,12 +120,12 @@ const Courses = () => {
                             className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card/60 px-4 py-3"
                           >
                             <span className="inline-flex items-center gap-2 text-sm font-medium text-foreground">
-                              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#e8b130]/20 bg-[#e8b130]/10">
-                                <Play className="h-4 w-4 text-[#e8b130]" />
+                              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-green-800/20 bg-green-800/10">
+                                <Play className="h-4 w-4 text-green-800" />
                               </span>
                               {item.title}
                             </span>
-                            <Badge className="rounded-full bg-[#d17547] text-white">
+                            <Badge className="rounded-full bg-green-800 text-white">
                               {item.tag}
                             </Badge>
                           </div>
@@ -146,7 +146,7 @@ const Courses = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-gradient-hero rounded-2xl p-8 my-12 text-center"
+            className="hidden bg-gradient-hero rounded-2xl p-8 my-12 text-center"
           >
             <h3 className=" text-2xl font-bold text-primary-foreground mb-2">
               Available Courses
@@ -161,7 +161,7 @@ const Courses = () => {
           </motion.div>
 
           {/* Filters */}
-          <div id="course-list" className="scroll-mt-28">
+          <div id="course-list" className="scroll-mt-28 mt-12">
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
               <div>
                 <h2 className=" text-3xl md:text-4xl font-bold text-foreground">
