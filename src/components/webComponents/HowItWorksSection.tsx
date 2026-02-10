@@ -66,9 +66,9 @@ export function HowItWorksSection() {
                 transition={{ duration: 0.55, delay: index * 0.06 }}
                 className="relative group"
               >
-                <div className="relative bg-gradient-card rounded-3xl p-8 shadow-soft transition-all duration-300 h-full border border-border/60 hover:shadow-elevated hover:-translate-y-1">
+                <div className="relative  rounded-3xl p-8 shadow-soft transition-all duration-300 h-full border border-border/60 hover:shadow-elevated hover:-translate-y-1">
                   {/* Step Number */}
-                  <div className="absolute -top-4 -left-4 w-11 h-11 rounded-full bg-background/90 border border-border flex items-center justify-center  font-bold text-foreground shadow-soft">
+                  <div className=" absolute -top-4 -left-4 w-11 h-11 rounded-full bg-background/90 border border-border flex items-center justify-center  font-bold text-foreground shadow-soft">
                     {index + 1}
                   </div>
 

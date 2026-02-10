@@ -21,10 +21,12 @@ import UgwuFarming from "@/assets/Image/ugwu-farming.jpg";
 import SoyaBeans from "@/assets/Image/SOYBEANS-IMAGE.jpeg";
 import Bean from "@/assets/Image/BEANS-IMAGE.jpeg";
 import Maize from "@/assets/Image/MAIZE-IMAGE.jpeg";
+import HeaderLogo from "@/assets/Image/logo.png";
 
 // imports arranged alphabetically
 
 export const AgrohealImages = {
+  HeaderLogo,
   IntroductionFarming,
   Biofertilizers,
   Composting,

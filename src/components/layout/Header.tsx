@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Leaf } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AgrohealImages } from "@/constant/Image";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -25,10 +26,10 @@ export default function Header() {
   const navClassName = useMemo(
     () =>
       [
-        "fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-colors duration-300",
+        "fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
         isScrolled
-          ? "bg-background border-b border-border"
-          : "bg-background border-b border-transparent",
+          ? "bg-background text-green-800 border-b border-border"
+          : "bg-black/10 text-white border-b border-transparent",
       ].join(" "),
     [isScrolled],
   );
@@ -44,12 +45,13 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-full bg-green-800 flex items-center justify-center group-hover:scale-110 transition-transform">
+            {/* <div className="w-10 h-10 rounded-full bg-green-800 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Leaf className="w-5 h-5 text-white" />
             </div>
             <span className=" text-xl font-semibold text-foreground">
               Agroheal
-            </span>
+            </span> */}
+            <img src={AgrohealImages.HeaderLogo} alt="" className="w-40" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -58,7 +60,7 @@ export default function Header() {
               <Link
                 key={link.name}
                 to={link.href}
-                className="relative group px-3 py-2 -mx-3 rounded-full text-green-800/80 hover:text-green-800 font-medium transition-colors motion-reduce:transition-none"
+                className="relative group px-3 py-2 -mx-3 rounded-full font-medium transition-colors motion-reduce:transition-none"
               >
                 {/* Cinematic hover pill */}
                 <span

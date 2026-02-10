@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, ChevronDown, Sparkles } from "lucide-react";
+import { ChevronDown, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SectionDivider } from "../webComponents/SectionDivider";
@@ -56,13 +56,13 @@ export function HeroSection() {
 
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10 pt-20">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto max-w-8xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="hidden items-center gap-2 px-4 py-2 rounded-full bg-[#e8b130]/20 border border-[#e8b130]/30 text-[#e8b130] font-medium text-sm mb-6">
+            <span className="hidden items-start gap-2 px-4 py-2 rounded-full bg-[#e8b130]/20 border border-[#e8b130]/30 text-[#e8b130] font-medium text-sm mb-6">
               <Sparkles className="w-4 h-4 text-[#e8b130]" />
               Premium organic farming education
             </span>
@@ -72,17 +72,17 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.08 }}
-            className=" text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-foreground leading-[1.05] mb-6"
+            className="text-left text-4xl md:text-5xl lg:text-5xl font-medium text-primary-foreground leading-[1.05] mb-6"
           >
-            Grow skills that
-            <span className="text-gradient-hero"> grow results</span>.
+            Farm for Africa Challenge: <br />
+            <span className=""> TEAM NIGERIA</span>.
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.16 }}
-            className="text-lg md:text-xl text-primary-foreground/85 mb-8 max-w-2xl leading-relaxed"
+            className="text-lg text-left md:text-xl text-primary-foreground/85 mb-8 max-w-2xl leading-relaxed"
           >
             LET'S FARM to cut food costs by over 50% & create an income stream
             for every participant. Through our Learn to Earn Agribusiness
@@ -93,26 +93,15 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.24 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex items-start"
           >
             <Button
               size="lg"
               asChild
-              className="bg-white text-green-800 hover:text-white hover:bg-transparent cursor-pointer"
-            >
-              <Link to="/dashboard/courses" className="gap-2">
-                Start learning
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-            </Button>
-            <Button
-              size="lg"
-              asChild
-              className="bg-transparent border-2 border-white hover:text-green-800 hover:bg-white cursor-pointer duration-300"
+              className="bg-green-800 p-5 rounded-full border-2 border-none hover:text-green-800 hover:bg-green-800/80 cursor-pointer duration-300"
             >
               <Link to="/signup" className="gap-2">
-                Create account
-                <BookOpen className="w-5 h-5" />
+                Read More
               </Link>
             </Button>
           </motion.div>

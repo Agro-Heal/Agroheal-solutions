@@ -52,11 +52,12 @@ export function BenefitsSection() {
         <SectionHeading
           eyebrow="Why Choose Agroheal"
           title="How LEAP works"
-          description="Discover why thousands are choosing organic farming as their path to financial freedom and environmental stewardship."
+          // description="Discover why thousands are choosing organic farming as their path to financial freedom and environmental stewardship."
+          description=""
           className="mb-16"
         />
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {benefits.map((benefit, index) => (
             <motion.div
               key={benefit.title}
@@ -66,16 +67,16 @@ export function BenefitsSection() {
               transition={{ duration: 0.55, delay: index * 0.06 }}
               className="group"
             >
-              <div className="relative bg-card/70 backdrop-blur-sm rounded-3xl p-7 shadow-soft transition-all duration-300 h-full border border-border/60 hover:bg-[#e8b130]/5 hover:border-primary/20 hover:shadow-elevated hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:transform-none">
+              <div className="relative  rounded-3xl p-7 shadow-soft transition-all duration-300 h-full border border-border/60  motion-reduce:transition-none motion-reduce:hover:transform-none">
                 <div
                   aria-hidden="true"
                   className="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity motion-reduce:transition-none"
                 />
 
-                <div className="relative w-12 h-12 rounded-2xl border border-primary/15 bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors motion-reduce:transition-none">
+                {/* <div className="relative w-12 h-12 rounded-2xl border border-primary/15 bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors motion-reduce:transition-none">
                   <benefit.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className=" text-xl font-semibold text-foreground mb-2">
+                </div> */}
+                <h3 className=" text-[18px] font-normal text-foreground mb-2">
                   {benefit.title}
                 </h3>
                 <p className="text-green-800 text-[14px] sm:text-[14px] md:text-[16pxs] leading-relaxed">

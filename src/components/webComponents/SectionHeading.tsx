@@ -26,11 +26,11 @@ export function SectionHeading({
       transition={{ duration: 0.55 }}
       className={cn(isCenter ? "text-center" : "text-left", className)}
     >
-      <span className="inline-flex text-[#d17547] items-center gap-2 font-semibold text-sm uppercase tracking-wider">
+      <span className="inline-flex text-green-800 items-center gap-2 font-semibold text-sm uppercase tracking-wider">
         <span className="h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
         {eyebrow}
       </span>
-      <h2 className=" text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4 leading-[1.1]">
+      <h2 className=" text-3xl font-medium text-foreground mt-4 leading-[1.1]">
         {title}
       </h2>
       {description && (
