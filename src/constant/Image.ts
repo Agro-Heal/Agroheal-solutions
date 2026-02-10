@@ -22,11 +22,14 @@ import SoyaBeans from "@/assets/Image/SOYBEANS-IMAGE.jpeg";
 import Bean from "@/assets/Image/BEANS-IMAGE.jpeg";
 import Maize from "@/assets/Image/MAIZE-IMAGE.jpeg";
 import HeaderLogo from "@/assets/Image/logo.png";
-
+import HowItWorksOne from "@/assets/Image/about-image-1.png";
+import HowItWorksTwo from "@/assets/Image/about-image-2.png";
 // imports arranged alphabetically
 
 export const AgrohealImages = {
   HeaderLogo,
+  HowItWorksOne,
+  HowItWorksTwo,
   IntroductionFarming,
   Biofertilizers,
   Composting,

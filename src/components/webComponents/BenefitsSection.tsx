@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Leaf, TrendingUp, Users, Shield, Clock, Award } from "lucide-react";
 import { SectionDivider } from "../webComponents/SectionDivider";
 import { SectionHeading } from "../webComponents/SectionHeading";
+import { AgrohealImages } from "@/constant/Image";
 
 const benefits = [
   {
@@ -57,34 +58,49 @@ export function BenefitsSection() {
           className="mb-16"
         />
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {benefits.map((benefit, index) => (
-            <motion.div
-              key={benefit.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.25 }}
-              transition={{ duration: 0.55, delay: index * 0.06 }}
-              className="group"
-            >
-              <div className="relative  rounded-3xl p-7 shadow-soft transition-all duration-300 h-full border border-border/60  motion-reduce:transition-none motion-reduce:hover:transform-none">
-                <div
-                  aria-hidden="true"
-                  className="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity motion-reduce:transition-none"
-                />
+        {/* <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"> */}
+        <div className="grid  md:grid-cols-2 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 gap-10">
+            {benefits.map((benefit, index) => (
+              <motion.div
+                key={benefit.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{ duration: 0.55, delay: index * 0.06 }}
+                className="group"
+              >
+                <div className="relative  rounded-3xl p-7 shadow-soft transition-all duration-300 h-full border border-border/60  motion-reduce:transition-none motion-reduce:hover:transform-none">
+                  <div
+                    aria-hidden="true"
+                    className="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity motion-reduce:transition-none"
+                  />
 
-                {/* <div className="relative w-12 h-12 rounded-2xl border border-primary/15 bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors motion-reduce:transition-none">
+                  {/* <div className="relative w-12 h-12 rounded-2xl border border-primary/15 bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors motion-reduce:transition-none">
                   <benefit.icon className="w-6 h-6 text-primary" />
                 </div> */}
-                <h3 className=" text-[18px] font-normal text-foreground mb-2">
-                  {benefit.title}
-                </h3>
-                <p className="text-green-800 text-[14px] sm:text-[14px] md:text-[16pxs] leading-relaxed">
-                  {benefit.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+                  <h3 className=" text-[18px] font-normal text-foreground mb-2">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-green-800 text-[14px] sm:text-[14px] md:text-[16pxs] leading-relaxed">
+                    {benefit.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 gap-10">
+            <img
+              src={AgrohealImages?.HowItWorksOne}
+              alt="about-1"
+              className="rounded-xl"
+            />
+            <img
+              src={AgrohealImages?.HowItWorksTwo}
+              alt="about-2"
+              className="rounded-xl"
+            />
+          </div>
         </div>
       </div>
     </section>
