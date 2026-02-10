@@ -55,7 +55,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -94,7 +94,7 @@ export default function Header() {
               </Button>
             </div>
           ) : (
-            <div className="hidden lg:flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-4">
               <Button className="bg-green-800 text-white">
                 <Link to="/login">Login</Link>
               </Button>
@@ -106,7 +106,7 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2 text-foreground"
+            className="md:hidden p-2"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
@@ -121,7 +121,7 @@ export default function Header() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden overflow-hidden"
+              className={`md:hidden overflow-hidden ${isScrolled ? "bg-white p-4" : "bg-white p-4 rounded-xl"}`}
             >
               <div className="py-4 space-y-4">
                 {navLinks.map((link) => (
