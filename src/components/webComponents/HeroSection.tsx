@@ -75,7 +75,7 @@ export function HeroSection() {
             className="text-left text-4xl md:text-5xl lg:text-5xl font-medium text-primary-foreground leading-[1.05] mb-6"
           >
             Farm for Africa Challenge: <br />
-            <span className=""> TEAM NIGERIA</span>.
+            <span className=""> TEAM NIGERIA</span>
           </motion.h1>
 
           <motion.p
@@ -93,7 +93,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.24 }}
-            className="flex items-start"
+            className="hidden items-start"
           >
             <Button
               size="lg"

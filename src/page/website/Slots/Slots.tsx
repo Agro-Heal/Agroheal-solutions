@@ -23,11 +23,11 @@ const Slots = () => {
               Hands-On Experience
             </span>
             <h1 className=" text-4xl md:text-5xl font-bold text-foreground mt-4">
-              Secure Your Farm Slot
+              Secure Your Farm Slot for Practicals
             </h1>
             <p className="text-muted-foreground text-lg mt-4 max-w-2xl mx-auto">
-              Put your knowledge into practice with a dedicated plot on our
-              organic farm. Limited slots available each season.
+              Put your knowledge of organic farming into practice. Limited slots
+              available
             </p>
           </motion.div>
 
@@ -48,7 +48,7 @@ const Slots = () => {
                     Practical Farm Slot
                   </h2>
                   <p className="text-primary-foreground/80 mt-2">
-                    One growing season access
+                    Access for two growing seasons (12 months)
                   </p>
                 </div>
 
@@ -63,10 +63,10 @@ const Slots = () => {
                 {/* Features */}
                 <div className="p-8 space-y-4">
                   {[
-                    "Dedicated plot on organic farm",
-                    "Expert guidance throughout season",
-                    "Access to farming tools & equipment",
-                    "WhatsApp group coordination",
+                    " Shared access to an hectare farm",
+                    "Expert guidance throughout the season",
+                    "Onsite production of organic inputs",
+                    "WhatsApp group coordinator",
                     "Share in harvest proceeds",
                   ].map((feature) => (
                     <div key={feature} className="flex items-center gap-3">

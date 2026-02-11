@@ -328,8 +328,8 @@ export const COURSESDATA: Course[] = [
     id: 8,
     Image: AgrohealImages?.Pesticide,
     slug: "organic-pest-management",
-    title: "Organic Pest Management",
-    description: "Organic pest management .",
+    title: "Organic Garden Practicals",
+    description: "Organic Garden Practicals .",
     duration: "2h 45m",
     lessons: [
       {
@@ -369,7 +369,7 @@ export const COURSESDATA: Course[] = [
     ],
     rating: 4.7,
     free: true,
-    category: "Organic Pest Management",
+    category: "Organic Garden Practicals",
   },
   {
     id: 9,

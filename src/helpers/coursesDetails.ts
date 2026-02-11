@@ -313,8 +313,8 @@ export const courses: Course[] = [
   {
     id: 8,
     slug: "organic-pest-management",
-    title: "Organic Pest Management",
-    description: "Organic pest management .",
+    title: "Organic Garden Practicals",
+    description: "Organic Garden Practicals .",
     duration: "2h 45m",
     lessons: [
       {
@@ -354,7 +354,7 @@ export const courses: Course[] = [
     ],
     rating: 4.7,
     free: true,
-    category: "Organic Pest Management",
+    category: "Organic Garden Practicals",
   },
   {
     id: 9,

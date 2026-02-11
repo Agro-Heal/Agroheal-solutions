@@ -15,7 +15,7 @@ const faqs = [
   },
   {
     q: "Are there free courses?",
-    a: "Yes—there are free lessons you can start with. You can upgrade later when you’re ready for deeper tracks and practical participation.",
+    a: "Yes. Once you pay the N1,00O yearly platform subscription, all the courses are free. This  includes future courses that will be added subject to research and demand.",
   },
   {
     q: "How do farm slots work?",
@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     q: "Can I learn at my own pace?",
-    a: "Absolutely. Learn when it fits your schedule, revisit lessons anytime, and progress to practice when you feel confident.",
+    a: "Yes. Once you pay the N1,00O yearly platform subscription, all the courses are free. This  includes future courses that will be added subject to research and demand.",
   },
 ];
 

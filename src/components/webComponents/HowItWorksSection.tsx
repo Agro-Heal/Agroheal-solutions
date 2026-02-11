@@ -8,7 +8,7 @@ const steps = [
     icon: BookOpen,
     title: "Learn",
     description:
-      "Learn from the comfort of your home how to farm a wide range of crops and livestock including fruity and leafy vegetables, tubers and small livestock.",
+      "Learn how to produce low-cost organic fertilizers and livestock feed to minimize production costs to the barest minimum with solutions that include Black Soldier Fly Larvae farming.",
     color: "bg-green-800 text-white",
   },
   {
@@ -22,7 +22,7 @@ const steps = [
     icon: Coins,
     title: "Earn",
     description:
-      "Join Practicals on a group farm (through whatsapp) with one day a month work rotation (pay a substitute if unavailable for your rotation). Through collective effort, you can earn up to 100% returns per farm slot every four months. Multiple slots, multiple returns!",
+      "Join Practicals on a group farm (through whatsapp) with one day a month work rotation (pay a substitute if unavailable for your rotation). Through collective effort, you can earn up to 100% returns per farm slot every six months. Multiple slots, multiple returns!",
     color: "bg-[#e8b130] text-white",
   },
 ];
@@ -34,7 +34,7 @@ export function HowItWorksSection() {
       <div className="container mx-auto px-4">
         <SectionHeading
           eyebrow="About LEAP"
-          title="Learn to Earn Agribusiness Platform (LEAP)"
+          title="Join the Learn to Earn Agribusiness Platform. Agroheal is simplifying farming"
           // description="A simple three-step journey designed to transform beginners into confident, earning organic farmers."
           description=""
           className="mb-16"

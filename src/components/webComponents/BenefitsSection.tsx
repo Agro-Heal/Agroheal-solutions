@@ -40,7 +40,7 @@ const benefits = [
     icon: Award,
     title: "Harvest & Share the Profits (up to 100% returns every six months)",
     description:
-      "When crops/livestock are ready, they are harvested and sold directly into trusted markets — cutting out middlemen. And with our innovative low-cost organic inputs, the profits are bigger-such that each farm slot can return a potential 100% returns every six months. Multiple slots multiple income.",
+      "When crops/livestock are ready, they are harvested and sold directly into trusted markets — cutting out middlemen. And with our innovative low-cost organic inputs, the profits are bigger-And with innovative low-cost organic inputs produced right on the farm, the profits are higher - such that each farm slot can return a potential 100% returns every six months. Multiple slots multiple income.",
   },
 ];
 
