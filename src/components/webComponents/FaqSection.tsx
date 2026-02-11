@@ -43,12 +43,17 @@ export function FAQSection() {
       <div className="container mx-auto px-4 relative">
         <div className="grid lg:grid-cols-12 gap-10 items-start">
           <div className="lg:col-span-5">
-            <SectionHeading
-              align="left"
-              eyebrow="Support"
-              title="FAQ"
-              description="Quick answers to the most common questions—so you can confidently explore the courses."
-            />
+            <SectionHeading align="left" eyebrow="" title="" description="" />
+            <span className="inline-flex text-green-800 items-center gap-2 font-semibold text-sm uppercase tracking-wider">
+              Support
+            </span>
+            <h2 className="text-3xl font-normal text-foreground mt-4 leading-[1.1]">
+              FAQ
+            </h2>
+            <p className="text-green-900 text-[16px] mt-4 max-w-2xl">
+              Quick answers to the most common questions—so you can confidently
+              explore the courses.
+            </p>
           </div>
 
           <motion.div
