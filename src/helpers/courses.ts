@@ -172,8 +172,7 @@ export const COURSESDATA: Course[] = [
     lessons: [
       {
         id: "3-1",
-        title:
-          "Audio: Composting By Esther Adetayo (!00 Days Tomato Challenge)",
+        title: "Audio: Composting By Esther Adetayo",
         duration: "18:00",
         videoId: "Bak4kUe6Vuw",
       },
@@ -205,7 +204,7 @@ export const COURSESDATA: Course[] = [
       {
         id: "4-1",
         title:
-          "Video 1: How To Rear Black Soldier Fly Larvae For The Production Of Livestock Feed And Organic Fertilizer",
+          "Black Soldier Fly Larvae farming and the strategic advantage it gives an Organic farmer.",
         duration: "18:00",
         videoId: "lbBNzCkj3y0",
       },
