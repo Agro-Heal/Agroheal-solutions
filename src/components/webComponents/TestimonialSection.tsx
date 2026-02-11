@@ -3,7 +3,6 @@ import { Quote, Star } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionDivider } from "../webComponents/SectionDivider";
-import { SectionHeading } from "../webComponents/SectionHeading";
 
 import {
   Carousel,
@@ -103,12 +102,16 @@ export function TestimonialsSection() {
       />
       <div className="container mx-auto px-4 relative">
         <div className="max-w-3xl">
-          <SectionHeading
-            align="left"
-            eyebrow="Testimonials"
-            title="Loved by learners"
-            description="Social proof that matches the journey: learn the theory, gain confidence, then move into practice."
-          />
+          <span className="inline-flex text-green-800 items-center gap-2 font-semibold text-sm uppercase tracking-wider">
+            <span
+              className="h-2 w-2 rounded-full bg-accent"
+              aria-hidden="true"
+            />
+            Testimonials
+          </span>
+          <h2 className="text-3xl font-normal text-foreground mt-4 leading-[1.1]">
+            Loved by learners
+          </h2>
         </div>
 
         {/* Desktop grid */}
