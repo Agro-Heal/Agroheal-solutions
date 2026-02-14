@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/libs/supabaseClient";
+import { Loader } from "lucide-react";
 
 export default function RequireSubscription({ children }: any) {
   const [allowed, setAllowed] = useState<boolean | null>(null);
@@ -28,7 +29,15 @@ export default function RequireSubscription({ children }: any) {
     checkSub();
   }, []);
 
-  if (allowed === null) return <div>Checking subscription...</div>;
+  if (allowed === null)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <Loader className="animate animate-spin text-greem-800" size={48} />
+          <p> Checking subscription...</p>
+        </div>
+      </div>
+    );
   if (!allowed) return <Navigate to="/subscribe" replace />;
 
   return children;
