@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     q: "Can I learn at my own pace?",
-    a: "Yes. Once you pay the N1,00O yearly platform subscription, all the courses are free. This  includes future courses that will be added subject to research and demand.",
+    a: "Absolutely. Learn when it fits your schedule and revisit lessons anytime. And with our learn by doing (practice) model, everything you learn stays with you forever.",
   },
 ];
 
