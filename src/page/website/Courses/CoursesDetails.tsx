@@ -234,9 +234,8 @@ const CourseDetail = () => {
                   transition={{ duration: 0.3 }}
                 >
                   {/* Video Player */}
-                  <div className="rounded-2xl overflow-hidden bg-muted border border-border shadow-elevated">
+                  {/* <div className="rounded-2xl overflow-hidden bg-muted border border-border shadow-elevated">
                     <AspectRatio ratio={16 / 9} className="relative">
-                      {/* YouTube Video */}
                       <iframe
                         src={`https://www.youtube.com/embed/${activeLesson.videoId}?autoplay=1&mute=0&modestbranding=1&rel=0&controls=0&disablekb=1&fs=0&iv_load_policy=3&cc_load_policy=0&playsinline=1`}
                         title={activeLesson.title}
@@ -245,8 +244,32 @@ const CourseDetail = () => {
                         className="w-full h-full pointer-events-none"
                       />
 
-                      {/* Full overlay to block all interactions */}
                       <div className="absolute inset-0 z-10 pointer-events-none" />
+                    </AspectRatio>
+                  </div> */}
+
+                  <div className="rounded-2xl overflow-hidden bg-muted border border-border shadow-elevated">
+                    <AspectRatio ratio={16 / 9} className="relative">
+                      {/* YouTube Video */}
+                      <iframe
+                        src={`https://www.youtube.com/embed/${activeLesson.videoId}?autoplay=1&mute=0&modestbranding=1&rel=0&controls=1&disablekb=1&fs=0&iv_load_policy=3&cc_load_policy=0&playsinline=1`}
+                        title={activeLesson.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen={false}
+                        className="w-full h-full"
+                      />
+
+                      {/* Top overlay - blocks YouTube logo and title */}
+                      <div className="absolute top-0 left-0 right-0 h-[15%] z-10 pointer-events-auto" />
+
+                      {/* Bottom overlay - blocks controls except play button area */}
+                      <div className="absolute bottom-0 left-0 right-0 h-[15%] z-10 pointer-events-auto" />
+
+                      {/* Left overlay - blocks left side */}
+                      <div className="absolute top-[15%] bottom-[15%] left-0 w-[25%] z-10 pointer-events-auto" />
+
+                      {/* Right overlay - blocks right side */}
+                      <div className="absolute top-[15%] bottom-[15%] right-0 w-[25%] z-10 pointer-events-auto" />
                     </AspectRatio>
                   </div>
 
