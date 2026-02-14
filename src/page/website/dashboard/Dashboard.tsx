@@ -9,7 +9,7 @@ import {
   Copy,
   ExternalLink,
   CheckCircle,
-  Loader,
+  LoaderCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -78,7 +78,10 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen flex justify-center items-center">
         <div className="flex flex-col items-center justify-center gap-4">
-          <Loader className="animate animate-spin text-greem-800" size={48} />
+          <LoaderCircle
+            className="animate animate-spin text-greem-800"
+            size={48}
+          />{" "}
           <p> Dashboard loading...</p>
         </div>
       </div>

@@ -326,7 +326,7 @@ export const COURSESDATA: Course[] = [
   {
     id: 8,
     Image: AgrohealImages?.Pesticide,
-    slug: "organic-pest-management",
+    slug: "organic-garden-practicals",
     title: "Organic Garden Practicals",
     description: "Organic Garden Practicals .",
     duration: "2h 45m",
@@ -376,7 +376,7 @@ export const COURSESDATA: Course[] = [
     slug: "mushroom-farming",
     title: "Mushroom Farming",
     description: "How to plant mushroom.",
-    duration: "2h 45m",
+    duration: "5h 45m",
     lessons: [
       {
         id: "9-1",
@@ -419,7 +419,7 @@ export const COURSESDATA: Course[] = [
     slug: "tomato-farming",
     title: "Tomato Farming",
     description: "How to plant tomato from seed to harvest.",
-    duration: "4h 00m",
+    duration: "2h 50m",
     lessons: [
       {
         id: "10-1",
@@ -466,7 +466,7 @@ export const COURSESDATA: Course[] = [
     slug: "ugu-farming",
     title: "Ugu Farming",
     description: "Fluted Pumpkin Multiplication Simplified.",
-    duration: "2h 00m",
+    duration: "4h 30m",
     lessons: [
       {
         id: "11-1",
@@ -511,7 +511,7 @@ export const COURSESDATA: Course[] = [
     slug: "pepper-farming",
     title: "Pepper Farming",
     description: " How To Grow Hot Pepper in Containers and Garden Beds.",
-    duration: "3h 30m",
+    duration: "0h 3m",
     lessons: [
       {
         id: "12-1",
@@ -531,7 +531,7 @@ export const COURSESDATA: Course[] = [
     title: "Shoko, Tete, and Ewedu Farming",
     description:
       "How to Grow Amaranthus (Tete), Celosia (Shoko), and Corchorus (Ewedu) Vegetables.",
-    duration: "3h 30m",
+    duration: "0h 3m",
     lessons: [
       {
         id: "13-1",
@@ -551,7 +551,7 @@ export const COURSESDATA: Course[] = [
     title: "How to plant Maize step by step",
     description:
       "How To Plant Maize from Seeds To Harvest (A Simple Step-By-Step Guide).",
-    duration: "3h 30m",
+    duration: "0h 4m",
     lessons: [
       {
         id: "14-1",
@@ -570,7 +570,7 @@ export const COURSESDATA: Course[] = [
     slug: "cucumber-farming",
     title: "Cucumber Farming",
     description: " How To Grow Cucumber From Seed To Harvest.",
-    duration: "3h 30m",
+    duration: "0h 3m",
     lessons: [
       {
         id: "15-1",
@@ -589,7 +589,7 @@ export const COURSESDATA: Course[] = [
     slug: "watermelon-farming",
     title: "Watermelon Farming",
     description: "Video: How To Grow Watermelon From Seed To Harvest",
-    duration: "3h 30m",
+    duration: "0h 4m",
     lessons: [
       {
         id: "16-1",
@@ -609,7 +609,7 @@ export const COURSESDATA: Course[] = [
     title: "Broiler Chicken Farming",
     description:
       "Production of Organic Chicken, Immune Boosters, and Chicken Feed",
-    duration: "3h 30m",
+    duration: "0h 25m",
     lessons: [
       {
         id: "17-1",
@@ -629,7 +629,7 @@ export const COURSESDATA: Course[] = [
     title: "Sweet Potato Farming",
     description:
       "Best practices for planting and harvesting potato in a stack.",
-    duration: "3h 30m",
+    duration: "0h 4m",
     lessons: [
       {
         id: "18-1",
@@ -649,7 +649,7 @@ export const COURSESDATA: Course[] = [
     title: "Yam Farming",
     description:
       "Best practices for planting and harvesting yam in a heap and stack.",
-    duration: "3h 30m",
+    duration: "0h 3m",
     lessons: [
       {
         id: "19-1",
@@ -669,7 +669,7 @@ export const COURSESDATA: Course[] = [
     title: "Cassava Farming",
     description:
       "Best practices for planting and harvesting cassava from seed to harvest.",
-    duration: "3h 30m",
+    duration: "0h 2m",
     lessons: [
       {
         id: "20-1",
@@ -689,7 +689,7 @@ export const COURSESDATA: Course[] = [
     title: "Beans Farming",
     description:
       "Best practices for planting and harvesting beans from seed to harvest.",
-    duration: "3h 30m",
+    duration: "0h 3m",
     lessons: [
       {
         id: "21-1",
@@ -709,7 +709,7 @@ export const COURSESDATA: Course[] = [
     title: "Soyabeans Farming",
     description:
       "Best practices for planting and harvesting soyabeans from seed to harvest.",
-    duration: "3h 30m",
+    duration: "0h 3m",
     lessons: [
       {
         id: "22-1",
