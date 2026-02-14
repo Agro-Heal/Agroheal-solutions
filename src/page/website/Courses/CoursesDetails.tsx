@@ -260,16 +260,16 @@ const CourseDetail = () => {
                       />
 
                       {/* Top overlay - blocks YouTube logo and title */}
-                      <div className="absolute top-0 left-0 right-0 h-[15%] z-10 pointer-events-auto" />
+                      <div className="absolute top-0 left-0 right-0 h-[12%] sm:h-[15%] z-10 pointer-events-auto" />
 
                       {/* Bottom overlay - blocks controls except play button area */}
-                      <div className="absolute bottom-0 left-0 right-0 h-[15%] z-10 pointer-events-auto" />
+                      <div className="absolute bottom-0 left-0 right-0 h-[12%] sm:h-[15%] z-10 pointer-events-auto" />
 
                       {/* Left overlay - blocks left side */}
-                      <div className="absolute top-[15%] bottom-[15%] left-0 w-[25%] z-10 pointer-events-auto" />
+                      <div className="absolute top-[12%] sm:top-[15%] bottom-[12%] sm:bottom-[15%] left-0 w-[20%] sm:w-[25%] z-10 pointer-events-auto" />
 
                       {/* Right overlay - blocks right side */}
-                      <div className="absolute top-[15%] bottom-[15%] right-0 w-[25%] z-10 pointer-events-auto" />
+                      <div className="absolute top-[12%] sm:top-[15%] bottom-[12%] sm:bottom-[15%] right-0 w-[20%] sm:w-[25%] z-10 pointer-events-auto" />
                     </AspectRatio>
                   </div>
 
