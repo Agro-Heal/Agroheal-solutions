@@ -3,14 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Leaf, Mail, Lock } from "lucide-react";
+import { Leaf, Mail, Lock, EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/libs/supabaseClient";
 import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
-
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -129,11 +129,22 @@ const Login = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className="pl-10"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
               </div>
             </div>
 

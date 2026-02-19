@@ -168,8 +168,8 @@ const Slots = () => {
                   Have Questions?
                 </h3>
                 <p className="text-green-800 text-sm mb-4">
-                  Learn more about our practical farming program and what to
-                  expect during your season.
+                  Learn more about our practical learning program and what to
+                  expect during your farm season.
                 </p>
                 <Button variant="outline" asChild>
                   <Link to="/about">View FAQ</Link>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Leaf, Mail, Lock, User } from "lucide-react";
+import { Leaf, Mail, Lock, User, EyeOff, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 const Signup = () => {
   const navigate = useNavigate();
-
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -168,12 +168,23 @@ const Signup = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className="pl-10"
                   minLength={8}
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
               </div>
             </div>
 
