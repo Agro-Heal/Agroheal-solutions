@@ -34,9 +34,8 @@ export function HowItWorksSection() {
       <div className="container mx-auto px-4">
         <SectionHeading
           eyebrow="About LEAP"
-          title="Join the Learn to Earn Agribusiness Platform. Agroheal is simplifying farming"
-          // description="A simple three-step journey designed to transform beginners into confident, earning organic farmers."
-          description=""
+          title="Join the Learn to Earn Agribusiness Platform"
+          description="Agroheal is simplifying farming so everyone can join in."
           className="mb-16"
         />
 
