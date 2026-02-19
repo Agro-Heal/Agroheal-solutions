@@ -66,7 +66,7 @@ const Slots = () => {
                     " Shared access to an hectare farm",
                     "Expert guidance throughout the season",
                     "Onsite production of organic inputs",
-                    "WhatsApp group coordinator",
+                    "WhatsApp group coordination",
                     "Share in harvest proceeds",
                   ].map((feature) => (
                     <div key={feature} className="flex items-center gap-3">
@@ -93,7 +93,7 @@ const Slots = () => {
               className="space-y-6"
             >
               {/* Availability */}
-              <div className="bg-muted/50 rounded-xl p-6 border border-border/50">
+              <div className="hidden bg-muted/50 rounded-xl p-6 border border-border/50">
                 <h3 className=" text-lg font-semibold text-foreground mb-4">
                   Slot Availability
                 </h3>

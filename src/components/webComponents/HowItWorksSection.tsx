@@ -8,21 +8,21 @@ const steps = [
     icon: BookOpen,
     title: "Learn",
     description:
-      "Learn how to produce low-cost organic fertilizers and livestock feed to minimize production costs to the barest minimum with solutions that include Black Soldier Fly Larvae farming.",
+      "Learn how to farm a wide range of crops/livestock, and produce organic fertilizers/pesticides/livestock feed, with solutions that include BSFL and Mushroom farming.",
     color: "bg-green-800 text-white",
   },
   {
     icon: Sprout,
     title: "Practice",
     description:
-      "Secure your farm slot and apply your knowledge hands-on. Work with real crops on real land with expert guidance.",
+      "Learn with real crops on real land with expert guidance. Secure a farm slot for life-long learning and practice in organic farming. ",
     color: "bg-[#d17547] text-white",
   },
   {
     icon: Coins,
     title: "Earn",
     description:
-      "Join Practicals on a group farm (through whatsapp) with one day a month work rotation (pay a substitute if unavailable for your rotation). Through collective effort, you can earn up to 100% returns per farm slot every six months. Multiple slots, multiple returns!",
+      "Practice on a group farm (through whatsapp) with one day a month work rotation (pay a substitute if unavailable for your rotation). Through collective effort, you can earn up to 100% returns per farm slot every six months. Multiple slots, multiple returns!",
     color: "bg-[#e8b130] text-white",
   },
 ];
