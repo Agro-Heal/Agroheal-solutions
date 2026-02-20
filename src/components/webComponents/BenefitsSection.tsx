@@ -9,7 +9,7 @@ const benefits = [
     icon: Leaf,
     title: "Join the platform (₦1,000 yearly)",
     description:
-      "Start with a yearly subscription fee of ₦1,000 yearly. This gives you access to all our training courses, from composting to crop management — so you understand the basics before stepping onto the farm.",
+      "Start with a subscription fee of N1,000 yearly. This gives you access to all our training courses, from composting to crop management — so you understand the basics before stepping onto the farm.",
   },
   {
     icon: TrendingUp,
@@ -32,7 +32,7 @@ const benefits = [
   },
   {
     icon: Clock,
-    title: " Your Monthly work rotation (1 day per month)",
+    title: " Your Monthly work rotation (one day per month)",
     description:
       "Farming here doesn’t take over your life. You only need to show up one day a month to perform tasks like planting, weeding, nurturing livestock & harvesting. If you can’t make it, there’s a ₦500 charge (per slot) to pay a substitute to do the work.",
   },
@@ -51,7 +51,7 @@ export function BenefitsSection() {
       <SectionDivider position="bottom" className="text-background" />
       <div className="container mx-auto px-4">
         <SectionHeading
-          eyebrow="Why Choose Agroheal"
+          eyebrow=""
           title="How LEAP works"
           // description="Discover why thousands are choosing organic farming as their path to financial freedom and environmental stewardship."
           description=""

@@ -15,7 +15,7 @@ const steps = [
     icon: Sprout,
     title: "Practice",
     description:
-      "Learn with real crops on real land with expert guidance. Secure a farm slot for life-long learning and practice in organic farming. ",
+      "Secure a farm slot for life-long learning and practice in organic farming. Learn with real crops on real land with expert guidance. ",
     color: "bg-[#d17547] text-white",
   },
   {
@@ -35,7 +35,8 @@ export function HowItWorksSection() {
         <SectionHeading
           eyebrow="About LEAP"
           title="Join the Learn to Earn Agribusiness Platform"
-          description="Agroheal is simplifying farming so everyone can join in."
+          // description="Agroheal is simplifying farming so everyone can join in."
+          description=" Learn. Practice. Earn"
           className="mb-16"
         />
 

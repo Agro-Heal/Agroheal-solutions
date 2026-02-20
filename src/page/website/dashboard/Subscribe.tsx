@@ -9,6 +9,7 @@ import { supabase } from "@/libs/supabaseClient";
 import { useEffect, useState } from "react";
 
 declare global {
+  // to be refactored later
   interface Window {
     PaystackPop: any;
     FlutterwaveCheckout: any;
@@ -16,7 +17,7 @@ declare global {
 }
 
 const Subscribe = () => {
-  const SubscribeFee = 1500;
+  const SubscribeFee = 1000;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);

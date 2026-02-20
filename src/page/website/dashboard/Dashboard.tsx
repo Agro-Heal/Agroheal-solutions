@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/libs/supabaseClient";
+import toast, { Toaster } from "react-hot-toast";
 
 // interface props
 
@@ -74,9 +75,43 @@ const Dashboard = () => {
     setupProfile();
   }, []);
 
+  // handle copy
+  const handleCopyReferralCode = async () => {
+    try {
+      await navigator.clipboard.writeText(profile?.referral_code || "");
+      toast.success(`${profile?.referral_code} copied to clipboard`, {
+        duration: 3000,
+        position: "top-right",
+        icon: "📩",
+        style: {
+          background: "green",
+          color: "#fff",
+          borderRadius: "10px",
+          padding: "12px 16px",
+          fontSize: "14px",
+        },
+      });
+    } catch (err) {
+      console.error("error:", err);
+      toast.error(`Failed to copy${profile?.referral_code}`, {
+        duration: 3000,
+        position: "top-right",
+        icon: "📩",
+        style: {
+          background: "crimson",
+          color: "#fff",
+          borderRadius: "10px",
+          padding: "12px 16px",
+          fontSize: "14px",
+        },
+      });
+    }
+  };
+
   if (!profile)
     return (
       <div className="min-h-screen flex justify-center items-center">
+        <Toaster />
         <div className="flex flex-col items-center justify-center gap-4">
           <LoaderCircle
             className="animate animate-spin text-greem-800"
@@ -89,6 +124,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Toaster />
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
           {/* Welcome Header */}
@@ -249,7 +285,11 @@ const Dashboard = () => {
                     <div className="flex-1 px-3 py-2 bg-muted rounded-lg text-foreground font-mono text-sm">
                       {profile?.referral_code}
                     </div>
-                    <Button variant="outline" size="icon">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleCopyReferralCode}
+                    >
                       <Copy className="w-4 h-4" />
                     </Button>
                   </div>

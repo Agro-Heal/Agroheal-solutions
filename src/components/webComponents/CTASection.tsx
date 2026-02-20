@@ -36,14 +36,14 @@ export function CTASection() {
           </h2>
           <p className="text-primary-foreground/80 text-lg md:text-xl mb-10 max-w-2xl mx-auto">
             Invite your friends to join the challenge. For every person that
-            signs up through your link, you earn ₦500 instantly. Grow your
-            income while farming to cut food costs!
+            signs up using your referral code, you earn ₦500 instantly. Grow
+            your income while farming to cut food costs!
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
               size="lg"
-              className="w-fit bg-green-800 hover:bg-green-800/80 p-6 rounded-full"
+              className="w-fit bg-[#ffffff] text-green-800 hover:bg-white/90 p-6 rounded-full"
             >
               <Link to="/signup" className="gap-2">
                 Get Started Now
