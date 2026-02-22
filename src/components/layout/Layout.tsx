@@ -18,7 +18,12 @@ const Layout = () => {
     }
   }, [pathname, normalizedPath, navigate]);
 
-  const HIDDENROURES = ["/login", "/signup"];
+  const HIDDENROURES = [
+    "/login",
+    "/signup",
+    "/forgot-password",
+    "/reset-password",
+  ];
 
   const hiddenPath = HIDDENROURES.includes(normalizedPath);
 
