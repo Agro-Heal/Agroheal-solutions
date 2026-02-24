@@ -77,8 +77,11 @@ const Dashboard = () => {
 
   // handle copy
   const handleCopyReferralCode = async () => {
+    const textCopy = `https://agroheal.solutions/signup#${profile?.referral_code}`;
     try {
-      await navigator.clipboard.writeText(profile?.referral_code || "");
+      await navigator.clipboard.writeText(
+        `You have been referred by ${profile?.full_name}, click their referral link and signup ${textCopy} or copy and paste the code ${profile?.referral_code}, click on this link https://agroheal.solutions/signup and paste the code as your referral code`,
+      );
       toast.success(`${profile?.referral_code} copied to clipboard`, {
         duration: 3000,
         position: "top-right",
