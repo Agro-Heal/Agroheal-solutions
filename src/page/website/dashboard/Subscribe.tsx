@@ -93,7 +93,7 @@ const Subscribe = () => {
   const createSubscription = async (userId: string) => {
     const now = new Date();
     const expires = new Date();
-    expires.setDate(now.getDate() + 30);
+    expires.setDate(now.getDate() + 365);
 
     const { error } = await supabase.from("subscriptions").insert({
       user_id: userId,
@@ -313,7 +313,7 @@ const Subscribe = () => {
             <Card className="relative overflow-hidden border-2 border-primary/20 shadow-elevated">
               {/* Badge */}
               <div className="absolute top-0 right-0 bg-gradient-cta text-primary-foreground text-xs font-semibold px-4 py-1.5 rounded-bl-lg">
-                Monthly subscription Payment
+                Yearly subscription Payment
               </div>
 
               <CardContent className="p-8 pt-12">
@@ -329,11 +329,11 @@ const Subscribe = () => {
                   </p>
                   <div className="flex items-baseline justify-center gap-1">
                     <span className="text-4xl md:text-5xl font-display font-bold text-foreground">
-                      ₦1,500
+                      ₦1,000
                     </span>
                   </div>
                   <p className="text-muted-foreground text-sm mt-2">
-                    Monthly subscription
+                    Yearly subscription
                   </p>
                 </div>
 
