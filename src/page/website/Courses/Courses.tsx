@@ -56,9 +56,10 @@ const Courses = () => {
                     Organic Farming Foundations
                   </h1>
                   <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
-                    Start with the essentials (soil, planning, pest control)
-                    through embedded YouTube lessons—then upgrade when you’re
-                    ready for full access.
+                    Start your organic farming journey with the essentials -
+                    Introduction to Organic farming, How to produce Organic
+                    inputs - biofertilizers, biopesticides, as well as BSFL
+                    cultivation (the ultimate game changer!)
                   </p>
 
                   <div className="hidden mt-7 flex-col sm:flex-row gap-3">
@@ -110,10 +111,10 @@ const Courses = () => {
                         {[
                           { title: "Soil health & composting", tag: "Core" },
                           {
-                            title: "Crop rotation & farm planning",
+                            title: "Organic inputs production",
                             tag: "Core",
                           },
-                          { title: "Organic pest control", tag: "Core" },
+                          { title: "Crops & Livestock farming", tag: "Core" },
                         ].map((item) => (
                           <div
                             key={item.title}

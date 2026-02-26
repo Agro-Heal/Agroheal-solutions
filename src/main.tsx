@@ -22,6 +22,7 @@ import RequireSubscription from "./page/website/dashboard/RequireSubscription";
 import Subscribe from "./page/website/dashboard/Subscribe";
 import ForgotPasswordForm from "./page/ForgotPassword";
 import UpdatePasswordForm from "./page/UpdatePassword";
+import ProfileComponent from "./page/website/dashboard/Profile";
 
 const route = createBrowserRouter([
   {
@@ -63,6 +64,7 @@ const route = createBrowserRouter([
           { path: "checkout", element: <Checkout /> },
           { path: "courses", element: <Courses /> },
           { path: "courses/:slug", element: <SingleCoursePage /> },
+          { path: "profile", element: <ProfileComponent /> },
         ],
       },
     ],

@@ -67,7 +67,6 @@ const Dashboard = () => {
       if (countError) console.error(countError);
 
       profileData.total_referrals = count || 0;
-      // console.log(count);
 
       setProfile(profileData);
     };
@@ -77,15 +76,45 @@ const Dashboard = () => {
 
   // handle copy
   const handleCopyReferralCode = async () => {
-    const textCopy = `https://agroheal.solutions/signup#${profile?.referral_code}`;
+    // referral code message
+    const textCopy = `
+   Join Our Ginger & Pepper Group Farming Initiative!
+
+Fun fact: The global Ginger Export market is worth over USD 4.1 billion, with a known preference for Nigerian ginger due to its high pungency and strong oleoresin oil content.   
+
+•⁠  ⁠Unlock Double Profits with Pepper & Ginger Inter-crop!
+
+•⁠  ⁠Better Land Use that Maximizes every inch of soil for more money in your pocket.
+
+•⁠  ⁠Better Pest & Disease Balance to make life tough for pests and disease.
+
+•⁠  ⁠Better Soil Health: Ginger’s deep roots and pepper’s canopy work together for healthier soil.
+
+•⁠  ⁠Better Market access after harvest: Collective bargaining power for selling produce.
+
+•⁠  ⁠Easy Access to inputs (pepper seeds, ginger rhizomes and compost) at reduced cost.
+
+•⁠  ⁠Training, Access to land & Expert support provided.
+
+Farmers report up to 40-60% higher income compared to mono-cropping. With proper management, you can expect quick pepper sales within 4 - 6 months and a lucrative ginger harvest by 8 - 9 months.
+
+“Come learn, collaborate, and grow your income!”
+
+Date: Sunday, March 1st 2026. Time: 7pm - 9pm. Venue: Private Telegram Group. 
+Trainer: Saka Adesoji (Saka Organic Foods)
+
+Click on the link below to secure your spot for learning with a registration fee of N1,000 only. 
+
+Session will be recorded and made available on user dashboards.
+
+    https://agroheal.solutions/signup?ref=${profile?.referral_code}
+
+    `;
     try {
-      await navigator.clipboard.writeText(
-        `You have been referred by ${profile?.full_name}, click their referral link and signup ${textCopy} or copy and paste the code ${profile?.referral_code}, click on this link https://agroheal.solutions/signup and paste the code as your referral code`,
-      );
+      await navigator.clipboard.writeText(`${textCopy} `);
       toast.success(`${profile?.referral_code} copied to clipboard`, {
         duration: 3000,
         position: "top-right",
-        icon: "📩",
         style: {
           background: "green",
           color: "#fff",
@@ -99,7 +128,6 @@ const Dashboard = () => {
       toast.error(`Failed to copy${profile?.referral_code}`, {
         duration: 3000,
         position: "top-right",
-        icon: "📩",
         style: {
           background: "crimson",
           color: "#fff",
@@ -160,7 +188,7 @@ const Dashboard = () => {
               },
               {
                 label: "Total Courses",
-                value: `${profile?.courses}`,
+                value: `${profile.courses}`,
                 icon: BookOpen,
                 color: "text-[#d17547]",
               },

@@ -8,15 +8,19 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/libs/supabaseClient";
 import toast, { Toaster } from "react-hot-toast";
+import { useSearchParams } from "react-router-dom";
 
 const Signup = () => {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [referral, setReferral] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [referral, setReferral] = useState<string>(() => {
+    return searchParams.get("ref") || "";
+  });
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -195,6 +199,7 @@ const Signup = () => {
                 value={referral}
                 onChange={(e) => setReferral(e.target.value)}
                 type="text"
+                disabled={referral.length > 0 ? true : false}
                 placeholder="Enter referral code"
               />
             </div>
