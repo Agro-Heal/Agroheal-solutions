@@ -172,7 +172,7 @@ const Slots = () => {
                   expect during your farm season.
                 </p>
                 <Button variant="outline" asChild>
-                  <Link to="/about">View FAQ</Link>
+                  <Link to="/dashboard/legal">View FAQ</Link>
                 </Button>
               </div>
             </motion.div>

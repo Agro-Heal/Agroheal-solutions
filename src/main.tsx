@@ -69,6 +69,7 @@ const route = createBrowserRouter([
           { path: "courses/:slug", element: <SingleCoursePage /> },
           { path: "profile", element: <ProfileComponent /> },
           { path: "slots-subscription", element: <MonthlyPayment /> },
+          { path: "legal", element: <Legal /> },
         ],
       },
     ],

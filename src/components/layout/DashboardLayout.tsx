@@ -39,7 +39,6 @@ import {
   LayoutDashboard,
   Sprout,
   CreditCard,
-  Settings,
   ScrollText,
   LogOut,
   Menu,
@@ -53,15 +52,15 @@ import { motion, AnimatePresence } from "framer-motion";
 const normalizePath = (path: string) => path.replace(/\/+$/, "") || "/";
 
 const navItems = [
-  { label: "Overview", path: "/dashboard", icon: LayoutDashboard },
+  { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "Slots", path: "/dashboard/slots", icon: Sprout },
   {
     label: "Monthly Payment",
     path: "/dashboard/slots-subscription",
     icon: CreditCard,
   },
-  { label: "Legal Agreement", path: "/legal", icon: ScrollText },
-  { label: "Settings", path: "/dashboard/settings", icon: Settings },
+  { label: "Courses", path: "/dashboard/courses", icon: ScrollText },
+  { label: "Legal Agreement", path: "/dashboard/legal", icon: ScrollText },
 ];
 
 const HIDDEN_ROUTES = ["/login", "/signup"];
