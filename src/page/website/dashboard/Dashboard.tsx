@@ -93,7 +93,7 @@ With proper management, you can expect over 300% higher yield from super habaner
 "Come learn, collaborate, and grow your income!"
 
 Date: March 1st 2026. 
-Time: 5pm - 7pm. 
+Time: 4pm - 6pm. 
 Venue: Private Telegram Group. 
 Trainer: Saka Adesoji (Saka Organic Foods)
 
