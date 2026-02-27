@@ -443,12 +443,14 @@ const Subscribe = () => {
           >
             <p className="text-muted-foreground">
               Have questions?{" "}
-              <Link
-                to="/about"
+              <a
+                href="https://wa.link/5ff5ww"
+                target="_blank"
+                rel="noreferrer"
                 className="text-primary hover:underline font-medium"
               >
                 Contact us
-              </Link>
+              </a>
             </p>
           </motion.div>
         </div>
