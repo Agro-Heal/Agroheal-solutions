@@ -19,7 +19,7 @@ const normalizePath = (path: string) => path.replace(/\/+$/, "") || "/";
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "Courses", path: "/dashboard/courses", icon: ScrollText },
-  { label: "Secure Practice Slots", path: "/dashboard/slots", icon: Sprout },
+  { label: "Secure Practice Slot", path: "/dashboard/slots", icon: Sprout },
   {
     label: "Monthly Rent Payment",
     path: "/dashboard/slots-subscription",
