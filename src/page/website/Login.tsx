@@ -45,21 +45,18 @@ const Login = () => {
     }
 
     const notify = () =>
-      toast.success(
-        "Signup successful, a mail has been sent. Please verify your email.",
-        {
-          duration: 5000,
-          position: "top-right",
-          icon: "📩",
-          style: {
-            background: "#065f46",
-            color: "#fff",
-            borderRadius: "10px",
-            padding: "12px 16px",
-            fontSize: "14px",
-          },
+      toast.success("Signin successful.", {
+        duration: 5000,
+        position: "top-right",
+        icon: "📩",
+        style: {
+          background: "#065f46",
+          color: "#fff",
+          borderRadius: "10px",
+          padding: "12px 16px",
+          fontSize: "14px",
         },
-      );
+      });
     notify();
     setTimeout(() => {
       navigate("/dashboard");
