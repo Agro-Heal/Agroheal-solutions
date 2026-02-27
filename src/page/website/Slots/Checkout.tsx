@@ -94,6 +94,45 @@ const Checkout = () => {
     return data;
   };
 
+  const createSubscription = async (orderId: string) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      console.error("No user found");
+      return;
+    }
+
+    console.log("Creating subscription for order:", orderId, "user:", user.id);
+
+    const nextPaymentDate = new Date();
+    nextPaymentDate.setDate(nextPaymentDate.getDate() + 30);
+
+    const { data, error } = await supabase
+      .from("slot_subscriptions")
+      .insert([
+        {
+          user_id: user.id,
+          checkout_id: Number(orderId),
+          amount: 500,
+          last_payment_date: new Date().toISOString(),
+          next_payment_date: nextPaymentDate.toISOString(),
+        },
+      ])
+      .select();
+
+    if (error) {
+      console.error(
+        "Subscription creation error:",
+        error.message,
+        error.details,
+        error.hint,
+      );
+    } else {
+      console.log("Subscription created successfully:", data);
+    }
+  };
+
   const isFormValid =
     formData.firstName.trim() &&
     formData.lastName.trim() &&
@@ -101,96 +140,6 @@ const Checkout = () => {
     formData.phone.trim();
 
   // --- Paystack Payment ---
-  // const handlePaystack = async () => {
-  //   if (!isFormValid) {
-  //     toast({
-  //       title: "Please fill all fields",
-  //       description: "All billing details are required.",
-  //       variant: "destructive",
-  //     });
-  //     return;
-  //   }
-
-  //   // Check if Paystack is loaded
-  //   if (!(window as any).PaystackPop) {
-  //     toast({
-  //       title: "Payment Error",
-  //       description: "Paystack is still loading. Please try again.",
-  //       variant: "destructive",
-  //     });
-  //     return;
-  //   }
-
-  //   setIsProcessing(true);
-
-  //   const order = await createCheckout("paystack");
-  //   if (!order) {
-  //     setIsProcessing(false);
-  //     return;
-  //   }
-
-  //   try {
-  //     const handler = (window as any).PaystackPop.setup({
-  //       key: import.meta.env.VITE_PAYSTACK_KEYS,
-  //       email: order.email,
-  //       amount: Number(order.amount) * 100,
-  //       currency: "NGN",
-  //       ref: `SLOT_${order.id}_${Date.now()}`,
-  //       callback: async function (response: any) {
-  //         console.log("Payment successful:", response);
-
-  //         try {
-  //           // Update database
-  //           const { error: updateError } = await supabase
-  //             .from("checkout")
-  //             .update({
-  //               status: "paid",
-  //               transaction_ref: response.reference,
-  //             })
-  //             .eq("id", order.id);
-
-  //           if (updateError) throw updateError;
-
-  //           toast({
-  //             title: "Payment successful 🎉",
-  //             description: "Your slot has been secured!",
-  //           });
-
-  //           // Redirect after success
-  //           setTimeout(() => {
-  //             window.location.href = `${import.meta.env.VITE_WHATSAPP_REDIRECT}`;
-  //           }, 2000);
-  //         } catch (error) {
-  //           console.error("Update error:", error);
-  //           toast({
-  //             title: "Warning",
-  //             description: "Payment received but failed to update record.",
-  //             variant: "destructive",
-  //           });
-  //         }
-  //       },
-  //       onClose: function () {
-  //         console.log("Payment window closed");
-  //         toast({
-  //           title: "Payment cancelled",
-  //           description: "You closed the payment window.",
-  //         });
-  //         setIsProcessing(false);
-  //       },
-  //     });
-
-  //     handler.openIframe();
-  //   } catch (error) {
-  //     console.error("Paystack error:", error);
-  //     toast({
-  //       title: "Payment Error",
-  //       description: "Failed to initialize payment. Please try again.",
-  //       variant: "destructive",
-  //     });
-  //     setIsProcessing(false);
-  //   }
-  // };
-
   const handlePaystack = async () => {
     if (!isFormValid) {
       toast({
@@ -236,7 +185,6 @@ const Checkout = () => {
         amount: Number(order.amount) * 100,
         currency: "NGN",
         ref: `SLOT_${order.id}_${Date.now()}`,
-        // Remove 'async' - Paystack doesn't support async callbacks
         callback: function (response: any) {
           console.log("Payment successful:", response);
 
@@ -261,13 +209,15 @@ const Checkout = () => {
                 return;
               }
 
+              await createSubscription(order.id);
+
               toast({
                 title: "Payment successful 🎉",
                 description: "Your slot has been secured!",
               });
 
               setTimeout(() => {
-                window.location.href = `${import.meta.env.VITE_WHATSAPP_REDIRECT}`;
+                window.location.href = `https://chat.whatsapp.com/LlXB7iYXmTx8JpzKulzTvD`;
               }, 2000);
             } catch (error: any) {
               console.error("Update error:", error);
@@ -368,6 +318,8 @@ const Checkout = () => {
 
               if (updateError) throw updateError;
 
+              await createSubscription(order.id);
+
               toast({
                 title: "Payment successful 🎉",
                 description: "Your slot has been secured!",
@@ -375,7 +327,6 @@ const Checkout = () => {
 
               // Redirect after success
               setTimeout(() => {
-                // window.location.href = "/dashboard/slots";
                 window.location.href = `${import.meta.env.VITE_WHATSAPP_REDIRECT}`;
               }, 2000);
             } catch (error) {

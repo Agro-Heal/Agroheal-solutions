@@ -23,6 +23,7 @@ import Subscribe from "./page/website/dashboard/Subscribe";
 import ForgotPasswordForm from "./page/ForgotPassword";
 import UpdatePasswordForm from "./page/UpdatePassword";
 import ProfileComponent from "./page/website/dashboard/Profile";
+import MonthlyPayment from "./page/website/Slots/MonthlyPayment";
 
 const route = createBrowserRouter([
   {
@@ -65,6 +66,7 @@ const route = createBrowserRouter([
           { path: "courses", element: <Courses /> },
           { path: "courses/:slug", element: <SingleCoursePage /> },
           { path: "profile", element: <ProfileComponent /> },
+          { path: "slots-subscription", element: <MonthlyPayment /> },
         ],
       },
     ],
