@@ -361,8 +361,7 @@ Click on the link above to join the learning platform with a registration fee of
               </div>
 
               <p className="text-xs text-gray-400 leading-relaxed">
-                Earnings are calculated monthly. Withdrawals available in a
-                future update.
+                Withdrawals available in a future update.
               </p>
             </div>
           </motion.div>
