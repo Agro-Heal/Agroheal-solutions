@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { supabase } from "@/libs/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { LoaderCircle } from "lucide-react";
 
 export default function RequireSubscription({ children }: any) {

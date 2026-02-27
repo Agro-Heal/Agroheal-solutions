@@ -24,6 +24,7 @@ import ForgotPasswordForm from "./page/ForgotPassword";
 import UpdatePasswordForm from "./page/UpdatePassword";
 import ProfileComponent from "./page/website/dashboard/Profile";
 import MonthlyPayment from "./page/website/Slots/MonthlyPayment";
+import Legal from "./page/website/Legal";
 
 const route = createBrowserRouter([
   {
@@ -35,6 +36,7 @@ const route = createBrowserRouter([
       { path: "about", element: <About /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
+      { path: "legal", element: <Legal /> },
       { path: "forgot-password", element: <ForgotPasswordForm /> },
       { path: "reset-password", element: <UpdatePasswordForm /> },
     ],

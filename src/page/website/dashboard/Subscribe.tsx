@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { benefits, included } from "@/helpers/dashboard.helpers";
-import { supabase } from "@/libs/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
 
 declare global {

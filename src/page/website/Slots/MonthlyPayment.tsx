@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/libs/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { AlertCircle, CheckCircle } from "lucide-react";

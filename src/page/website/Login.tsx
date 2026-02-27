@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { Leaf, Mail, Lock, EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
-import { supabase } from "@/libs/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
