@@ -8,7 +8,7 @@ const steps = [
     icon: BookOpen,
     title: "Learn",
     description:
-      "Learn how to farm a wide range of crops/livestock, and produce organic fertilizers/pesticides/livestock feed, with solutions that include BSFL and Mushroom farming.",
+      "Learn how to farm a wide range of crops/livestock, produce organic fertilizers/pesticides, and livestock feed, including BSFL.",
     color: "bg-green-800 text-white",
   },
   {

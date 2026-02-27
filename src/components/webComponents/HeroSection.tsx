@@ -85,9 +85,9 @@ export function HeroSection() {
             className="text-lg text-left md:text-xl text-primary-foreground/85 mb-8 max-w-2xl leading-relaxed"
           >
             LET'S FARM to cut food costs by over 50% & create an income stream
-            for every participant. Through the Learn to Earn Agribusiness
-            Platform (LEAP), Agroheal is simplifying farming so everyone can
-            join in.
+            for every participant. <br />
+            <br /> Through the Learn to Earn Agribusiness Platform (LEAP),
+            Agroheal is simplifying farming so everyone can join in.
           </motion.p>
 
           <motion.div

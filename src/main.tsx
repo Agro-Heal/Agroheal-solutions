@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import "./index.css";
 
 // pages imports for routes
@@ -57,7 +57,7 @@ const route = createBrowserRouter([
         path: "/dashboard",
         element: (
           <RequireSubscription>
-            <DashboardLayout />
+            <Outlet />
           </RequireSubscription>
         ),
         errorElement: <DashboardError />,
