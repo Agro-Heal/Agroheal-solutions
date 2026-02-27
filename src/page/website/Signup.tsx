@@ -89,18 +89,21 @@ const Signup = () => {
       .eq("id", user.id);
 
     // Success toast
-    toast.success("Signup successful! Please verify your email.", {
-      duration: 5000,
-      position: "top-right",
-      icon: "📩",
-      style: {
-        background: "#065f46",
-        color: "#fff",
-        borderRadius: "10px",
-        padding: "12px 16px",
-        fontSize: "14px",
+    toast.success(
+      "Signup successful! An email has been sent to your registered mail acount, Please verify your email.",
+      {
+        duration: 5000,
+        position: "top-right",
+        icon: "📩",
+        style: {
+          background: "#065f46",
+          color: "#fff",
+          borderRadius: "10px",
+          padding: "12px 16px",
+          fontSize: "14px",
+        },
       },
-    });
+    );
 
     setTimeout(() => {
       navigate("/login");

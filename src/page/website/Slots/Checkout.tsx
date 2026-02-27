@@ -327,8 +327,8 @@ const Checkout = () => {
 
               // Redirect after success
               setTimeout(() => {
-                window.location.href = `${import.meta.env.VITE_WHATSAPP_REDIRECT}`;
-              }, 2000);
+                window.location.href = `https://chat.whatsapp.com/LlXB7iYXmTx8JpzKulzTvD`;
+              }, 1000);
             } catch (error) {
               console.error("Update error:", error);
               toast({
