@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Check, Crown } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
