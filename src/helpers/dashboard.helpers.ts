@@ -22,6 +22,5 @@ export const included = [
   "Video lessons & tutorials",
   "Downloadable resources",
   "Progress tracking",
-  "Certificate of completion",
   "Community access",
 ];
