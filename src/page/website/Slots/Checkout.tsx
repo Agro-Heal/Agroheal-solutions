@@ -10,7 +10,7 @@ import { supabase } from "@/lib/supabaseClient";
 
 const Checkout = () => {
   const { toast } = useToast();
-  const slotPrice = 100; // fixed price for the slot
+  const slotPrice = 2000; // fixed price for the slot
   const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
