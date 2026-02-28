@@ -5,7 +5,6 @@ import {
   BookOpen,
   Sprout,
   Users,
-  TrendingUp,
   Copy,
   CheckCircle,
   LoaderCircle,
