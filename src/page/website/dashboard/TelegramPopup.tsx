@@ -1,3 +1,4 @@
+import { AgrohealImages } from "@/constant/Image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, TrendingUp, Calendar, Clock, MapPin, User } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -40,12 +41,15 @@ const FarmingInitiativePopup = () => {
           >
             <div className="relative w-full max-w-md pointer-events-auto overflow-hidden rounded-3xl shadow-2xl">
               {/* Header — deep green with pattern */}
-              <div className="relative bg-green-800 px-6 pt-7 pb-10 overflow-hidden">
-                {/* Decorative circles */}
-                <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-white/5" />
-                <div className="absolute top-4 -right-2 w-20 h-20 rounded-full bg-white/5" />
-                <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-full bg-green-700/50" />
-
+              <div
+                className="relative px-6 pt-7 pb-10 overflow-hidden"
+                style={{
+                  backgroundImage: `linear-gradient(rgba(0,0,0,0.77), rgba(0,0,0,0.80)), url('${AgrohealImages.initiative}')`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundBlendMode: "darken",
+                }}
+              >
                 {/* Close button */}
                 <button
                   onClick={() => setIsOpen(false)}

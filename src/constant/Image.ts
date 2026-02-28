@@ -24,6 +24,7 @@ import Maize from "@/assets/Image/MAIZE-IMAGE.jpeg";
 import HeaderLogo from "@/assets/Image/logo.png";
 import HowItWorksOne from "@/assets/Image/about-image-1.png";
 import HowItWorksTwo from "@/assets/Image/about-image-2.png";
+import initiative from "@/assets/Image/ginger.jpeg";
 // imports arranged alphabetically
 
 export const AgrohealImages = {
@@ -52,4 +53,5 @@ export const AgrohealImages = {
   SoyaBeans,
   Maize,
   Bean,
+  initiative,
 };
