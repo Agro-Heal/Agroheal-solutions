@@ -62,7 +62,7 @@ const FarmingInitiativePopup = () => {
                 <div className="inline-flex items-center gap-1.5 bg-[#e8b130]/20 border border-[#e8b130]/40 rounded-full px-3 py-1 mb-4">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#e8b130] animate-pulse" />
                   <span className="text-[#e8b130] text-xs font-semibold tracking-wide uppercase">
-                    New Initiative
+                    New Training
                   </span>
                 </div>
 
@@ -162,7 +162,7 @@ const FarmingInitiativePopup = () => {
                   onClick={handleJoin}
                   className="w-full bg-green-800 hover:bg-green-700 active:scale-[0.98] text-white font-semibold text-sm rounded-2xl py-3.5 transition-all flex items-center justify-center gap-2"
                 >
-                  <span>Join the Initiative</span>
+                  <span>Join Telegram Group</span>
                   <span className="text-base">→</span>
                 </button>
 
