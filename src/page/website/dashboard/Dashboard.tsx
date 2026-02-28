@@ -394,14 +394,14 @@ Click on the link above to join the learning platform with a registration fee of
                 iconBg: "bg-orange-50",
                 iconColor: "text-[#d17547]",
               },
-              {
-                to: "/dashboard/profile",
-                icon: TrendingUp,
-                label: "View Profile",
-                desc: "Manage your account",
-                iconBg: "bg-yellow-50",
-                iconColor: "text-[#e8b130]",
-              },
+              // {
+              //   to: "/dashboard/profile",
+              //   icon: TrendingUp,
+              //   label: "View Profile",
+              //   desc: "Manage your account",
+              //   iconBg: "bg-yellow-50",
+              //   iconColor: "text-[#e8b130]",
+              // },
             ].map((action, i) => (
               <Link
                 key={i}

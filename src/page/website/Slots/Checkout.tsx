@@ -382,7 +382,7 @@ const Checkout = () => {
               Secure Your Farm Slot
             </h1>
             <p className="text-muted-foreground mb-8">
-              Complete your billing details to proceed with payment.
+              pay with paystack oor flutterwave.
             </p>
           </motion.div>
 
@@ -492,7 +492,7 @@ const Checkout = () => {
                     <Sprout className="w-6 h-6 text-primary-foreground" />
                   </div>
                   <h3 className="font-display text-lg font-semibold text-primary-foreground">
-                    Practical Farm Slot
+                    Practicals Farm Slot
                   </h3>
                   <p className="text-primary-foreground/80 text-sm">
                     One growing season
@@ -519,7 +519,7 @@ const Checkout = () => {
                   <ul className="text-sm text-muted-foreground space-y-2 pt-4 border-t border-border">
                     <li className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      Dedicated plot on organic farm
+                      Practice slot on an hectare farm
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary" />
