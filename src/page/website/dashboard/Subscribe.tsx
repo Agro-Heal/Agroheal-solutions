@@ -17,7 +17,7 @@ declare global {
 }
 
 const Subscribe = () => {
-  const SubscribeFee = 100;
+  const SubscribeFee = 1000;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -341,7 +341,7 @@ const Subscribe = () => {
                   </p>
                   <div className="flex items-baseline justify-center gap-1">
                     <span className="text-4xl md:text-5xl font-display font-bold text-foreground">
-                      ₦100
+                      ₦1,000
                     </span>
                   </div>
                   <p className="text-muted-foreground text-sm mt-2">
