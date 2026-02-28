@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import toast, { Toaster } from "react-hot-toast";
+import FarmingInitiativePopup from "./TelegramPopup";
 
 const Dashboard = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -186,7 +187,7 @@ Click on the link above to join the learning platform with a registration fee of
   return (
     <div className="min-h-screen bg-gray-50">
       <Toaster />
-
+      <FarmingInitiativePopup />
       {/* Top Hero Banner */}
       <div className="bg-green-800 px-4 md:px-8 pt-8 pb-16">
         <motion.div
@@ -393,14 +394,6 @@ Click on the link above to join the learning platform with a registration fee of
                 iconBg: "bg-orange-50",
                 iconColor: "text-[#d17547]",
               },
-              // {
-              //   to: "/dashboard/profile",
-              //   icon: TrendingUp,
-              //   label: "View Profile",
-              //   desc: "Manage your account",
-              //   iconBg: "bg-yellow-50",
-              //   iconColor: "text-[#e8b130]",
-              // },
             ].map((action, i) => (
               <Link
                 key={i}
