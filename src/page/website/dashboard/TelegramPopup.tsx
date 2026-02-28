@@ -67,7 +67,7 @@ const FarmingInitiativePopup = () => {
                   <br />
                   Farming Initiative 🌱
                 </h2>
-                <p className="text-green-300 text-sm relative z-10">
+                <p className="text-green-300 text-[12px] sm:text-sm relative z-10">
                   Join and unlock serious profits from intercropping
                 </p>
 
@@ -106,7 +106,7 @@ const FarmingInitiativePopup = () => {
                       <span className="mt-0.5 w-4 h-4 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                         <TrendingUp className="w-2.5 h-2.5 text-green-700" />
                       </span>
-                      <span className="text-sm text-gray-600 leading-snug">
+                      <span className="text-[12px] sm:text-sm text-gray-600 leading-snug">
                         {item}
                       </span>
                     </li>
@@ -164,7 +164,7 @@ const FarmingInitiativePopup = () => {
 
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="w-full mt-2 text-xs text-gray-400 hover:text-gray-600 py-2 transition-colors"
+                  className="hidden sm:inline-block w-full mt-2 text-xs text-gray-400 hover:text-gray-600 py-2 transition-colors"
                 >
                   Maybe later
                 </button>
