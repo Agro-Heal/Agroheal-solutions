@@ -10,7 +10,7 @@ import { supabase } from "@/lib/supabaseClient";
 
 const Checkout = () => {
   const { toast } = useToast();
-  const slotPrice = 2000; // fixed price for the slot
+  const slotPrice = 100; // fixed price for the slot
   const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -457,7 +457,8 @@ const Checkout = () => {
 
                   <Button
                     onClick={handlePaystack}
-                    disabled={isProcessing}
+                    // disabled={isProcessing}
+                    disabled={true}
                     className="w-full h-12 bg-[#0BA4DB] hover:bg-[#0993c7] text-white font-semibold"
                   >
                     {isProcessing ? "Processing..." : "Pay with Paystack"}
@@ -465,7 +466,8 @@ const Checkout = () => {
 
                   <Button
                     onClick={handleFlutterwave}
-                    disabled={isProcessing}
+                    // disabled={isProcessing}
+                    disabled={true}
                     className="w-full h-12 bg-[#F5A623] hover:bg-[#e09515] text-white font-semibold"
                   >
                     {isProcessing ? "Processing..." : "Pay with Flutterwave"}
