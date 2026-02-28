@@ -78,9 +78,16 @@ const Slots = () => {
 
                 {/* CTA */}
                 <div className="p-8 pt-0">
-                  <Button className="w-full bg-[#d17547] text-white hover:bg-[#d17547]/80">
-                    <Link to="/dashboard/checkout">Secure My Slot</Link>
-                  </Button>
+                  <Link to="/dashboard/checkout">
+                    <Button
+                      className="w-full bg-[#d17547] text-white hover:bg-[#d17547]/80"
+                      onClick={() => {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                    >
+                      Secure My Slot
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </motion.div>

@@ -17,7 +17,7 @@ declare global {
 }
 
 const Subscribe = () => {
-  const SubscribeFee = 1000;
+  const SubscribeFee = 100;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -95,13 +95,25 @@ const Subscribe = () => {
     const expires = new Date();
     expires.setDate(now.getDate() + 365);
 
-    const { error } = await supabase.from("subscriptions").insert({
-      user_id: userId,
-      plan: "platform",
-      status: "active",
-      started_at: now.toISOString(),
-      expires_at: expires.toISOString(),
-    });
+    // const { error } = await supabase.from("subscriptions").insert({
+    //   user_id: userId,
+    //   plan: "platform",
+    //   status: "active",
+    //   started_at: now.toISOString(),
+    //   expires_at: expires.toISOString(),
+    // });
+
+    // if (error) throw error;
+    const { error } = await supabase.from("subscriptions").upsert(
+      {
+        user_id: userId,
+        plan: "platform",
+        status: "active",
+        started_at: now.toISOString(),
+        expires_at: expires.toISOString(),
+      },
+      { onConflict: "user_id" },
+    );
 
     if (error) throw error;
   };
@@ -329,7 +341,7 @@ const Subscribe = () => {
                   </p>
                   <div className="flex items-baseline justify-center gap-1">
                     <span className="text-4xl md:text-5xl font-display font-bold text-foreground">
-                      ₦1,000
+                      ₦100
                     </span>
                   </div>
                   <p className="text-muted-foreground text-sm mt-2">
