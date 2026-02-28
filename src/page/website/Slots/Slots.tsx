@@ -31,7 +31,7 @@ const Slots = () => {
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
             {/* Slot Card */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}

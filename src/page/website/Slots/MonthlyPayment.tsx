@@ -42,6 +42,24 @@ const MonthlyPayment = () => {
     document.body.appendChild(script);
   }, []);
 
+  // const fetchSubscription = async () => {
+  //   const {
+  //     data: { user },
+  //   } = await supabase.auth.getUser();
+  //   if (!user) return;
+
+  //   const { data, error } = await supabase
+  //     .from("slot_subscriptions")
+  //     .select("*")
+  //     .eq("user_id", user.id)
+  //     .eq("status", "active")
+  //     .single();
+
+  //   if (error) console.error(error);
+  //   setSubscription(data);
+  //   setLoading(false);
+  // };
+
   const fetchSubscription = async () => {
     const {
       data: { user },
@@ -52,8 +70,9 @@ const MonthlyPayment = () => {
       .from("slot_subscriptions")
       .select("*")
       .eq("user_id", user.id)
-      .eq("status", "active")
-      .single();
+      .order("last_payment_date", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
     if (error) console.error(error);
     setSubscription(data);

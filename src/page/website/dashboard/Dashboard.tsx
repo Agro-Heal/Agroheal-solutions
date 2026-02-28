@@ -387,7 +387,7 @@ Click on the link above to join the learning platform with a registration fee of
                 iconColor: "text-green-800",
               },
               {
-                to: "/dashboard/slots",
+                to: "/dashboard/slots-subscription",
                 icon: Sprout,
                 label: "View Farm Slots",
                 desc: "Secure your farming spot",

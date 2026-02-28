@@ -115,6 +115,7 @@ const Checkout = () => {
           user_id: user.id,
           checkout_id: Number(orderId),
           amount: 500,
+          status: "active",
           last_payment_date: new Date().toISOString(),
           next_payment_date: nextPaymentDate.toISOString(),
         },

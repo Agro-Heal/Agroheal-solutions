@@ -7,255 +7,247 @@ import {
   LockOpen,
   Play,
   Star,
+  Sprout,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { COURSESDATA } from "@/helpers/courses";
 
 const Courses = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4">
-          {/* Featured track header */}
-          <section className="relative overflow-hidden rounded-3xl border border-border bg-card/60 backdrop-blur-sm">
-            <div
-              className="absolute inset-0 bg-gradient-to-r from-[#e8b130]/10 via-[#d17547]/10 to-[#e8b130]/10"
-              aria-hidden="true"
-            />
+    <div className="min-h-screen bg-gray-50">
+      <main className="pb-0">
+        {/* ── Hero Section ─────────────────────────────────── */}
+        <section className="relative overflow-hidden bg-green-800 px-6 md:px-12 pt-14 pb-24">
+          {/* Background blobs */}
+          <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-white/5 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-16 -right-16 w-96 h-96 rounded-full bg-green-600/30 blur-3xl pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-green-700/20 blur-3xl pointer-events-none" />
+
+          <div className="relative max-w-6xl mx-auto">
             <motion.div
-              aria-hidden="true"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7 }}
-              className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-accent/15 blur-3xl"
-            />
-            <motion.div
-              aria-hidden="true"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.05 }}
-              className="pointer-events-none absolute -bottom-28 -right-28 h-80 w-80 rounded-full bg-primary/10 blur-3xl"
-            />
-
-            <div className="relative p-8 md:p-10">
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55 }}
-                className="grid lg:grid-cols-12 gap-10 items-center"
-              >
-                <div className="lg:col-span-7">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-green-800/30 bg-green-800/15 px-4 py-2 text-sm font-semibold text-green-800">
-                    <Leaf className="h-4 w-4 text-green-800" />
-                    Featured track
-                  </div>
-                  <h1 className="mt-5  text-4xl md:text-5xl font-bold text-foreground leading-[1.05]">
-                    Organic Farming Foundations
-                  </h1>
-                  <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
-                    Start your organic farming journey with the essentials -
-                    Introduction to Organic farming, How to produce Organic
-                    inputs - biofertilizers, biopesticides, as well as BSFL
-                    cultivation (the ultimate game changer!)
-                  </p>
-
-                  <div className="hidden mt-7 flex-col sm:flex-row gap-3">
-                    <Button
-                      size="lg"
-                      className="bg-green-800 text-white cursor-pointer"
-                    >
-                      <Link
-                        to="#course-list"
-                        className="flex items-center gap-2"
-                      >
-                        <span>Browse courses</span>
-                        <ArrowRight className="" />
-                      </Link>
-                    </Button>
-                    <Button variant="outline" size="lg">
-                      <Link
-                        to="/signup"
-                        className="flex items-center gap-2 cursor-pointer"
-                      >
-                        Start learning
-                        <BookOpen className="" />
-                      </Link>
-                    </Button>
-                  </div>
-
-                  <div className="mt-6 flex flex-wrap items-center gap-2">
-                    <Badge className="rounded-full text-white bg-green-800">
-                      YouTube video lessons
-                    </Badge>
-                    <Badge variant="outline" className="rounded-full">
-                      Beginner-friendly
-                    </Badge>
-                    <Badge variant="outline" className="rounded-full">
-                      Simple progress tracking
-                    </Badge>
-                  </div>
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="grid lg:grid-cols-2 gap-12 items-center"
+            >
+              {/* Left */}
+              <div>
+                <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
+                  <Leaf className="w-3.5 h-3.5 text-green-300" />
+                  <span className="text-green-200 text-xs font-semibold uppercase tracking-widest">
+                    Featured Track
+                  </span>
                 </div>
 
-                <div className="lg:col-span-5">
-                  <Card className="overflow-hidden border-border/60 bg-background/50">
-                    <CardHeader className="pb-4">
-                      <CardTitle className=" text-2xl">
-                        What you’ll learn
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="space-y-3">
-                        {[
-                          { title: "Soil health & composting", tag: "Core" },
-                          {
-                            title: "Organic inputs production",
-                            tag: "Core",
-                          },
-                          { title: "Crops & Livestock farming", tag: "Core" },
-                        ].map((item) => (
-                          <div
-                            key={item.title}
-                            className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card/60 px-4 py-3"
-                          >
-                            <span className="inline-flex items-center gap-2 text-sm font-medium text-foreground">
-                              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-green-800/20 bg-green-800/10">
-                                <Play className="h-4 w-4 text-green-800" />
-                              </span>
-                              {item.title}
-                            </span>
-                            <Badge className="rounded-full bg-green-800 text-white">
-                              {item.tag}
-                            </Badge>
-                          </div>
-                        ))}
+                <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
+                  Organic Farming
+                  <span className="block text-green-300">Foundations</span>
+                </h1>
+
+                <p className="text-green-200 text-base leading-relaxed mb-8 max-w-lg">
+                  Start your organic farming journey with the essentials —
+                  Introduction to Organic farming, producing Organic inputs,
+                  biofertilizers, biopesticides, and BSFL cultivation.
+                </p>
+
+                {/* Stats row */}
+                <div className="flex flex-wrap gap-6 mb-8">
+                  {[
+                    { icon: BookOpen, label: "12+ Lessons" },
+                    { icon: Users, label: "Beginner Friendly" },
+                    { icon: Play, label: "Video Courses" },
+                  ].map(({ icon: Icon, label }) => (
+                    <div key={label} className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                        <Icon className="w-3.5 h-3.5 text-green-300" />
                       </div>
-                      <p className="mt-4 text-xs text-muted-foreground">
-                        Courses are delivered via embedded YouTube videos.
-                      </p>
-                    </CardContent>
-                  </Card>
+                      <span className="text-green-200 text-sm font-medium">
+                        {label}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              </motion.div>
-            </div>
-          </section>
 
-          {/* Subscription Banner */}
+                <div className="flex flex-wrap gap-3">
+                  <a href="#course-list">
+                    <Button className="bg-white text-green-800 hover:bg-green-50 font-semibold rounded-xl px-6 h-11">
+                      Browse courses
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </a>
+                  <Link to="/signup">
+                    <Button
+                      variant="outline"
+                      className="border-white/30 text-white hover:bg-white/10 rounded-xl px-6 h-11 bg-transparent"
+                    >
+                      Start learning
+                      <BookOpen className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Right — what you'll learn card */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.15 }}
+                className="bg-white/10 border border-white/20 backdrop-blur-sm rounded-3xl p-6"
+              >
+                <p className="text-xs font-semibold text-green-300 uppercase tracking-widest mb-5">
+                  What you'll learn
+                </p>
+                <div className="space-y-3">
+                  {[
+                    {
+                      title: "Soil health & composting",
+                      desc: "Master organic soil management",
+                    },
+                    {
+                      title: "Organic inputs production",
+                      desc: "Biofertilizers & biopesticides",
+                    },
+                    {
+                      title: "Crops & Livestock farming",
+                      desc: "Integrated farming systems",
+                    },
+                  ].map((item) => (
+                    <div
+                      key={item.title}
+                      className="flex items-center gap-4 bg-white/10 rounded-2xl px-4 py-3.5"
+                    >
+                      <div className="w-9 h-9 rounded-xl bg-green-600/50 flex items-center justify-center flex-shrink-0">
+                        <Sprout className="w-4 h-4 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm">
+                          {item.title}
+                        </p>
+                        <p className="text-green-300 text-xs">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-green-400 text-xs mt-5 text-center">
+                  Delivered via embedded YouTube videos
+                </p>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+
+        <section
+          id="course-list"
+          className="scroll-mt-20 max-w-6xl mx-auto px-6 md:px-12 mb-20"
+        >
+          {/* Section header */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="hidden bg-gradient-hero rounded-2xl p-8 my-12 text-center"
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8"
           >
-            <h3 className=" text-2xl font-bold text-primary-foreground mb-2">
-              Available Courses
-            </h3>
-            <p className="text-primary-foreground/80 mb-6 max-w-lg mx-auto">
-              Monthly access to all courses, new content monthly, and priority
-              support.
-            </p>
-            {/* <Button size="lg" className="text-white bg-[#d17547]">
-              <Link to="#courses-lists">Start now</Link>
-            </Button> */}
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                All Courses
+              </h2>
+              <p className="text-gray-500 text-sm mt-1">
+                Browse by category to find the right lesson track.
+              </p>
+            </div>
+            <div className="inline-flex items-center gap-2 bg-green-50 border border-green-100 rounded-xl px-4 py-2">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-green-700 text-sm font-semibold">
+                {COURSESDATA.length} courses available
+              </span>
+            </div>
           </motion.div>
 
-          {/* Filters */}
-          <div id="course-list" className="scroll-mt-28 mt-12">
-            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
-              <div>
-                <h2 className=" text-3xl md:text-4xl font-bold text-foreground">
-                  All courses
-                </h2>
-                <p className="mt-2 text-muted-foreground">
-                  Find by category to get the right lesson track.
-                </p>
-              </div>
-            </div>
+          {/* Grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {COURSESDATA.map((course, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.07 }}
+              >
+                <Link to={`/dashboard/courses/${course?.slug}`}>
+                  <Card className="group h-full overflow-hidden border border-gray-100 bg-white rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+                    {/* Thumbnail */}
+                    <div className="relative aspect-video overflow-hidden bg-gray-100">
+                      <div
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                        style={{ backgroundImage: `url(${course?.Image})` }}
+                      />
+                      {/* Overlay on hover */}
+                      <div className="absolute inset-0 bg-green-900/0 group-hover:bg-green-900/20 transition-colors duration-300" />
 
-            {/* Course Grid */}
-            <div
-              id="courses-lists"
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {COURSESDATA.map((course, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 26 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.55, delay: index * 0.06 }}
-                  className="group"
-                >
-                  <Link to={`/dashboard/courses/${course?.slug}`}>
-                    <Card className="h-full overflow-hidden border-border/60 bg-card/70 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevated">
-                      {/* Thumbnail */}
-                      <div className="aspect-video bg-muted relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-secondary/10 to-accent/10" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          {/* <div className="w-14 h-14 rounded-full bg-background/80 border border-border flex items-center justify-center group-hover:scale-110 transition-transform shadow-elevated">
-                            <Play className="w-6 h-6 text-primary ml-1" />
-                            <img src={course?.Image} alt="" />
-                          </div> */}
-                          <div
-                            className="h-64 w-full bg-cover bg-center rounded-lg"
-                            style={{ backgroundImage: `url(${course?.Image})` }}
-                          ></div>
-                        </div>
-
-                        <div className="absolute top-3 left-3">
-                          <Badge
-                            variant="secondary"
-                            className="rounded-full bg-[#d17547] text-white"
-                          >
-                            {course.category}
-                          </Badge>
-                        </div>
-
-                        <div className="absolute top-3 right-3">
-                          {/* {course.free ? (
-                          <Badge className="rounded-full bg-green-800 text-white">
-                            FREE
-                          </Badge>
-                        ) : ( */}
-                          <Badge
-                            variant="outline"
-                            className="rounded-full inline-flex items-center gap-1 bg-white "
-                          >
-                            <LockOpen className="w-3 h-3" />
-                            Free
-                          </Badge>
-                          {/* )} */}
+                      {/* Play button on hover */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                          <Play className="w-5 h-5 text-green-800 ml-0.5" />
                         </div>
                       </div>
 
-                      {/* Content */}
-                      <CardContent className="p-6 flex flex-col" key={index}>
-                        <h3 className="cursor-pointer text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+                      {/* Top badges */}
+                      <div className="absolute top-3 left-3">
+                        <Badge className="rounded-full bg-[#d17547] text-white text-xs font-semibold shadow-sm">
                           {course.category}
-                        </h3>
-                        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                        </Badge>
+                      </div>
+                      <div className="absolute top-3 right-3">
+                        <Badge className="rounded-full bg-white text-gray-700 text-xs font-medium shadow-sm inline-flex items-center gap-1">
+                          <LockOpen className="w-3 h-3 text-green-600" />
+                          Free
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <CardContent className="p-5">
+                      <h3 className="font-bold text-gray-900 text-base mb-3 group-hover:text-green-800 transition-colors line-clamp-2">
+                        {course.category}
+                      </h3>
+
+                      {/* Meta row */}
+                      <div className="flex items-center justify-between text-xs text-gray-400">
+                        <div className="flex items-center gap-3">
                           <span className="inline-flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
+                            <Clock className="w-3.5 h-3.5" />
                             {course?.duration}
                           </span>
                           <span className="inline-flex items-center gap-1">
-                            <BookOpen className="w-4 h-4" />
+                            <BookOpen className="w-3.5 h-3.5" />
                             {course?.lessons.length} lessons
                           </span>
-                          <span className="ml-auto inline-flex items-center gap-1 text-accent font-medium">
-                            <Star className="w-4 h-4 fill-accent" />
-                            {/* {courseItem.rating} */} 5 star
-                          </span>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
+                        <span className="inline-flex items-center gap-1 text-yellow-500 font-semibold">
+                          <Star className="w-3.5 h-3.5 fill-yellow-400" />
+                          5.0
+                        </span>
+                      </div>
+
+                      {/* CTA */}
+                      <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                        <span className="text-xs text-gray-400 font-medium">
+                          Start learning
+                        </span>
+                        <div className="w-7 h-7 rounded-full bg-green-50 flex items-center justify-center group-hover:bg-green-800 transition-colors">
+                          <ArrowRight className="w-3.5 h-3.5 text-green-700 group-hover:text-white transition-colors" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </motion.div>
+            ))}
           </div>
-        </div>
+        </section>
       </main>
     </div>
   );
