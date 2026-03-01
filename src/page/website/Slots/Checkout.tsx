@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, CreditCard, Shield, Sprout } from "lucide-react";
+import {
+  ArrowLeft,
+  CreditCard,
+  Minus,
+  Plus,
+  Shield,
+  Sprout,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +17,9 @@ import { supabase } from "@/lib/supabaseClient";
 
 const Checkout = () => {
   const { toast } = useToast();
+  const [slotQuantity, setSlotQuantity] = useState(1);
   const slotPrice = 2000;
+  const totalPrice = slotPrice * slotQuantity;
   const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -18,7 +27,6 @@ const Checkout = () => {
     email: "",
     phone: "",
   });
-
   // Load payment scripts on component mount
   useEffect(() => {
     // Load Paystack
@@ -50,6 +58,9 @@ const Checkout = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const incrementSlot = () => setSlotQuantity((q) => Math.min(q + 1, 10));
+  const decrementSlot = () => setSlotQuantity((q) => Math.max(q - 1, 1));
+
   const createCheckout = async (paymentMethod: "paystack" | "flutterwave") => {
     const {
       data: { user },
@@ -73,7 +84,7 @@ const Checkout = () => {
           last_name: formData.lastName,
           email: formData.email,
           phone: formData.phone,
-          amount: slotPrice,
+          amount: totalPrice,
           payment_method: paymentMethod,
           status: "pending",
         },
@@ -103,8 +114,6 @@ const Checkout = () => {
       return;
     }
 
-    console.log("Creating subscription for order:", orderId, "user:", user.id);
-
     const nextPaymentDate = new Date();
     nextPaymentDate.setDate(nextPaymentDate.getDate() + 30);
 
@@ -115,7 +124,9 @@ const Checkout = () => {
           user_id: user.id,
           checkout_id: Number(orderId),
           amount: 500,
+          slotPrice: totalPrice,
           status: "active",
+          slots: slotQuantity,
           last_payment_date: new Date().toISOString(),
           next_payment_date: nextPaymentDate.toISOString(),
         },
@@ -424,7 +435,6 @@ const Checkout = () => {
                       />
                     </div>
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
                     <Input
@@ -436,7 +446,6 @@ const Checkout = () => {
                       onChange={handleInputChange}
                     />
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
                     <Input
@@ -447,6 +456,53 @@ const Checkout = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Number of Slots</Label>
+                    <div className="flex items-center gap-4">
+                      <button
+                        type="button"
+                        onClick={decrementSlot}
+                        disabled={slotQuantity <= 1}
+                        className="w-10 h-10 rounded-xl border border-border bg-background flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+
+                      <div className="flex-1 text-center">
+                        <span className="text-3xl font-bold text-foreground">
+                          {slotQuantity}
+                        </span>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {slotQuantity === 1 ? "slot" : "slots"}
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={incrementSlot}
+                        disabled={slotQuantity >= 10}
+                        className="w-10 h-10 rounded-xl border border-border bg-background flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Price breakdown */}
+                    {slotQuantity > 1 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center justify-between bg-green-50 border border-green-100 rounded-xl px-4 py-3 mt-2"
+                      >
+                        <span className="text-sm text-green-700 font-medium">
+                          {slotQuantity} × ₦{slotPrice.toLocaleString()}
+                        </span>
+                        <span className="text-sm font-bold text-green-800">
+                          = ₦{totalPrice.toLocaleString()}
+                        </span>
+                      </motion.div>
+                    )}
                   </div>
                 </div>
 
@@ -514,7 +570,7 @@ const Checkout = () => {
                     <div className="flex justify-between font-semibold">
                       <span className="text-foreground">Total</span>
                       <span className="text-foreground text-xl">
-                        ₦{slotPrice.toLocaleString()}
+                        ₦{totalPrice.toLocaleString()}
                       </span>
                     </div>
                   </div>
