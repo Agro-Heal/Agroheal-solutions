@@ -458,8 +458,8 @@ const Checkout = () => {
 
                   <Button
                     onClick={handlePaystack}
-                    // disabled={isProcessing}
-                    disabled={true}
+                    disabled={isProcessing}
+                    // disabled={true}
                     className="w-full h-12 bg-[#0BA4DB] hover:bg-[#0993c7] text-white font-semibold"
                   >
                     {isProcessing ? "Processing..." : "Pay with Paystack"}
