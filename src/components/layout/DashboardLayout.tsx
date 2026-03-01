@@ -21,7 +21,7 @@ const navItems = [
   { label: "Courses", path: "/dashboard/courses", icon: ScrollText },
   { label: "Secure Practice Slot", path: "/dashboard/slots", icon: Sprout },
   {
-    label: "Monthly Rent Payment",
+    label: "Slot Management",
     path: "/dashboard/slots-subscription",
     icon: CreditCard,
   },
@@ -45,7 +45,8 @@ const DashboardLayout = () => {
 
   // Close sidebar on route change
   useEffect(() => {
-    setSidebarOpen(false);
+    const timer = setTimeout(() => setSidebarOpen(false), 0);
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   const hiddenPath = HIDDEN_ROUTES.includes(normalizedPath);
