@@ -125,36 +125,36 @@ export const COURSESDATA: Course[] = [
     slug: "biofertilizer-production",
     title: "Biofertilizer Production",
     description: "Learn more about Biofertilizer Production",
-    duration: "3h 15m",
+    duration: "0h 56m",
     lessons: [
       {
         id: "2-1",
         title: "Video 1: Production of beneficial Microbes - IMO",
-        duration: "20:00",
+        duration: "15:00",
         videoId: "_1i_2BXi4Y4",
       },
       {
         id: "2-2",
         title: "Video 2: Production of beneficial Microbes - LAB",
-        duration: "18:00",
+        duration: "20:35",
         videoId: "NTqr2TZRRvE",
       },
       {
         id: "2-3",
         title: "Video 3: Production of beneficial Microbes - Mycorrhiza",
-        duration: "22:00",
+        duration: "7:44",
         videoId: "GvRzlBiPsEk",
       },
       {
         id: "2-4",
         title: "Video 4: Production of beneficial Microbes - Pseudomonas",
-        duration: "15:00",
+        duration: "7:17",
         videoId: "BneHjfqI-xU",
       },
       {
         id: "2-5",
         title: "Video 5: Production of beneficial Microbes - Cyanobacteria",
-        duration: "20:00",
+        duration: "4:34",
         videoId: "jiy4qQfNJPw",
       },
     ],
@@ -168,24 +168,24 @@ export const COURSESDATA: Course[] = [
     slug: "Composting",
     title: "Composting",
     description: "Learn more about composing.",
-    duration: "2h 45m",
+    duration: "1h 40m",
     lessons: [
       {
         id: "3-1",
         title: "Audio: Composting By Esther Adetayo",
-        duration: "18:00",
+        duration: "32:06",
         videoId: "Bak4kUe6Vuw",
       },
       {
         id: "3-2",
         title: "Video 1: Bucket Composting",
-        duration: "20:00",
+        duration: "30:32",
         videoId: "sF1XqLRvj4s",
       },
       {
         id: "3-3",
         title: "Video 2: Garden Composting",
-        duration: "22:00",
+        duration: "23:21",
         videoId: "ZMVcs753KjA",
       },
     ],
@@ -199,33 +199,33 @@ export const COURSESDATA: Course[] = [
     slug: "bkack-soldier-fly-larvae",
     title: "Black Soldier Fly Larvae",
     description: "Black soldier fly larvae.",
-    duration: "2h 45m",
+    duration: "1h 05m",
     lessons: [
       {
         id: "4-1",
         title:
           "Black Soldier Fly Larvae farming and the strategic advantage it gives an Organic farmer.",
-        duration: "18:00",
+        duration: "32:06",
         videoId: "lbBNzCkj3y0",
       },
       {
         id: "4-2",
         title: "Video 2: Black Soldier Fly Production Stages",
-        duration: "20:00",
+        duration: "30:32",
         videoId: "LTazdkGrvDc",
       },
       {
         id: "4-3",
         title:
           "Video 3: Black Soldier Fly Larvae Production: Profit Potential, Marketing Tips And Production Guide",
-        duration: "22:00",
+        duration: "23:21",
         videoId: "Z_ynq3kJQrU",
       },
       {
         id: "4-4",
         title:
           "Video 4: Black Soldier Fly Larvae Production: How To Use Frass Organic Fertilizer",
-        duration: "22:00",
+        duration: "06:31",
         videoId: "WgwPTICUmiM",
       },
     ],
@@ -239,33 +239,33 @@ export const COURSESDATA: Course[] = [
     slug: "organic-fertilizer-production",
     title: "Organic Fertilizer Production",
     description: "How to produce organic fertilizers.",
-    duration: "2h 45m",
+    duration: "0h 44m",
     lessons: [
       {
         id: "5-1",
         title: "Video 1: Production of Organic Fertilizer (Compost)",
-        duration: "18:00",
+        duration: "15:38",
         videoId: "8ic3X-8OUdA",
       },
       {
         id: "5-2",
         title:
           "Video 2: Production of Organic Fertilizer (Fermented Manure Tea)",
-        duration: "20:00",
+        duration: "07:42",
         videoId: "XnU2Da9yhnQ",
       },
       {
         id: "5-3",
         title:
           "Video 3: Production of Organic Fertilizer (Fermented Fruit Juice Attractant)",
-        duration: "22:00",
+        duration: "04:46",
         videoId: "_S5XKMAJZA8",
       },
       {
         id: "5-3",
         title:
           "Video 4: Production of Organic Fertilizer (Fermented Fruit Juice Multivitamin)",
-        duration: "22:00",
+        duration: "15:58",
         videoId: "IXo6Cb7oQ5E",
       },
     ],
@@ -279,12 +279,12 @@ export const COURSESDATA: Course[] = [
     slug: "biochar-production",
     title: "Biochar Production",
     description: "How to produce biochar.",
-    duration: "2h 45m",
+    duration: "0h 26m",
     lessons: [
       {
         id: "6-1",
         title: "Video: Production of Biochar",
-        duration: "18:00",
+        duration: "26:00",
         videoId: "rw6xug2QcWQ",
       },
     ],
@@ -298,24 +298,24 @@ export const COURSESDATA: Course[] = [
     slug: "organic-pesticide-production",
     title: "Organic Pesticide Production",
     description: "How to produce organic pesticide.",
-    duration: "2h 45m",
+    duration: "0h 17m",
     lessons: [
       {
         id: "7-1",
         title: "Video 1: Production of Organic Pesticide (GINGER-GARLIC)",
-        duration: "18:00",
+        duration: "05:47",
         videoId: "cmdp29WAUQM",
       },
       {
         id: "7-2",
         title: "Video 2: Production of Organic Pesticide (CHILI PEPPER-GARLIC)",
-        duration: "20:00",
+        duration: "04:35",
         videoId: "EBunr-PwEcg",
       },
       {
         id: "7-3",
         title: "Video 1: Production of Organic Pesticide (NEEM EXTRACT)",
-        duration: "22:00",
+        duration: "07:07",
         videoId: "aCfwqNngWKE",
       },
     ],
@@ -329,40 +329,40 @@ export const COURSESDATA: Course[] = [
     slug: "organic-garden-practicals",
     title: "Organic Garden Practicals",
     description: "Organic Garden Practicals .",
-    duration: "2h 45m",
+    duration: "0h 35m",
     lessons: [
       {
         id: "8-1",
         title:
           "Video 1: Introduction to Organic Farming and The Basics of Plant and Animal Nutrition.",
-        duration: "18:00",
+        duration: "04:42",
         videoId: "rKom6PawdZ0",
       },
       {
         id: "8-2",
         title:
           "Video 2: How to Make a Well-Nourished Container Soil Mix For Fruity Vegetables.",
-        duration: "20:00",
+        duration: "05:29",
         videoId: "JP4JXB5edf8",
       },
       {
         id: "8-3",
         title:
           "Video 3: How to Make a Well-Nourished Soil Mix for Leafy Vegetables.",
-        duration: "22:00",
+        duration: "02:34",
         videoId: "LryhsDoUm6Q",
       },
       {
         id: "8-4",
         title: "Video 4: How to Prepare Raised Beds for Garden Farming.",
-        duration: "15:00",
+        duration: "02:47",
         videoId: "vUvNo4qLupY",
       },
       {
         id: "8-5",
         title:
           "Video 5: Organic Garden Layout And Livestock Housing For 12 By 12 Template.",
-        duration: "18:00",
+        duration: "19:30",
         videoId: "pC_M0I1Dgo0",
       },
     ],
@@ -376,36 +376,36 @@ export const COURSESDATA: Course[] = [
     slug: "mushroom-farming",
     title: "Mushroom Farming",
     description: "How to plant mushroom.",
-    duration: "5h 45m",
+    duration: "5h 21m",
     lessons: [
       {
         id: "9-1",
         title: "Audio-video 1: Mushroom Masterclass Day 1 (Audio 1)",
-        duration: "18:00",
+        duration: "01:23:50",
         videoId: "pUS3M-0SPeQ",
       },
       {
         id: "9-2",
         title: "Audio-video 2: Mushroom Masterclass Day 1 (Audio 2)",
-        duration: "20:00",
+        duration: "01:18:14",
         videoId: "s7LZPZ2PrbI",
       },
       {
         id: "9-3",
         title: "Audio-video 3: Mushroom Masterclass Day 1 (Audio 3)",
-        duration: "22:00",
+        duration: "01:17:00",
         videoId: "_cInrf8yjy4",
       },
       {
         id: "9-4",
         title: "Audio-video 4: Mushroom Masterclass Day 2 (Q & A)",
-        duration: "15:00",
+        duration: "52:03",
         videoId: "b5f8C2B50ug",
       },
       {
         id: "9-5",
         title: "Video: Mushroom Masterclass Practical",
-        duration: "18:00",
+        duration: "46:59",
         videoId: "csOvJj_cvS8",
       },
     ],
@@ -419,40 +419,40 @@ export const COURSESDATA: Course[] = [
     slug: "tomato-farming",
     title: "Tomato Farming",
     description: "How to plant tomato from seed to harvest.",
-    duration: "2h 50m",
+    duration: "5h 03m",
     lessons: [
       {
         id: "10-1",
         title:
           "Audio-video 1: Precision Tomato Farming Techniques and Profitability",
-        duration: "20:00",
+        duration: "01:26:31",
         videoId: "6ThQo4E-XkA",
       },
       {
         id: "10-2",
         title: "Audio-video 2: Organic Tomato Production Practical Training",
-        duration: "22:00",
+        duration: "01:07:59",
         videoId: "HbiDrhrSM-I",
       },
       {
         id: "10-3",
         title:
           "Audio-video 3: Organic Tomato Farming: Seed, Pest, Disease, Nutrition",
-        duration: "15:00",
+        duration: "01:16:32",
         videoId: "5CAKc_2i5tc",
       },
       {
         id: "10-4",
         title:
           "Audio-video 4: Comprehensive Tomato Cultivation and Disease Management.",
-        duration: "18:00",
+        duration: "01:07:35",
         videoId: "jmKGPKKVXxY",
       },
       {
         id: "10-5",
         title:
           "Video: How To Grow Organic Tomatoes in Net Grow Bags or Garden Beds.",
-        duration: "16:00",
+        duration: "05:32",
         videoId: "3tJCjQcS0I4",
       },
     ],
@@ -466,38 +466,38 @@ export const COURSESDATA: Course[] = [
     slug: "ugu-farming",
     title: "Ugu Farming",
     description: "Fluted Pumpkin Multiplication Simplified.",
-    duration: "4h 30m",
+    duration: "4h 05m",
     lessons: [
       {
         id: "11-1",
         title: " Ugu Seeds: Fluted Pumpkin Multiplication Simplified.",
-        duration: "15:00",
+        duration: "03:11",
         videoId: "zEkboWcurME",
       },
       {
         id: "11-2",
         title:
           "Audio-video 2: Ugu (Fluted Pumpkin) Masterclass: Seed Multiplication System.",
-        duration: "22:00",
+        duration: "01:21:48",
         videoId: "6cmK0BFjGsg",
       },
       {
         id: "11-3",
         title: "Audio-video 3: Ugu Masterclass: Ugu Multiplication Techniques.",
-        duration: "20:00",
+        duration: "01:15:20",
         videoId: "-lIwRR2lz_A",
       },
       {
         id: "11-4",
         title:
           "Audio-video 4: Ugu Masterclass: Organic Pest And Disease Control.",
-        duration: "15:00",
+        duration: "01:23:04",
         videoId: "2d34lfe34fk",
       },
       {
         id: "11-5",
         title: "Video: How To Plant Ugu (Fluted Pumpkin).",
-        duration: "18:00",
+        duration: "04:53",
         videoId: "rgi8ds3uqaA",
       },
     ],
@@ -528,7 +528,7 @@ export const COURSESDATA: Course[] = [
     id: 13,
     Image: AgrohealImages?.ShokoTete,
     slug: "shoko-tete-&-ewedu-farming",
-    title: "Shoko, Tete, and Ewedu Farming",
+    title: " ⁠Shoko, Tete and Ewedu Farming",
     description:
       "How to Grow Amaranthus (Tete), Celosia (Shoko), and Corchorus (Ewedu) Vegetables.",
     duration: "0h 3m",
@@ -542,7 +542,7 @@ export const COURSESDATA: Course[] = [
     ],
     rating: 4.8,
     free: true,
-    category: "Shoko Tete and Ewedu",
+    category: "⁠Shoko, Tete and Ewedu Farming",
   },
   {
     id: 14,
@@ -640,7 +640,7 @@ export const COURSESDATA: Course[] = [
     ],
     rating: 4.8,
     free: true,
-    category: "Sweet Potato",
+    category: "Sweet Potato Farming",
   },
   {
     id: 19,
@@ -706,7 +706,7 @@ export const COURSESDATA: Course[] = [
     id: 22,
     Image: AgrohealImages?.SoyaBeans,
     slug: "how-to-grow-soyabeans-from-seed-to-harvest",
-    title: "Soyabeans Farming",
+    title: "Soybeans Farming",
     description:
       "Best practices for planting and harvesting soyabeans from seed to harvest.",
     duration: "0h 3m",
@@ -720,7 +720,7 @@ export const COURSESDATA: Course[] = [
     ],
     rating: 4.8,
     free: true,
-    category: "Soyabeans",
+    category: "Soybeans Farming",
   },
 ];
 

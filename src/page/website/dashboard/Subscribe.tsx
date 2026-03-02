@@ -182,8 +182,8 @@ const Subscribe = () => {
             // Call async function but don't await it in the callback
             createSubscription(user.id)
               .then(() => {
-                alert("Subscription activated successfully!");
-                navigate("/dashboard");
+                handler.close();
+                navigate("/dashboard", { replace: true });
               })
               .catch((error) => {
                 console.error("Error creating subscription:", error);
@@ -250,8 +250,10 @@ const Subscribe = () => {
               // Create subscription in database
               await createSubscription(user.id);
 
-              alert("Subscription activated successfully!");
-              navigate("/dashboard");
+              document
+                .querySelector<HTMLIFrameElement>(".flwco--payment-frame")
+                ?.remove();
+              navigate("/dashboard", { replace: true });
             } else {
               alert("Payment verification failed");
             }

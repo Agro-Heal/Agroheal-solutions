@@ -20,7 +20,6 @@ const Courses = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="pb-0">
-        {/* ── Hero Section ─────────────────────────────────── */}
         <section className="relative overflow-hidden bg-green-800 px-6 md:px-12 pt-14 pb-24">
           {/* Background blobs */}
           <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-white/5 blur-3xl pointer-events-none" />
@@ -223,7 +222,8 @@ const Courses = () => {
                           </span>
                           <span className="inline-flex items-center gap-1">
                             <BookOpen className="w-3.5 h-3.5" />
-                            {course?.lessons.length} lessons
+                            {course?.lessons.length}
+                            {course?.lessons.length > 1 ? "lessons" : "lesson"}
                           </span>
                         </div>
                         <span className="inline-flex items-center gap-1 text-yellow-500 font-semibold">
