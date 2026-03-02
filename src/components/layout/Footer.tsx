@@ -3,21 +3,19 @@ import { Leaf, Mail, Phone, MapPin } from "lucide-react";
 
 const footerLinks = {
   platform: [
-    { name: "Courses", href: "/courses" },
-    { name: "Farm Slots", href: "/slots" },
-    { name: "Pricing", href: "/pricing" },
-    { name: "Affiliate Program", href: "/affiliate" },
+    { name: "Courses", href: "/dashboard/courses" },
+    { name: "Farm Slots", href: "/dashboard/slots" },
+    { name: "Affiliate Program", href: "/dashboard" },
   ],
   company: [
     { name: "About Us", href: "/about" },
-    { name: "Contact", href: "/contact" },
     { name: "Careers", href: "/careers" },
-    { name: "Blog", href: "/blog" },
+    // { name: "Blog", href: "/blog" },
   ],
   legal: [
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Terms of Service", href: "/terms" },
-    { name: "Cookie Policy", href: "/cookies" },
+    { name: "Privacy Policy", href: "/legal" },
+    { name: "Terms of Service", href: "/legal" },
+    { name: "Cookie Policy", href: "/legal" },
   ],
 };
 
