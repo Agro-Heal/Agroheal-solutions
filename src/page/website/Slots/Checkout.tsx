@@ -481,7 +481,7 @@ const Checkout = () => {
                       <button
                         type="button"
                         onClick={incrementSlot}
-                        disabled={slotQuantity >= 10}
+                        disabled={slotQuantity >= 100}
                         className="w-10 h-10 rounded-xl border border-border bg-background flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         <Plus className="w-4 h-4" />
