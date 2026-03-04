@@ -17,7 +17,7 @@ declare global {
 }
 
 const Subscribe = () => {
-  const SubscribeFee = 1000;
+  const SubscribeFee = 100;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -119,8 +119,6 @@ const Subscribe = () => {
   };
 
   const handlePaystackPayment = () => {
-    console.log("=== PAYSTACK PAYMENT DEBUG ===");
-
     if (!user) {
       console.error("No user found");
       navigate("/login");
@@ -181,8 +179,9 @@ const Subscribe = () => {
 
             // Call async function but don't await it in the callback
             createSubscription(user.id)
-              .then(() => {
+              .then(async () => {
                 handler.close();
+                await supabase.auth.refreshSession();
                 navigate("/dashboard", { replace: true });
               })
               .catch((error) => {
@@ -190,8 +189,6 @@ const Subscribe = () => {
                 alert(
                   "Failed to activate subscription. Please contact support.",
                 );
-              })
-              .finally(() => {
                 setLoading(false);
               });
           } else {
@@ -211,70 +208,67 @@ const Subscribe = () => {
     }
   };
 
-  const handleFlutterwavePayment = () => {
-    if (!user) {
-      console.log("Please login first");
-      navigate("/login");
-      return;
-    }
+  // const handleFlutterwavePayment = () => {
+  //   if (!user) {
+  //     console.log("Please login first");
+  //     navigate("/login");
+  //     return;
+  //   }
 
-    if (!window.FlutterwaveCheckout) {
-      console.error("Flutterwave is not loaded yet");
-      alert("Payment system is loading. Please try again in a moment.");
-      setLoading(false);
-      return;
-    }
+  //   if (!window.FlutterwaveCheckout) {
+  //     console.error("Flutterwave is not loaded yet");
+  //     alert("Payment system is loading. Please try again in a moment.");
+  //     setLoading(false);
+  //     return;
+  //   }
 
-    setLoading(true);
+  //   setLoading(true);
 
-    try {
-      window.FlutterwaveCheckout({
-        public_key: import.meta.env.VITE_FLUTTERWAVE_KEY,
-        tx_ref: `SUB_${Date.now()}_${user.id.slice(0, 8)}`,
-        amount: SubscribeFee,
-        currency: "NGN",
-        payment_options: "card,ussd,banktransfer",
-        customer: {
-          email: user.email,
-          name: user.user_metadata?.full_name || user.email,
-        },
-        customizations: {
-          title: "Platform Subscription",
-          description: "Monthly subscription payment",
-          logo: "https://your-logo-url.com/logo.png", // Add your logo URL
-        },
-        callback: async function (data: any) {
-          console.log("Payment response:", data);
-          try {
-            if (data.status === "successful") {
-              // Create subscription in database
-              await createSubscription(user.id);
-
-              document
-                .querySelector<HTMLIFrameElement>(".flwco--payment-frame")
-                ?.remove();
-              navigate("/dashboard", { replace: true });
-            } else {
-              alert("Payment verification failed");
-            }
-          } catch (error) {
-            console.error("Error creating subscription:", error);
-            alert("Failed to activate subscription. Please contact support.");
-          } finally {
-            setLoading(false);
-          }
-        },
-        onclose: function () {
-          setLoading(false);
-          console.log("Payment cancelled");
-        },
-      });
-    } catch (error) {
-      console.error("Error initializing Flutterwave:", error);
-      alert("Failed to initialize payment. Please try again.");
-      setLoading(false);
-    }
-  };
+  //   try {
+  //     window.FlutterwaveCheckout({
+  //       public_key: import.meta.env.VITE_FLUTTERWAVE_KEY,
+  //       tx_ref: `SUB_${Date.now()}_${user.id.slice(0, 8)}`,
+  //       amount: SubscribeFee,
+  //       currency: "NGN",
+  //       payment_options: "card,ussd,banktransfer",
+  //       customer: {
+  //         email: user.email,
+  //         name: user.user_metadata?.full_name || user.email,
+  //       },
+  //       customizations: {
+  //         title: "Platform Subscription",
+  //         description: "Monthly subscription payment",
+  //         logo: "https://your-logo-url.com/logo.png",
+  //       },
+  //       callback: async function (data: any) {
+  //         // console.log("Payment response:", data);
+  //         try {
+  //           if (data.status === "successful" || data.status === "completed") {
+  //             // Create subscription in database
+  //             await createSubscription(user.id);
+  //             await supabase.auth.refreshSession();
+  //             navigate("/dashboard", { replace: true });
+  //           } else {
+  //             alert("Payment verification failed");
+  //           }
+  //         } catch (error) {
+  //           console.error("Error creating subscription:", error);
+  //           alert("Failed to activate subscription. Please contact support.");
+  //         } finally {
+  //           setLoading(false);
+  //         }
+  //       },
+  //       onclose: function () {
+  //         setLoading(false);
+  //         console.log("Payment cancelled");
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.error("Error initializing Flutterwave:", error);
+  //     alert("Failed to initialize payment. Please try again.");
+  //     setLoading(false);
+  //   }
+  // };
 
   const handlePayment = () => {
     console.log("Payment method:", paymentMethod);
@@ -286,7 +280,7 @@ const Subscribe = () => {
     if (paymentMethod === "paystack") {
       handlePaystackPayment();
     } else {
-      handleFlutterwavePayment();
+      handlePaystackPayment();
     }
   };
 
@@ -367,7 +361,7 @@ const Subscribe = () => {
                 </ul>
 
                 {/* Payment Method Selection */}
-                <div className="mb-6">
+                <div className="mb-6 hidden">
                   <p className="text-sm font-medium text-foreground mb-3">
                     Choose Payment Method
                   </p>
@@ -384,7 +378,7 @@ const Subscribe = () => {
                     </button>
                     <button
                       onClick={() => setPaymentMethod("flutterwave")}
-                      className={`p-3 rounded-lg border-2 transition-all ${
+                      className={`hidden p-3 rounded-lg border-2 transition-all ${
                         paymentMethod === "flutterwave"
                           ? "border-green-800 bg-green-800/10"
                           : "border-border hover:border-green-800/50"

@@ -56,7 +56,7 @@ const Courses = () => {
                 {/* Stats row */}
                 <div className="flex flex-wrap gap-6 mb-8">
                   {[
-                    { icon: BookOpen, label: "12+ Lessons" },
+                    { icon: BookOpen, label: "22 Lessons" },
                     { icon: Users, label: "Beginner Friendly" },
                     { icon: Play, label: "Video Courses" },
                   ].map(({ icon: Icon, label }) => (
@@ -78,7 +78,7 @@ const Courses = () => {
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </a>
-                  <Link to="/signup">
+                  {/* <Link to="/signup">
                     <Button
                       variant="outline"
                       className="border-white/30 text-white hover:bg-white/10 rounded-xl px-6 h-11 bg-transparent"
@@ -86,7 +86,7 @@ const Courses = () => {
                       Start learning
                       <BookOpen className="w-4 h-4 ml-2" />
                     </Button>
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
 

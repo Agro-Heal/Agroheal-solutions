@@ -76,7 +76,7 @@ const FarmingInitiativePopup = () => {
                 </p>
 
                 {/* ROI badges */}
-                <div className="flex gap-2 mt-4 relative z-10">
+                <div className="hidden gap-2 mt-4 relative z-10">
                   <div className="bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-center">
                     <p className="text-white font-bold text-base">300%+</p>
                     <p className="text-green-300 text-xs">Pepper Yield</p>
@@ -118,7 +118,7 @@ const FarmingInitiativePopup = () => {
                 </ul>
 
                 {/* Event details */}
-                <div className="bg-gray-50 rounded-2xl p-4 mb-5 grid grid-cols-2 gap-3">
+                <div className="hidden bg-gray-50 rounded-2xl p-4 mb-5 grid-cols-2 gap-3">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-green-700 flex-shrink-0" />
                     <div>

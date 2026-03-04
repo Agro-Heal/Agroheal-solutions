@@ -67,7 +67,7 @@ const Signup = () => {
         .from("profiles")
         .select("id")
         .eq("referral_code", referral.toUpperCase())
-        .single();
+        .maybeSingle();
 
       if (referrer) referrerId = referrer.id;
     }
@@ -79,14 +79,29 @@ const Signup = () => {
       .toUpperCase();
 
     // Update the new user's profile
-    await supabase
-      .from("profiles")
-      .update({
+    // await supabase
+    //   .from("profiles")
+    //   .update({
+    //     full_name: name,
+    //     referral_code: myReferralCode,
+    //     referred_by: referrerId,
+    //   })
+    //   .eq("id", user.id);
+
+    const { error: profileError } = await supabase.from("profiles").upsert(
+      {
+        id: user.id,
         full_name: name,
         referral_code: myReferralCode,
         referred_by: referrerId,
-      })
-      .eq("id", user.id);
+        created_at: new Date().toISOString(),
+      },
+      { onConflict: "id" },
+    );
+
+    if (profileError) {
+      console.error("Profile creation failed:", profileError);
+    }
 
     // Success toast
     toast.success(
@@ -202,7 +217,7 @@ const Signup = () => {
                 value={referral}
                 onChange={(e) => setReferral(e.target.value)}
                 type="text"
-                disabled={referral.length > 0 ? true : false}
+                disabled={referral.length > 10 ? true : false}
                 placeholder="Enter referral code"
               />
             </div>

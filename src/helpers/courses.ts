@@ -722,6 +722,25 @@ export const COURSESDATA: Course[] = [
     free: true,
     category: "Soybeans Farming",
   },
+  {
+    id: 23,
+    Image: "",
+    slug: "ginger-&-pepper-webinar",
+    title: "Ginger and Pepper Webinar",
+    description: "Indepth training about ginger and peper.",
+    duration: "0h 3m",
+    lessons: [
+      {
+        id: "23-1",
+        title: "ginger and pepper webinar",
+        duration: "18:00",
+        videoId: "MdE2pqeVjJ8",
+      },
+    ],
+    rating: 4.8,
+    free: true,
+    category: "Giniger and Pepper Webinar",
+  },
 ];
 
 // Helper function to get course by slug
