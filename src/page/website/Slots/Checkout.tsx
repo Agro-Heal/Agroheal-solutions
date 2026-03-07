@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabaseClient";
+import * as Sentry from "@sentry/react";
 
 const Checkout = () => {
   const { toast } = useToast();
@@ -224,15 +225,16 @@ const Checkout = () => {
               await createSubscription(order.id);
 
               toast({
-                title: "Payment successful 🎉",
+                title: "Payment successful",
                 description: "Your slot has been secured!",
               });
 
               setTimeout(() => {
-                window.location.href = `https://chat.whatsapp.com/LlXB7iYXmTx8JpzKulzTvD`;
+                // window.location.href = `https://chat.whatsapp.com/LlXB7iYXmTx8JpzKulzTvD`;
+                window.location.reload();
               }, 2000);
             } catch (error: any) {
-              console.error("Update error:", error);
+              Sentry.captureException(error);
               toast({
                 title: "Warning",
                 description: "Payment received but failed to update record.",
@@ -256,7 +258,7 @@ const Checkout = () => {
       const handler = (window as any).PaystackPop.setup(config);
       handler.openIframe();
     } catch (error) {
-      console.error("Paystack error:", error);
+      Sentry.captureException(error);
       toast({
         title: "Payment Error",
         description:

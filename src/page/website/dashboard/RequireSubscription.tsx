@@ -17,6 +17,8 @@ export default function RequireSubscription({ children }: any) {
         .from("subscriptions")
         .select("expires_at")
         .eq("user_id", user.id)
+        .eq("status", "active")
+        .order("expires_at", { ascending: false })
         .maybeSingle();
 
       if (!sub || new Date(sub.expires_at) < new Date()) {
