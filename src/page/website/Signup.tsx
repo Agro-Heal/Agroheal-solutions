@@ -10,6 +10,8 @@ import { supabase } from "@/lib/supabaseClient";
 import toast, { Toaster } from "react-hot-toast";
 import { useSearchParams } from "react-router-dom";
 
+import * as Sentry from "@sentry/react";
+
 const Signup = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -40,6 +42,13 @@ const Signup = () => {
     setLoading(false);
 
     if (error) {
+      Sentry.captureException(error, {
+        extra: {
+          email,
+          action: "signup",
+        },
+      });
+
       toast.error(`${error.message}`, {
         duration: 5000,
         position: "top-right",
