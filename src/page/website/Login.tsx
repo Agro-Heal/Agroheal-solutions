@@ -31,7 +31,6 @@ const Login = () => {
     if (error) {
       Sentry.captureException(error, {
         extra: {
-          email,
           action: "login",
         },
       });
