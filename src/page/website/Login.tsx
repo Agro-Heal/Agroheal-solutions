@@ -8,6 +8,8 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import toast, { Toaster } from "react-hot-toast";
 
+import * as Sentry from "@sentry/react";
+
 const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -27,6 +29,13 @@ const Login = () => {
     setLoading(false);
 
     if (error) {
+      Sentry.captureException(error, {
+        extra: {
+          email,
+          action: "login",
+        },
+      });
+
       const errorNotify = () =>
         toast.error(`${error?.message}`, {
           duration: 5000,

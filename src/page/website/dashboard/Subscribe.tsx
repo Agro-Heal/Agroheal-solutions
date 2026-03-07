@@ -9,6 +9,8 @@ import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { CheckCircle, ArrowRight, Sparkles } from "lucide-react";
+import * as Sentry from "@sentry/react";
+
 declare global {
   interface Window {
     PaystackPop: any;
@@ -44,7 +46,6 @@ const Subscribe = () => {
     }
   }, [navigate]);
 
-  // ✅ upsert subscription — safe for retries
   const createSubscription = async (userId: string) => {
     const now = new Date();
     const expires = new Date();
@@ -64,10 +65,17 @@ const Subscribe = () => {
       )
       .select();
 
-    if (error) throw error;
+    if (error) {
+      Sentry.captureException(error, {
+        extra: {
+          action: "subscribe",
+        },
+      });
+      throw error;
+    }
   };
 
-  // ✅ ensure profile exists — creates it if missing
+  // ensure profile exists — creates it if missing
   const ensureProfile = async (userId: string, userMeta: any) => {
     const { data: existing } = await supabase
       .from("profiles")
@@ -152,7 +160,7 @@ const Subscribe = () => {
                 return;
               }
 
-              // ✅ create subscription + profile in parallel
+              // create subscription + profile in parallel
               await Promise.all([
                 createSubscription(session.user.id),
                 ensureProfile(session.user.id, session.user.user_metadata),
@@ -176,7 +184,7 @@ const Subscribe = () => {
 
       handler.openIframe();
     } catch (error: any) {
-      console.error("FULL ERROR:", error);
+      Sentry.captureException(error); // capture any error
       alert(`Failed to initialize payment: ${error.message}`);
       setLoading(false);
     }
