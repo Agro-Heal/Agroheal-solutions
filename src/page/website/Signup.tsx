@@ -108,7 +108,12 @@ const Signup = () => {
     );
 
     if (profileError) {
-      Sentry.captureException(profileError);
+      Sentry.captureException(profileError, {
+        extra: {
+          action: "profile_creation",
+          userId: user.id,
+        },
+      });
 
       toast.error(
         "Account created but profile setup failed. Please contact support.",
