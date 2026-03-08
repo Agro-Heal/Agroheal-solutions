@@ -34,7 +34,7 @@ Sentry.init({
     Sentry.browserTracingIntegration(),
     Sentry.replayIntegration(),
   ],
-  release: "agroheal@1.0.0",
+  release: "agroheal@0.0.0",
   tracePropagationTargets: [
     "localhost",
     /^https:\/\/agroheal\.solutions\/.com/,
