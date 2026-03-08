@@ -37,7 +37,7 @@ Sentry.init({
   release: "agroheal@0.0.0",
   tracePropagationTargets: [
     "localhost",
-    /^https:\/\/agroheal\.solutions\/.com/,
+    /^https:\/\/agroheal\.solutions/,
   ],
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
