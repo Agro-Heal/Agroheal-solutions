@@ -11,12 +11,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabaseClient";
+import * as Sentry from "@sentry/react";
 
 const Checkout = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [slotQuantity, setSlotQuantity] = useState(1);
   const slotPrice = 2000;
   const totalPrice = slotPrice * slotQuantity;
@@ -198,7 +200,7 @@ const Checkout = () => {
         currency: "NGN",
         ref: `SLOT_${order.id}_${Date.now()}`,
         callback: function (response: any) {
-          console.log("Payment successful:", response);
+          // console.log("Payment successful:", response); // TODO: TO BE REMOVED
 
           // Handle async operations separately
           const updatePaymentStatus = async () => {
@@ -212,7 +214,8 @@ const Checkout = () => {
                 .eq("id", order.id);
 
               if (updateError) {
-                console.error("Update error:", updateError);
+                Sentry.captureException(updateError);
+                setIsProcessing(false);
                 toast({
                   title: "Warning",
                   description: "Payment received but failed to update record.",
@@ -224,15 +227,17 @@ const Checkout = () => {
               await createSubscription(order.id);
 
               toast({
-                title: "Payment successful 🎉",
+                title: "Payment successful",
                 description: "Your slot has been secured!",
               });
 
               setTimeout(() => {
-                window.location.href = `https://chat.whatsapp.com/LlXB7iYXmTx8JpzKulzTvD`;
+                // window.location.href = `https://chat.whatsapp.com/LlXB7iYXmTx8JpzKulzTvD`;
+                navigate("/dashboard/slots-subscription");
               }, 2000);
             } catch (error: any) {
-              console.error("Update error:", error);
+              Sentry.captureException(error);
+              setIsProcessing(false);
               toast({
                 title: "Warning",
                 description: "Payment received but failed to update record.",
@@ -256,7 +261,7 @@ const Checkout = () => {
       const handler = (window as any).PaystackPop.setup(config);
       handler.openIframe();
     } catch (error) {
-      console.error("Paystack error:", error);
+      Sentry.captureException(error);
       toast({
         title: "Payment Error",
         description:
@@ -316,7 +321,7 @@ const Checkout = () => {
           logo: "https://your-logo-url.com/logo.png", // Optional
         },
         callback: async function (response: any) {
-          console.log("Payment successful:", response);
+          // console.log("Payment successful:", response); // TODO: TO BE REMOVED LATER
 
           if (response.status === "successful") {
             try {
@@ -343,6 +348,7 @@ const Checkout = () => {
               }, 1000);
             } catch (error) {
               console.error("Update error:", error);
+              Sentry.captureException(error);
               toast({
                 title: "Warning",
                 description: "Payment received but failed to update record.",
@@ -350,7 +356,6 @@ const Checkout = () => {
               });
             }
           }
-
           setIsProcessing(false);
         },
         onclose: function () {
@@ -363,7 +368,7 @@ const Checkout = () => {
         },
       });
     } catch (error) {
-      console.error("Flutterwave error:", error);
+      Sentry.captureException(error);
       toast({
         title: "Payment Error",
         description: "Failed to initialize payment. Please try again.",

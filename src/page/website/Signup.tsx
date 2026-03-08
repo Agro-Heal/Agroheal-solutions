@@ -108,7 +108,29 @@ const Signup = () => {
     );
 
     if (profileError) {
-      console.error("Profile creation failed:", profileError);
+      Sentry.captureException(profileError, {
+        extra: {
+          action: "profile_creation",
+          userId: user.id,
+        },
+      });
+
+      toast.error(
+        "Account created but profile setup failed. Please contact support.",
+        {
+          duration: 5000,
+          position: "top-right",
+          style: {
+            background: "crimson",
+            color: "#fff",
+            borderRadius: "10px",
+            padding: "12px 16px",
+            fontSize: "14px",
+          },
+        },
+      );
+
+      return;
     }
 
     // Success toast
