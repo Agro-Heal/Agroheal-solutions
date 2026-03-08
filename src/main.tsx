@@ -33,17 +33,22 @@ Sentry.init({
   integrations: [
     Sentry.browserTracingIntegration(),
     Sentry.replayIntegration(),
+    Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
   ],
   release: "agroheal@0.0.0",
   tracePropagationTargets: [
     "localhost",
     /^https:\/\/agroheal\.solutions\/.com/,
   ],
+  enableLogs: true,
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
   sendDefaultPii: true,
 });
+Sentry.metrics.count("button_click", 1);
+Sentry.metrics.gauge("page_load_time", 150);
+Sentry.metrics.distribution("response_time", 200);
 
 const route = createBrowserRouter([
   {
