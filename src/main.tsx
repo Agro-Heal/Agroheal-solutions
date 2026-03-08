@@ -30,8 +30,18 @@ import Legal from "./page/website/Legal";
 
 Sentry.init({
   dsn: "https://b74e0d2a3ed4c6b73902514350956ee3@o4511001958416384.ingest.de.sentry.io/4511001967722576",
-  integrations: [Sentry.browserTracingIntegration()],
-  tracePropagationTargets: ["localhost", /^https:\/\/yourserver\.io\/api/],
+  integrations: [
+    Sentry.browserTracingIntegration(),
+    Sentry.replayIntegration(),
+  ],
+  release: "agroheal@1.0.0",
+  tracePropagationTargets: [
+    "localhost",
+    /^https:\/\/agroheal\.solutions\/.com/,
+  ],
+  tracesSampleRate: 1.0,
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
   sendDefaultPii: true,
 });
 
