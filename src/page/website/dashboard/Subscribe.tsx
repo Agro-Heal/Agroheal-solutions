@@ -189,7 +189,7 @@ const Subscribe = () => {
       handler.openIframe();
     } catch (error: any) {
       Sentry.captureException(error); // capture any error
-      Sentry.metrics.count("payment-failed", 1);
+      Sentry.metrics.count("payment_failed", 1);
       alert(`Failed to initialize payment: ${error.message}`);
       setLoading(false);
     }
