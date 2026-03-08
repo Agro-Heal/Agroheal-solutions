@@ -118,6 +118,7 @@ const Subscribe = () => {
       return;
     }
 
+    Sentry.metrics.count("payment_initiated", 1);
     setLoading(true);
 
     try {
@@ -149,6 +150,7 @@ const Subscribe = () => {
         onClose: () => setLoading(false),
         callback: function (response: any) {
           if (response.status === "success") {
+            Sentry.metrics.count("payment_success", 1);
             const run = async () => {
               const {
                 data: { session },
@@ -173,6 +175,8 @@ const Subscribe = () => {
 
             run().catch((err) => {
               console.error("Payment post-processing failed:", err);
+              Sentry.metrics.count("payment_failed", 1);
+
               setShowSuccess(true); // payment went through, show success anyway
             });
           } else {
@@ -185,6 +189,7 @@ const Subscribe = () => {
       handler.openIframe();
     } catch (error: any) {
       Sentry.captureException(error); // capture any error
+      Sentry.metrics.count("payment_failed", 1);
       alert(`Failed to initialize payment: ${error.message}`);
       setLoading(false);
     }

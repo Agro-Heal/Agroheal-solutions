@@ -173,7 +173,7 @@ const Checkout = () => {
       });
       return;
     }
-
+    Sentry.metrics.count("payment_initiated", 1);
     setIsProcessing(true);
 
     const order = await createCheckout("paystack");
@@ -201,6 +201,7 @@ const Checkout = () => {
         ref: `SLOT_${order.id}_${Date.now()}`,
         callback: function (response: any) {
           // console.log("Payment successful:", response); // TODO: TO BE REMOVED
+          Sentry.metrics.count("payment_success", 1);
 
           // Handle async operations separately
           const updatePaymentStatus = async () => {
@@ -215,6 +216,8 @@ const Checkout = () => {
 
               if (updateError) {
                 Sentry.captureException(updateError);
+                Sentry.metrics.count("payment_failed", 1);
+
                 setIsProcessing(false);
                 toast({
                   title: "Warning",
@@ -237,6 +240,8 @@ const Checkout = () => {
               }, 2000);
             } catch (error: any) {
               Sentry.captureException(error);
+              Sentry.metrics.count("payment_failed", 1);
+
               setIsProcessing(false);
               toast({
                 title: "Warning",
