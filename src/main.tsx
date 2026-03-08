@@ -40,7 +40,7 @@ Sentry.init({
     /^https:\/\/agroheal\.solutions\/.com/,
   ],
   tracesSampleRate: 1.0,
-  replaysSessionSampleRate: 0.1,
+  replaysSessionSampleRate: 1.0,
   replaysOnErrorSampleRate: 1.0,
   sendDefaultPii: true,
 });
