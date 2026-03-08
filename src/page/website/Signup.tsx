@@ -150,6 +150,7 @@ const Signup = () => {
       },
     );
 
+    Sentry.metrics.count("signup_completed", 1);
     setTimeout(() => {
       navigate("/login");
     }, 2000);

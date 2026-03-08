@@ -65,6 +65,7 @@ const Login = () => {
           fontSize: "14px",
         },
       });
+    Sentry.metrics.count("login_completed", 1);
     notify();
     setTimeout(() => {
       navigate("/dashboard");
