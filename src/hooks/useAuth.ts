@@ -7,19 +7,25 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    // Get initial session
+    const getInitialSession = async () => {
+      const { data } = await supabase.auth.getSession();
       setSession(data.session);
       setLoading(false);
-    });
+    };
 
-    // Listen for login/logout changes
+    getInitialSession();
+
+    // Listen to auth state changes in real-time
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
       },
     );
 
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      listener?.subscription.unsubscribe();
+    };
   }, []);
 
   return { session, loading };
