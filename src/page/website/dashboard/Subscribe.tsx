@@ -25,6 +25,7 @@ const Subscribe = () => {
   const [user, setUser] = useState<any>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [activationError, setActivationError] = useState(false);
+  const [paymentReference, setPaymentReference] = useState<string | null>(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -96,6 +97,7 @@ const Subscribe = () => {
         onClose: () => setLoading(false),
         callback: function (response: any) {
           if (response.status === "success") {
+            setPaymentReference(response.reference);
             Sentry.metrics.count("payment_success", 1);
 
             const run = async () => {
@@ -155,11 +157,18 @@ const Subscribe = () => {
         return;
       }
 
+      // if there is no payment reference returned from paystack verify-payment.. bounc back to /subscribe
+      if (!paymentReference) {
+        navigate("/subscribe");
+        return;
+      }
+
+      // Reuse payment reference in retry function to retry same payment to prevent duplicate issues
       const { data, error } = await supabase.functions.invoke(
         "verify-payment",
         {
           body: {
-            reference: `RETRY_${Date.now()}_${session.user.id.slice(0, 8)}`,
+            reference: paymentReference,
             provider: "paystack",
             userId: session.user.id,
           },
