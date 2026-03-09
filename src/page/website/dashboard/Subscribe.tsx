@@ -97,8 +97,8 @@ const Subscribe = () => {
         onClose: () => setLoading(false),
         callback: function (response: any) {
           if (response.status === "success") {
-            setPaymentReference(response.reference);
             Sentry.metrics.count("payment_success", 1);
+            setPaymentReference(response.reference);
 
             const run = async () => {
               const { data, error } = await supabase.functions.invoke(
