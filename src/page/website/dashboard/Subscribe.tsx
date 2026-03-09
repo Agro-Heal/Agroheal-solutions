@@ -17,6 +17,7 @@ declare global {
   }
 }
 
+// review this codebase
 const Subscribe = () => {
   const SubscribeFee = 1000;
   const navigate = useNavigate();
