@@ -51,10 +51,15 @@ const DashboardLayout = () => {
 
   const hiddenPath = HIDDEN_ROUTES.includes(normalizedPath);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
-  };
+  async function handleLogout() {
+    try {
+      await supabase.auth.signOut();
+      navigate("/", { replace: true });
+    } catch (error) {
+      console.error("Logout error:", error);
+      navigate("/", { replace: true });
+    }
+  }
 
   if (hiddenPath) {
     return <Outlet />;

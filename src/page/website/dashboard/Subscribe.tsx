@@ -48,62 +48,6 @@ const Subscribe = () => {
     }
   }, [navigate]);
 
-  const createSubscription = async (userId: string) => {
-    const now = new Date();
-    const expires = new Date();
-    expires.setDate(now.getDate() + 365);
-
-    const { error } = await supabase
-      .from("subscriptions")
-      .upsert(
-        {
-          user_id: userId,
-          plan: "platform",
-          status: "active",
-          started_at: now.toISOString(),
-          expires_at: expires.toISOString(),
-        },
-        { onConflict: "user_id" },
-      )
-      .select();
-
-    if (error) {
-      Sentry.captureException(error, {
-        extra: {
-          action: "subscribe",
-        },
-      });
-      throw error;
-    }
-  };
-
-  // ensure profile exists — creates it if missing
-  const ensureProfile = async (userId: string, userMeta: any) => {
-    const { data: existing } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("id", userId)
-      .maybeSingle();
-
-    if (!existing) {
-      await supabase
-        .from("profiles")
-        .upsert(
-          {
-            id: userId,
-            full_name: userMeta?.full_name || userMeta?.email || "",
-            referral_code: Math.random()
-              .toString(36)
-              .substring(2, 8)
-              .toUpperCase(),
-            created_at: new Date().toISOString(),
-          },
-          { onConflict: "id" },
-        )
-        .select();
-    }
-  };
-
   const handlePaystackPayment = () => {
     if (!user) {
       navigate("/login");
@@ -150,106 +94,42 @@ const Subscribe = () => {
           ],
         },
         onClose: () => setLoading(false),
-        // callback: function (response: any) {
-        //   if (response.status === "success") {
-        //     Sentry.metrics.count("payment_success", 1);
-        //     const run = async () => {
-        //       const {
-        //         data: { session },
-        //       } = await supabase.auth.getSession();
-
-        //       if (!session) {
-        //         alert("Session expired. Please log in and try again.");
-        //         navigate("/login");
-        //         return;
-        //       }
-
-        //       // Create subscription first (critical path)
-        //       await createSubscription(session.user.id);
-
-        //       // Profile creation is best-effort — don't block the success flow
-        //       try {
-        //         await ensureProfile(
-        //           session.user.id,
-        //           session.user.user_metadata,
-        //         );
-        //       } catch (profileErr) {
-        //         Sentry.captureException(profileErr, {
-        //           extra: { action: "ensure_profile_after_payment" },
-        //         });
-        //       }
-
-        //       handler.close();
-        //       await supabase.auth.refreshSession();
-        //       setLoading(false);
-        //       setShowSuccess(true);
-        //     };
-
-        //     run().catch((err) => {
-        //       console.error("Payment post-processing failed:", err);
-        //       Sentry.captureException(err, {
-        //         extra: {
-        //           action: "post_payment_subscription_creation",
-        //           userId: user?.id,
-        //         },
-        //       });
-        //       setLoading(false);
-        //       setActivationError(true);
-        //     });
-        //   } else {
-        //     alert("Payment verification failed");
-        //     setLoading(false);
-        //   }
-        // },
         callback: function (response: any) {
           if (response.status === "success") {
             Sentry.metrics.count("payment_success", 1);
-            const run = async () => {
-              const {
-                data: { session },
-              } = await supabase.auth.getSession();
 
-              if (!session) {
-                alert("Session expired. Please log in and try again.");
-                navigate("/login");
+            const run = async () => {
+              const { data, error } = await supabase.functions.invoke(
+                "verify-payment",
+                {
+                  body: {
+                    reference: response.reference,
+                    provider: "paystack",
+                    userId: user.id,
+                  },
+                },
+              );
+
+              if (error || !data?.success) {
+                Sentry.captureException(error, {
+                  extra: { action: "verify_payment", userId: user.id },
+                });
+                setActivationError(true);
                 return;
               }
 
-              await createSubscription(session.user.id);
-
-              try {
-                await ensureProfile(
-                  session.user.id,
-                  session.user.user_metadata,
-                );
-              } catch (profileErr) {
-                Sentry.captureException(profileErr, {
-                  extra: { action: "ensure_profile_after_payment" },
-                });
-              }
-
-              try {
-                await supabase.auth.refreshSession();
-              } catch (refreshErr) {
-                Sentry.captureException(refreshErr, {
-                  extra: { action: "session_refresh_after_payment" },
-                });
-              }
-
-              setLoading(false);
+              await supabase.auth.refreshSession();
               setShowSuccess(true);
             };
 
-            run().catch((err) => {
-              Sentry.captureException(err, {
-                extra: {
-                  action: "post_payment_subscription_creation",
-                  userId: user?.id,
-                },
-              });
-              setLoading(false);
-              setActivationError(true);
-            });
+            run()
+              .catch((err) => {
+                Sentry.captureException(err, {
+                  extra: { action: "post_payment", userId: user.id },
+                });
+                setActivationError(true);
+              })
+              .finally(() => setLoading(false));
           }
         },
       });
@@ -274,7 +154,26 @@ const Subscribe = () => {
         navigate("/login");
         return;
       }
-      await createSubscription(session.user.id);
+
+      const { data, error } = await supabase.functions.invoke(
+        "verify-payment",
+        {
+          body: {
+            reference: `RETRY_${Date.now()}_${session.user.id.slice(0, 8)}`,
+            provider: "paystack",
+            userId: session.user.id,
+          },
+        },
+      );
+
+      if (error || !data?.success) {
+        Sentry.captureException(error, {
+          extra: { action: "retry_activation", userId: user?.id },
+        });
+        setActivationError(true);
+        return;
+      }
+
       await supabase.auth.refreshSession();
       setShowSuccess(true);
     } catch (err) {
@@ -285,10 +184,6 @@ const Subscribe = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handlePayment = () => {
-    handlePaystackPayment();
   };
 
   return (
@@ -372,7 +267,7 @@ const Subscribe = () => {
                   </ul>
 
                   <Button
-                    onClick={handlePayment}
+                    onClick={handlePaystackPayment}
                     disabled={loading}
                     className="w-full bg-green-800 text-white hover:bg-green-900 disabled:opacity-50"
                   >

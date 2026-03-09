@@ -34,11 +34,6 @@ export default function Header() {
     [isScrolled],
   );
 
-  function handleLogout() {
-    localStorage.clear();
-    window.location.reload();
-  }
-
   return (
     <nav className={navClassName}>
       <div className="container mx-auto px-4">
@@ -80,29 +75,14 @@ export default function Header() {
             ))}
           </div>
 
-          {/* Desktop CTA */}
-          {localStorage.getItem("sb-ptowfacejneezksyhntk-auth-token") ? (
-            <div className="hidden md:flex items-center gap-4">
-              <Button className="bg-green-800 text-white">
-                <Link to="/dashboard">Dashboard</Link>
-              </Button>
-              <Button
-                className="bg-green-800 text-white"
-                onClick={handleLogout}
-              >
-                <Link to="">Logout</Link>
-              </Button>
-            </div>
-          ) : (
-            <div className="hidden md:flex items-center gap-4">
-              <Button className="bg-green-800 text-white">
-                <Link to="/login">Login</Link>
-              </Button>
-              <Button className="bg-green-800 text-white">
-                <Link to="/dashboard/courses">Explore Courses</Link>
-              </Button>
-            </div>
-          )}
+          <div className="hidden md:flex items-center gap-4">
+            <Link to="/login">
+              <Button className="bg-green-800 text-white">Login</Button>
+            </Link>
+            <Link to="/signup">
+              <Button className="bg-green-800 text-white">Get started</Button>
+            </Link>
+          </div>
 
           {/* Mobile Menu Button */}
           <button
@@ -134,28 +114,19 @@ export default function Header() {
                     {link.name}
                   </Link>
                 ))}
-                {localStorage.getItem("sb-ptowfacejneezksyhntk-auth-token") ? (
-                  <div className="pt-4 flex flex-col gap-3">
-                    <Button className="bg-green-800 text-white">
-                      <Link to="/dashboard">Dashboard</Link>
+
+                <div className="pt-4 flex flex-col gap-3">
+                  <Link to="/login" className="w-full">
+                    <Button className="w-full bg-green-800 text-white">
+                      Login
                     </Button>
-                    <Button
-                      className="bg-green-800 text-white"
-                      onClick={handleLogout}
-                    >
-                      <Link to="">Logout</Link>
+                  </Link>
+                  <Link to="/signup" className="w-full">
+                    <Button className="w-full bg-green-800 text-white">
+                      Get started
                     </Button>
-                  </div>
-                ) : (
-                  <div className="pt-4 flex flex-col gap-3">
-                    <Button className="bg-green-800 text-white">
-                      <Link to="/login">Login</Link>
-                    </Button>
-                    <Button className="bg-green-800 text-white">
-                      <Link to="/dashboard/courses">Explore Courses</Link>
-                    </Button>
-                  </div>
-                )}
+                  </Link>
+                </div>
               </div>
             </motion.div>
           )}
