@@ -27,6 +27,7 @@ import UpdatePasswordForm from "./page/UpdatePassword";
 import ProfileComponent from "./page/website/dashboard/Profile";
 import MonthlyPayment from "./page/website/Slots/MonthlyPayment";
 import Legal from "./page/website/Legal";
+import { Analytics } from "@vercel/analytics/react";
 
 Sentry.init({
   dsn: "https://b74e0d2a3ed4c6b73902514350956ee3@o4511001958416384.ingest.de.sentry.io/4511001967722576",
@@ -35,10 +36,7 @@ Sentry.init({
     Sentry.replayIntegration(),
   ],
   release: "agroheal@0.0.0",
-  tracePropagationTargets: [
-    "localhost",
-    /^https:\/\/agroheal\.solutions/,
-  ],
+  tracePropagationTargets: ["localhost", /^https:\/\/agroheal\.solutions/],
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
@@ -99,5 +97,6 @@ const route = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RouterProvider router={route} />
+    <Analytics />
   </StrictMode>,
 );
