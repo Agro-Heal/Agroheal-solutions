@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, Crown } from "lucide-react";
+import { Check, Crown, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,6 +23,7 @@ const Subscribe = () => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [activationError, setActivationError] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -148,6 +149,57 @@ const Subscribe = () => {
           ],
         },
         onClose: () => setLoading(false),
+        // callback: function (response: any) {
+        //   if (response.status === "success") {
+        //     Sentry.metrics.count("payment_success", 1);
+        //     const run = async () => {
+        //       const {
+        //         data: { session },
+        //       } = await supabase.auth.getSession();
+
+        //       if (!session) {
+        //         alert("Session expired. Please log in and try again.");
+        //         navigate("/login");
+        //         return;
+        //       }
+
+        //       // Create subscription first (critical path)
+        //       await createSubscription(session.user.id);
+
+        //       // Profile creation is best-effort — don't block the success flow
+        //       try {
+        //         await ensureProfile(
+        //           session.user.id,
+        //           session.user.user_metadata,
+        //         );
+        //       } catch (profileErr) {
+        //         Sentry.captureException(profileErr, {
+        //           extra: { action: "ensure_profile_after_payment" },
+        //         });
+        //       }
+
+        //       handler.close();
+        //       await supabase.auth.refreshSession();
+        //       setLoading(false);
+        //       setShowSuccess(true);
+        //     };
+
+        //     run().catch((err) => {
+        //       console.error("Payment post-processing failed:", err);
+        //       Sentry.captureException(err, {
+        //         extra: {
+        //           action: "post_payment_subscription_creation",
+        //           userId: user?.id,
+        //         },
+        //       });
+        //       setLoading(false);
+        //       setActivationError(true);
+        //     });
+        //   } else {
+        //     alert("Payment verification failed");
+        //     setLoading(false);
+        //   }
+        // },
         callback: function (response: any) {
           if (response.status === "success") {
             Sentry.metrics.count("payment_success", 1);
@@ -162,35 +214,74 @@ const Subscribe = () => {
                 return;
               }
 
-              // create subscription + profile in parallel
-              await Promise.all([
-                createSubscription(session.user.id),
-                ensureProfile(session.user.id, session.user.user_metadata),
-              ]);
+              await createSubscription(session.user.id);
 
-              handler.close();
-              await supabase.auth.refreshSession();
-              setShowSuccess(true); // ← show success modal, it handles redirect
+              try {
+                await ensureProfile(
+                  session.user.id,
+                  session.user.user_metadata,
+                );
+              } catch (profileErr) {
+                Sentry.captureException(profileErr, {
+                  extra: { action: "ensure_profile_after_payment" },
+                });
+              }
+
+              try {
+                await supabase.auth.refreshSession();
+              } catch (refreshErr) {
+                Sentry.captureException(refreshErr, {
+                  extra: { action: "session_refresh_after_payment" },
+                });
+              }
+
+              setLoading(false);
+              setShowSuccess(true);
             };
 
             run().catch((err) => {
-              console.error("Payment post-processing failed:", err);
-              Sentry.metrics.count("payment_failed", 1);
-
-              setShowSuccess(true); // payment went through, show success anyway
+              Sentry.captureException(err, {
+                extra: {
+                  action: "post_payment_subscription_creation",
+                  userId: user?.id,
+                },
+              });
+              setLoading(false);
+              setActivationError(true);
             });
-          } else {
-            alert("Payment verification failed");
-            setLoading(false);
           }
         },
       });
 
       handler.openIframe();
     } catch (error: any) {
-      Sentry.captureException(error); // capture any error
+      Sentry.captureException(error);
       Sentry.metrics.count("payment_failed", 1);
       alert(`Failed to initialize payment: ${error.message}`);
+      setLoading(false);
+    }
+  };
+
+  const retryActivation = async () => {
+    setActivationError(false);
+    setLoading(true);
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/login");
+        return;
+      }
+      await createSubscription(session.user.id);
+      await supabase.auth.refreshSession();
+      setShowSuccess(true);
+    } catch (err) {
+      Sentry.captureException(err, {
+        extra: { action: "retry_activation", userId: user?.id },
+      });
+      setActivationError(true);
+    } finally {
       setLoading(false);
     }
   };
@@ -204,6 +295,11 @@ const Subscribe = () => {
       <PaymentSuccess
         isOpen={showSuccess}
         userName={user?.user_metadata?.full_name || user?.email}
+      />
+      <ActivationErrorModal
+        isOpen={activationError}
+        onRetry={retryActivation}
+        loading={loading}
       />
       <div className="min-h-screen bg-background">
         <main className="pt-10 pb-16">
@@ -502,6 +598,79 @@ const PaymentSuccess = ({ isOpen, userName }: PaymentSuccessProps) => {
                   <span className="font-bold text-green-700">{countdown}s</span>
                 </p>
               </motion.div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+};
+
+interface ActivationErrorModalProps {
+  isOpen: boolean;
+  onRetry: () => void;
+  loading: boolean;
+}
+
+const ActivationErrorModal = ({
+  isOpen,
+  onRetry,
+  loading,
+}: ActivationErrorModalProps) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85, y: 40 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          >
+            <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden">
+              <div className="px-8 pt-10 pb-6 text-center">
+                <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-5">
+                  <AlertTriangle className="w-8 h-8 text-amber-600" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-900 mb-2">
+                  Account Activation
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Your payment was received, but we had trouble activating your
+                  subscription. Please retry or contact support.
+                </p>
+              </div>
+              <div className="px-6 pb-8 space-y-3">
+                <button
+                  onClick={onRetry}
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 bg-green-800 hover:bg-green-900 disabled:opacity-50 text-white font-semibold py-3.5 rounded-2xl transition-all active:scale-95"
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Retrying...
+                    </span>
+                  ) : (
+                    "Retry Activation"
+                  )}
+                </button>
+                <a
+                  href="https://wa.link/5ff5ww"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block w-full text-center text-sm font-medium text-green-800 hover:underline py-2"
+                >
+                  Contact Support
+                </a>
+              </div>
             </div>
           </motion.div>
         </>
