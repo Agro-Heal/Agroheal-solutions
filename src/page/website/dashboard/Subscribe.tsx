@@ -149,6 +149,57 @@ const Subscribe = () => {
           ],
         },
         onClose: () => setLoading(false),
+        // callback: function (response: any) {
+        //   if (response.status === "success") {
+        //     Sentry.metrics.count("payment_success", 1);
+        //     const run = async () => {
+        //       const {
+        //         data: { session },
+        //       } = await supabase.auth.getSession();
+
+        //       if (!session) {
+        //         alert("Session expired. Please log in and try again.");
+        //         navigate("/login");
+        //         return;
+        //       }
+
+        //       // Create subscription first (critical path)
+        //       await createSubscription(session.user.id);
+
+        //       // Profile creation is best-effort — don't block the success flow
+        //       try {
+        //         await ensureProfile(
+        //           session.user.id,
+        //           session.user.user_metadata,
+        //         );
+        //       } catch (profileErr) {
+        //         Sentry.captureException(profileErr, {
+        //           extra: { action: "ensure_profile_after_payment" },
+        //         });
+        //       }
+
+        //       handler.close();
+        //       await supabase.auth.refreshSession();
+        //       setLoading(false);
+        //       setShowSuccess(true);
+        //     };
+
+        //     run().catch((err) => {
+        //       console.error("Payment post-processing failed:", err);
+        //       Sentry.captureException(err, {
+        //         extra: {
+        //           action: "post_payment_subscription_creation",
+        //           userId: user?.id,
+        //         },
+        //       });
+        //       setLoading(false);
+        //       setActivationError(true);
+        //     });
+        //   } else {
+        //     alert("Payment verification failed");
+        //     setLoading(false);
+        //   }
+        // },
         callback: function (response: any) {
           if (response.status === "success") {
             Sentry.metrics.count("payment_success", 1);
@@ -163,10 +214,8 @@ const Subscribe = () => {
                 return;
               }
 
-              // Create subscription first (critical path)
               await createSubscription(session.user.id);
 
-              // Profile creation is best-effort — don't block the success flow
               try {
                 await ensureProfile(
                   session.user.id,
@@ -178,14 +227,19 @@ const Subscribe = () => {
                 });
               }
 
-              handler.close();
-              await supabase.auth.refreshSession();
+              try {
+                await supabase.auth.refreshSession();
+              } catch (refreshErr) {
+                Sentry.captureException(refreshErr, {
+                  extra: { action: "session_refresh_after_payment" },
+                });
+              }
+
               setLoading(false);
-              setShowSuccess(true); // ← show success modal, it handles redirect
+              setShowSuccess(true);
             };
 
             run().catch((err) => {
-              console.error("Payment post-processing failed:", err);
               Sentry.captureException(err, {
                 extra: {
                   action: "post_payment_subscription_creation",
@@ -195,16 +249,13 @@ const Subscribe = () => {
               setLoading(false);
               setActivationError(true);
             });
-          } else {
-            alert("Payment verification failed");
-            setLoading(false);
           }
         },
       });
 
       handler.openIframe();
     } catch (error: any) {
-      Sentry.captureException(error); // capture any error
+      Sentry.captureException(error);
       Sentry.metrics.count("payment_failed", 1);
       alert(`Failed to initialize payment: ${error.message}`);
       setLoading(false);
@@ -589,7 +640,7 @@ const ActivationErrorModal = ({
                   <AlertTriangle className="w-8 h-8 text-amber-600" />
                 </div>
                 <h2 className="text-xl font-bold text-gray-900 mb-2">
-                  Account Activation Issue
+                  Account Activation
                 </h2>
                 <p className="text-sm text-gray-600">
                   Your payment was received, but we had trouble activating your

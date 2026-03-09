@@ -67,24 +67,24 @@ const Signup = () => {
     if (!user) return;
 
     // 2️Handle referral code input
-    let referrerId: string | null = null;
+    // let referrerId: string | null = null;
 
-    if (referral) {
-      // search for the referrer by referral code
-      const { data: referrer } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("referral_code", referral.toUpperCase())
-        .maybeSingle();
+    // if (referral) {
+    //   // search for the referrer by referral code
+    //   const { data: referrer } = await supabase
+    //     .from("profiles")
+    //     .select("id")
+    //     .eq("referral_code", referral.toUpperCase())
+    //     .maybeSingle();
 
-      if (referrer) referrerId = referrer.id;
-    }
+    //   // if (referrer) referrerId = referrer.id;
+    // }
 
     // Generate your own referral code
-    const myReferralCode = Math.random()
-      .toString(36)
-      .substring(2, 8)
-      .toUpperCase();
+    // const myReferralCode = Math.random()
+    //   .toString(36)
+    //   .substring(2, 8)
+    //   .toUpperCase();
 
     // Update the new user's profile
     // await supabase
@@ -96,42 +96,42 @@ const Signup = () => {
     //   })
     //   .eq("id", user.id);
 
-    const { error: profileError } = await supabase.from("profiles").upsert(
-      {
-        id: user.id,
-        full_name: name,
-        referral_code: myReferralCode,
-        referred_by: referrerId,
-        created_at: new Date().toISOString(),
-      },
-      { onConflict: "id" },
-    );
+    // const { error: profileError } = await supabase.from("profiles").upsert(
+    //   {
+    //     id: user.id,
+    //     full_name: name,
+    //     referral_code: myReferralCode,
+    //     referred_by: referrerId,
+    //     created_at: new Date().toISOString(),
+    //   },
+    //   { onConflict: "id" },
+    // );
 
-    if (profileError) {
-      Sentry.captureException(profileError, {
-        extra: {
-          action: "profile_creation",
-          userId: user.id,
-        },
-      });
+    // if (profileError) {
+    //   Sentry.captureException(profileError, {
+    //     extra: {
+    //       action: "profile_creation",
+    //       userId: user.id,
+    //     },
+    //   });
 
-      toast.error(
-        "Account created but profile setup failed. Please contact support.",
-        {
-          duration: 5000,
-          position: "top-right",
-          style: {
-            background: "crimson",
-            color: "#fff",
-            borderRadius: "10px",
-            padding: "12px 16px",
-            fontSize: "14px",
-          },
-        },
-      );
+    //   toast.error(
+    //     "Account created but profile setup failed. Please contact support.",
+    //     {
+    //       duration: 5000,
+    //       position: "top-right",
+    //       style: {
+    //         background: "crimson",
+    //         color: "#fff",
+    //         borderRadius: "10px",
+    //         padding: "12px 16px",
+    //         fontSize: "14px",
+    //       },
+    //     },
+    //   );
 
-      return;
-    }
+    //   return;
+    // }
 
     // Success toast
     toast.success(
@@ -153,7 +153,7 @@ const Signup = () => {
     Sentry.metrics.count("signup_completed", 1);
     setTimeout(() => {
       navigate("/login");
-    }, 2000);
+    }, 1000);
   };
 
   return (
