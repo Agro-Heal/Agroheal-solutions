@@ -20,57 +20,42 @@ const Dashboard = () => {
   const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
-    const setupProfile = async () => {
+    const fetchProfile = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) return;
 
-      let { data: profileData } = await supabase
+      const { data: profileData } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user.id)
         .maybeSingle();
 
-      if (!profileData) {
-        const { data: newProfile } = await supabase
-          .from("profiles")
-          .upsert(
-            {
-              id: user.id,
-              full_name: user.user_metadata?.full_name || user.email,
-              referral_code: Math.random()
-                .toString(36)
-                .substring(2, 8)
-                .toUpperCase(),
-              created_at: new Date().toISOString(),
-            },
-            { onConflict: "id" },
-          )
-          .select()
-          .maybeSingle();
-
-        profileData = newProfile;
-      }
-
       if (!profileData) return;
 
-      const updatedFields: any = {};
+      // ── Apply referral if not yet processed ──────────────
+      const pendingReferral = user.user_metadata?.referral_code;
+      if (pendingReferral && !profileData.referred_by) {
+        const { data: referrer } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("referral_code", pendingReferral)
+          .maybeSingle();
 
-      if (!profileData.full_name && user.user_metadata?.full_name) {
-        updatedFields.full_name = user.user_metadata.full_name;
-      }
+        if (referrer) {
+          await supabase
+            .from("profiles")
+            .update({ referred_by: referrer.id })
+            .eq("id", user.id);
 
-      if (!profileData.referral_code) {
-        updatedFields.referral_code = Math.random()
-          .toString(36)
-          .substring(2, 8)
-          .toUpperCase();
-      }
+          profileData.referred_by = referrer.id;
+        }
 
-      if (Object.keys(updatedFields).length > 0) {
-        await supabase.from("profiles").update(updatedFields).eq("id", user.id);
-        profileData = { ...profileData, ...updatedFields };
+        // Clear it from metadata so it never runs again
+        await supabase.auth.updateUser({
+          data: { referral_code: null },
+        });
       }
 
       const { count } = await supabase
@@ -78,11 +63,10 @@ const Dashboard = () => {
         .select("id", { count: "exact", head: true })
         .eq("referred_by", user.id);
 
-      profileData.total_referrals = count || 0;
-      setProfile(profileData);
+      setProfile({ ...profileData, total_referrals: count || 0 });
     };
 
-    setupProfile();
+    fetchProfile();
   }, []);
 
   const handleCopyReferralCode = async () => {
