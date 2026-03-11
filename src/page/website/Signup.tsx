@@ -24,6 +24,8 @@ const Signup = () => {
     return searchParams.get("ref") || "";
   });
 
+  // console.log("ref param:", searchParams.get("ref"));
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -35,6 +37,7 @@ const Signup = () => {
       options: {
         data: {
           full_name: name,
+          referral_code: referral.trim().toUpperCase() || null,
         },
       },
     });
