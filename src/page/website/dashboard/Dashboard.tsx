@@ -13,11 +13,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import FarmingInitiativePopup from "./TelegramPopup";
+import ShareReferralModal from "@/components/webComponents/shareModal";
 
 const Dashboard = () => {
   const [profile, setProfile] = useState<any>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -58,80 +60,20 @@ const Dashboard = () => {
         });
       }
 
-      const { count } = await supabase
+      // referrls details
+      const { data: referrals, count } = await supabase
         .from("profiles")
-        .select("id", { count: "exact", head: true })
+        .select("id, full_name, created_at", { count: "exact" })
         .eq("referred_by", user.id);
+
+      profileData.total_referrals = count || 0;
+      profileData.referrals = referrals || [];
 
       setProfile({ ...profileData, total_referrals: count || 0 });
     };
 
     fetchProfile();
   }, []);
-
-  const handleCopyReferralCode = async () => {
-    const textCopy = `
-    https://agroheal.solutions/signup?ref=${profile?.referral_code}
-
-Join Our Ginger & Pepper Group Farming Initiative!
-
-Fun fact: The global Ginger Export market is worth over USD 4.1 billion, with a known preference for Nigerian ginger due to its high pungency and strong oleoresin oil content.   
-
-•⁠  ⁠Unlock Double Profits with Pepper & Ginger Inter-crop!
-
-•⁠  ⁠Better Land Use that Maximizes every inch of soil for more money in your pocket.
-
-•⁠  ⁠Better Pest & Disease Balance to make life tough for pests and disease.
-
-•⁠  ⁠Better Soil Health: Ginger's deep roots and pepper's canopy work together for healthier soil.
-
-•⁠  ⁠Better Market access after harvest: Collective bargaining power for selling produce.
-
-•⁠  ⁠Easy Access to inputs (pepper seeds, ginger rhizomes and compost) at reduced cost.
-
-•⁠  ⁠Training, Access to land & Expert support provided.
-
-With proper management, you can expect over 300% higher yield from super habanero pepper harvest from the 4th month and a lucrative ginger harvest of over 200% ROI by the 8th month!
-
-"Come learn, collaborate, and grow your income!"
-
-Date: March 1st 2026. 
-Time: 4pm - 6pm. 
-Venue: Private Telegram Group. 
-Trainer: Saka Adesoji (Saka Organic Foods)
-
-Session will be recorded and made available on user dashboards.
-
-Click on the link above to join the learning platform with a registration fee of N1,000 only.`;
-
-    try {
-      await navigator.clipboard.writeText(`${textCopy} `);
-      toast.success(`${profile?.referral_code} copied to clipboard`, {
-        duration: 3000,
-        position: "top-right",
-        style: {
-          background: "green",
-          color: "#fff",
-          borderRadius: "10px",
-          padding: "12px 16px",
-          fontSize: "14px",
-        },
-      });
-    } catch (err) {
-      console.error("error:", err);
-      toast.error(`Failed to copy ${profile?.referral_code}`, {
-        duration: 3000,
-        position: "top-right",
-        style: {
-          background: "crimson",
-          color: "#fff",
-          borderRadius: "10px",
-          padding: "12px 16px",
-          fontSize: "14px",
-        },
-      });
-    }
-  };
 
   if (!profile)
     return (
@@ -336,7 +278,7 @@ Click on the link above to join the learning platform with a registration fee of
                     {profile?.referral_code}
                   </div>
                   <button
-                    onClick={handleCopyReferralCode}
+                    onClick={() => setShowShareModal(true)}
                     className="w-10 h-10 rounded-xl bg-green-800 flex items-center justify-center hover:bg-green-700 transition-colors flex-shrink-0"
                   >
                     <Copy className="w-4 h-4 text-white" />
@@ -354,6 +296,39 @@ Click on the link above to join the learning platform with a registration fee of
                   {profile?.total_referrals !== 1 ? "s" : ""}
                 </p>
               </div>
+
+              {profile?.referrals?.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">
+                    People You Referred
+                  </p>
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {profile.referrals.map((r: any) => (
+                      <div
+                        key={r.id}
+                        className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-green-800/10 flex items-center justify-center">
+                            <span className="text-xs font-bold text-green-800">
+                              {r.full_name?.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <span className="text-sm font-medium text-gray-700">
+                            {r.full_name}
+                          </span>
+                        </div>
+                        <span className="text-xs text-gray-400">
+                          {new Date(r.created_at).toLocaleDateString("en-NG", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <p className="text-xs text-gray-400 leading-relaxed">
                 Withdrawals available in a future update.
@@ -413,6 +388,11 @@ Click on the link above to join the learning platform with a registration fee of
           </div>
         </motion.div>
       </div>
+      <ShareReferralModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        referralCode={profile?.referral_code}
+      />
     </div>
   );
 };
