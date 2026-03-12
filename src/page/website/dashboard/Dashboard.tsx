@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [showShareModal, setShowShareModal] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     const fetchProfile = async () => {
       const {
         data: { user },
@@ -34,7 +35,7 @@ const Dashboard = () => {
         .eq("id", user.id)
         .maybeSingle();
 
-      if (!profileData) return;
+      if (cancelled || !profileData) return;
 
       // ── Apply referral if not yet processed ──────────────
       const pendingReferral = user.user_metadata?.referral_code;
@@ -44,6 +45,8 @@ const Dashboard = () => {
           .select("id")
           .eq("referral_code", pendingReferral)
           .maybeSingle();
+
+        if (cancelled) return;
 
         if (referrer) {
           await supabase
@@ -59,12 +62,15 @@ const Dashboard = () => {
           data: { referral_code: null },
         });
       }
+      if (cancelled) return;
 
       // referrls details
       const { data: referrals, count } = await supabase
         .from("profiles")
         .select("id, full_name, created_at", { count: "exact" })
         .eq("referred_by", user.id);
+
+      if (cancelled) return;
 
       profileData.total_referrals = count || 0;
       profileData.referrals = referrals || [];
@@ -73,6 +79,10 @@ const Dashboard = () => {
     };
 
     fetchProfile();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (!profile)
