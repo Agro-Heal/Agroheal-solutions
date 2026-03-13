@@ -19,7 +19,7 @@ declare global {
 
 // review this codebase
 const Subscribe = () => {
-  const SubscribeFee = 100;
+  const SubscribeFee = 2000;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
