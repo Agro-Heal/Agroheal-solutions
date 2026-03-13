@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
     await supabase.from("subscription_payments").insert({
       subscription_id: subscriptionId,
       user_id: sub.user_id,
-      amount: 500,
+      amount: 1000,
       transaction_ref: ref,
       status: "paid",
     });
