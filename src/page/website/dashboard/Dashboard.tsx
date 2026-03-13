@@ -42,37 +42,11 @@ const Dashboard = () => {
       }
 
       if (!profileData) {
-        const { data: created, error: upsertError } = await supabase
-          .from("profiles")
-          .upsert(
-            {
-              id: user.id,
-              full_name: user.user_metadata?.full_name || user.email,
-              referral_code: Math.random()
-                .toString(36)
-                .substring(2, 8)
-                .toUpperCase(),
-              created_at: new Date().toISOString(),
-            },
-            { onConflict: "id" },
-          )
-          .select()
-          .maybeSingle();
-
-        if (upsertError) {
-          console.error("Profile creation error:", upsertError);
-          setProfileError(true);
-          return;
-        }
-
-        profileData = created;
-      }
-
-      if (!profileData) {
         setProfileError(true);
         return;
       }
 
+      // apply pending referral if not yet processed
       const pendingReferral = user.user_metadata?.referral_code;
       if (pendingReferral && !profileData.referred_by) {
         const { data: referrer } = await supabase
@@ -92,13 +66,13 @@ const Dashboard = () => {
         await supabase.auth.updateUser({ data: { referral_code: null } });
       }
 
-      const { data: referrals, count } = await supabase
+      const { data: referrals } = await supabase
         .from("profiles")
-        .select("id, full_name, created_at", { count: "exact" })
+        .select("id, full_name, created_at")
         .eq("referred_by", user.id);
 
       profileData.referrals = referrals || [];
-      setProfile({ ...profileData, total_referrals: count || 0 });
+      setProfile({ ...profileData });
     };
 
     fetchProfile();

@@ -19,7 +19,6 @@ declare global {
 
 // review this codebase
 const Subscribe = () => {
-  // const SubscribeFee = 2000;
   const SubscribeFee = 2000;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -109,6 +108,7 @@ const Subscribe = () => {
                     reference: response.reference,
                     provider: "paystack",
                     userId: user.id,
+                    referralCode: user.user_metadata?.referral_code || null, // ← add this
                   },
                 },
               );

@@ -14,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const { reference, provider, userId } = await req.json();
+    const { reference, provider, userId, referralCode } = await req.json();
 
     if (!reference || !provider || !userId) {
       return new Response(
@@ -109,6 +109,62 @@ serve(async (req) => {
     );
 
     if (subError) throw subError;
+
+    // ── Ensure profile exists ─────────────────────────────
+    const { data: existingProfile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (!existingProfile) {
+      // fetch user metadata to get full_name
+      const {
+        data: { user },
+      } = await supabase.auth.admin.getUserById(userId);
+
+      await supabase.from("profiles").upsert(
+        {
+          id: userId,
+          full_name: user?.user_metadata?.full_name || user?.email || "",
+          referral_code: Math.random()
+            .toString(36)
+            .substring(2, 8)
+            .toUpperCase(),
+          created_at: now.toISOString(),
+        },
+        { onConflict: "id" },
+      );
+    }
+
+    // ── Apply referral ────────────────────────────────────
+    if (referralCode) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id, referred_by")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (profile && !profile.referred_by) {
+        const { data: referrer } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("referral_code", referralCode)
+          .maybeSingle();
+
+        if (referrer) {
+          await supabase
+            .from("profiles")
+            .update({ referred_by: referrer.id })
+            .eq("id", userId);
+        }
+      }
+
+      // clear from user metadata
+      await supabase.auth.admin.updateUserById(userId, {
+        user_metadata: { referral_code: null },
+      });
+    }
 
     // ── Log the payment ───────────────────────────────────
     await supabase.from("payment_logs").insert({
