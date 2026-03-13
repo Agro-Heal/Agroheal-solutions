@@ -157,6 +157,10 @@ serve(async (req) => {
             .from("profiles")
             .update({ referred_by: referrer.id })
             .eq("id", userId);
+
+          await supabase.rpc("increment_referral_earnings", {
+            referrer_id: referrer.id,
+          });
         }
       }
 
