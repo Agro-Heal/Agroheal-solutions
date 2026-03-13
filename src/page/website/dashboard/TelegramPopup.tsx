@@ -95,27 +95,29 @@ const FarmingInitiativePopup = () => {
               {/* Body */}
               <div className="bg-white px-6 pt-5 pb-6 -mt-4 rounded-t-3xl relative">
                 {/* Benefits list */}
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                  What you get
-                </p>
-                <ul className="space-y-2 mb-5">
-                  {[
-                    "Double profits with Pepper & Ginger inter-crop",
-                    "Collective bargaining power after harvest",
-                    "Seeds, rhizomes & compost at reduced cost",
-                    "Training, land access & expert support",
-                    "Session recorded & available on your dashboard",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2.5">
-                      <span className="mt-0.5 w-4 h-4 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                        <TrendingUp className="w-2.5 h-2.5 text-green-700" />
-                      </span>
-                      <span className="text-[12px] sm:text-sm text-gray-600 leading-snug">
-                        {item}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="hidden">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                    What you get
+                  </p>
+                  <ul className="space-y-2 mb-5">
+                    {[
+                      "Double profits with Pepper & Ginger inter-crop",
+                      "Collective bargaining power after harvest",
+                      "Seeds, rhizomes & compost at reduced cost",
+                      "Training, land access & expert support",
+                      "Session recorded & available on your dashboard",
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-2.5">
+                        <span className="mt-0.5 w-4 h-4 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                          <TrendingUp className="w-2.5 h-2.5 text-green-700" />
+                        </span>
+                        <span className="text-[12px] sm:text-sm text-gray-600 leading-snug">
+                          {item}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
                 {/* Event details */}
                 <div className="hidden bg-gray-50 rounded-2xl p-4 mb-5 grid-cols-2 gap-3">
