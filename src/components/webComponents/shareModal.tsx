@@ -18,30 +18,41 @@ const ShareReferralModal = ({
 
   const textCopy = `https://agroheal.solutions/signup?ref=${referralCode}
 
-Join Our Ginger & Pepper Group Farming Initiative!
+Ginger is the new Gold!
 
-Fun fact: The global Ginger Export market is worth over USD 4.1 billion, with a known preference for Nigerian ginger due to its high pungency and strong oleoresin oil content.
+Ginger prices have skyrocketed from ₦30,000 to over ₦600,000 per bag due to disease outbreaks and insecurity in northern farms.
 
-- Unlock Double Profits with Pepper & Ginger Inter-crop!
-- Better Land Use that Maximizes every inch of soil for more money in your pocket.
-- Better Pest & Disease Balance to make life tough for pests and disease.
-- Better Soil Health: Ginger's deep roots and pepper's canopy work together for healthier soil.
-- Better Market access after harvest: Collective bargaining power for selling produce.
-- Easy Access to inputs (pepper seeds, ginger rhizomes and compost) at reduced cost.
-- Training, Access to land & Expert support provided.
+This has created a massive opportunity for new farmers and investors in the savannah zone of southern Nigeria.
 
-With proper management, you can expect over 300% higher yield from super habanero pepper harvest from the 4th month and a lucrative ginger harvest of over 200% ROI by the 8th month!
+At Gingertown:
+•⁠  ⁠You can farm with peace of mind in a secure farm estate.
+•⁠  ⁠Manage your farm remotely with one day a month work rotation.
+•⁠  ⁠Enjoy expert guidance.
+•⁠  ⁠Farm ginger organically with carefully treated seedlings. 
+•⁠  ⁠Access premium export markets.
 
-"Come learn, collaborate, and grow your income!"
+⚠️ Limited spaces available for this farming cycle.
 
-Date: March 1st 2026.
-Time: 4pm - 6pm.
-Venue: Private Telegram Group.
-Trainer: Saka Adesoji (Saka Organic Foods)
+Step 1: Click the link above to register.
 
-Session will be recorded and made available on user dashboards.
+Step 2: Pay the learning platform subscription - N2,000 only.
 
-Click on the link above to join the learning platform with a registration fee of N2,000 only.`;
+Step 3: Join Gingertown -  per Farm Slot:
+A. Admin fee - N2,000  
+B. Group Farm establishment - contribute N5,000 monthly/5 months.
+C. Agroheal farm support - N500 monthly.
+Total per Farm Slot - N33,000 (1st year) 2nd year onwards reduced to N8,000 (minus farm establishment).
+
+Multiple Slots! Multiple Returns!
+
+📊 Projected Returns:
+• Up to 300% ROI on Ginger (8 months)
+• Up to 50% ROI on Garlic (5 months)
+
+🌍 The world wants Nigerian ginger. 
+🌱 Gingertown is building the supply.
+
+Click the link above to join the Ginger Gold-rush now! Learn. Farm. Earn.! It's a total package!`;
 
   const handleCopy = async () => {
     try {
