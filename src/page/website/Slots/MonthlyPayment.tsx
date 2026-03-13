@@ -34,19 +34,6 @@ const MonthlyPayment = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchSubscription();
-  }, []);
-
-  useEffect(() => {
-    if (document.getElementById("paystack-script")) return;
-    const script = document.createElement("script");
-    script.id = "paystack-script";
-    script.src = "https://js.paystack.co/v1/inline.js";
-    script.async = true;
-    document.body.appendChild(script);
-  }, []);
-
   const fetchSubscription = async () => {
     const {
       data: { user },
@@ -69,6 +56,22 @@ const MonthlyPayment = () => {
     setActiveSubscription(active);
     setLoading(false);
   };
+
+  useEffect(() => {
+    const load = async () => {
+      await fetchSubscription();
+    };
+    load();
+  }, []);
+
+  useEffect(() => {
+    if (document.getElementById("paystack-script")) return;
+    const script = document.createElement("script");
+    script.id = "paystack-script";
+    script.src = "https://js.paystack.co/v1/inline.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
 
   const isPaymentDue = () => {
     if (!activeSubscription) return false;
@@ -118,60 +121,41 @@ const MonthlyPayment = () => {
       const config = {
         key: import.meta.env.VITE_PAYSTACK_KEYS,
         email: profile?.email || user.email,
-        amount: 500 * 100,
+        amount: 1000 * 100,
         currency: "NGN",
-        ref: `SUB_${activeSubscription.id}_${Date.now()}`,
+        ref: `SLOT_${activeSubscription.id}_${Date.now()}`,
+        metadata: {
+          custom_fields: [
+            {
+              display_name: "Subscription ID",
+              variable_name: "subscription_id",
+              value: activeSubscription.id,
+            },
+            {
+              display_name: "User ID",
+              variable_name: "user_id",
+              value: user.id,
+            },
+          ],
+        },
         callback: function (response: any) {
-          const updateSubscription = async () => {
-            try {
-              const nextPaymentDate = new Date();
-              nextPaymentDate.setDate(nextPaymentDate.getDate() + 30);
-
-              const { error } = await supabase
-                .from("slot_subscriptions")
-                .update({
-                  last_payment_date: new Date().toISOString(),
-                  next_payment_date: nextPaymentDate.toISOString(),
-                  status: "active",
-                })
-                .eq("id", activeSubscription.id);
-
-              if (error) throw error;
-
-              await supabase.from("subscription_payments").insert([
-                {
-                  subscription_id: activeSubscription.id,
-                  user_id: user.id,
-                  amount: 500,
-                  transaction_ref: response.reference,
-                  status: "paid",
-                },
-              ]);
-
-              toast({
-                title: "Monthly payment successful",
-                description: "Your subscription has been renewed for 30 days.",
-              });
-
-              setTimeout(() => {
-                window.location.href =
-                  "https://chat.whatsapp.com/LlXB7iYXmTx8JpzKulzTvD";
-              }, 2000);
-
+          if (response.status === "success") {
+            toast({
+              title: "Payment successful",
+              description: "Your subscription has been renewed for 30 days.",
+            });
+            setTimeout(() => {
               fetchSubscription();
-            } catch (err) {
-              console.error(err);
-              toast({
-                title: "Warning",
-                description: "Payment received but failed to update record.",
-                variant: "destructive",
-              });
-            } finally {
               setIsProcessing(false);
-            }
-          };
-
-          updateSubscription();
+            }, 3000);
+          } else {
+            toast({
+              title: "Payment failed",
+              description: "Please try again.",
+              variant: "destructive",
+            });
+            setIsProcessing(false);
+          }
         },
         onClose: function () {
           toast({
@@ -185,7 +169,6 @@ const MonthlyPayment = () => {
       const handler = (window as any).PaystackPop.setup(config);
       handler.openIframe();
     } catch (error) {
-      console.error(error);
       toast({
         title: "Payment Error",
         description: "Failed to initialize payment.",
@@ -257,7 +240,7 @@ const MonthlyPayment = () => {
     : isDue
       ? {
           icon: AlertCircle,
-          label: `Payment due in ${days} day${days !== 1 ? "s" : ""}`,
+          label: `Payment due in ${days} day${days > 1 ? "s" : ""}`,
           headerBg: "bg-yellow-500",
         }
       : {
@@ -312,7 +295,7 @@ const MonthlyPayment = () => {
                 <CreditCard className="w-4 h-4" />
                 Monthly Fee
               </div>
-              <span className="font-bold text-gray-900 text-base">₦500</span>
+              <span className="font-bold text-gray-900 text-base">₦1,000</span>
             </div>
 
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
@@ -421,7 +404,7 @@ const MonthlyPayment = () => {
               ) : (
                 <span className="flex items-center gap-2">
                   <CreditCard className="w-4 h-4" />
-                  Pay ₦500 Monthly Fee
+                  Pay ₦1,000 Monthly Fee
                 </span>
               )}
             </Button>

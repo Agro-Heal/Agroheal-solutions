@@ -7,9 +7,9 @@ import { AgrohealImages } from "@/constant/Image";
 const benefits = [
   {
     icon: Leaf,
-    title: "Join the platform (₦1,000 yearly)",
+    title: "Join the platform (₦2,000 yearly)",
     description:
-      "Start with a subscription fee of N1,000 yearly. This gives you access to all our training courses, from composting to crop management — so you understand the basics before stepping onto the farm.",
+      "Start with a subscription fee of N2,000 yearly. This gives you access to all our training courses, from composting to crop management — so you understand the basics before stepping onto the farm.",
   },
   {
     icon: TrendingUp,
@@ -19,7 +19,7 @@ const benefits = [
   },
   {
     icon: Users,
-    title: "Keep Your Slot Active (₦500 monthly per slot)",
+    title: "Keep Your Slot Active (₦1,000 monthly per slot)",
     description:
       "Just like maintaining a house, farmland has monthly utilities. The monthly fee covers your farmland rent, agronomy fee and Agroheal oversight.",
   },
@@ -34,7 +34,7 @@ const benefits = [
     icon: Clock,
     title: " Your Monthly work rotation (one day per month)",
     description:
-      "Farming here doesn’t take over your life. You only need to show up one day a month to perform tasks like planting, weeding, nurturing livestock & harvesting. If you can’t make it, there’s a ₦500 charge (per slot) to pay a substitute to do the work.",
+      "Farming here doesn’t take over your life. You only need to show up one day a month to perform tasks like planting, weeding, nurturing livestock & harvesting. If you can’t make it, there’s a ₦1,000 charge (per slot) to pay a substitute to do the work.",
   },
   {
     icon: Award,

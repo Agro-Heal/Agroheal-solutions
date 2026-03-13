@@ -20,6 +20,7 @@ import ShareReferralModal from "@/components/webComponents/shareModal";
 const Dashboard = () => {
   const [profile, setProfile] = useState<any>(null);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [profileError, setProfileError] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -28,15 +29,24 @@ const Dashboard = () => {
       } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: profileData } = await supabase
+      const { data: profileData, error: selectError } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user.id)
         .maybeSingle();
 
-      if (!profileData) return;
+      if (selectError) {
+        console.error("Profile fetch error:", selectError);
+        setProfileError(true);
+        return;
+      }
 
-      // ── Apply referral if not yet processed ──────────────
+      if (!profileData) {
+        setProfileError(true);
+        return;
+      }
+
+      // apply pending referral if not yet processed
       const pendingReferral = user.user_metadata?.referral_code;
       if (pendingReferral && !profileData.referred_by) {
         const { data: referrer } = await supabase
@@ -50,30 +60,43 @@ const Dashboard = () => {
             .from("profiles")
             .update({ referred_by: referrer.id })
             .eq("id", user.id);
-
           profileData.referred_by = referrer.id;
         }
 
-        // Clear it from metadata so it never runs again
-        await supabase.auth.updateUser({
-          data: { referral_code: null },
-        });
+        await supabase.auth.updateUser({ data: { referral_code: null } });
       }
 
-      // referrls details
-      const { data: referrals, count } = await supabase
+      const { data: referrals } = await supabase
         .from("profiles")
-        .select("id, full_name, created_at", { count: "exact" })
+        .select("id, full_name, created_at")
         .eq("referred_by", user.id);
 
-      profileData.total_referrals = count || 0;
       profileData.referrals = referrals || [];
-
-      setProfile({ ...profileData, total_referrals: count || 0 });
+      setProfile({ ...profileData });
     };
 
     fetchProfile();
   }, []);
+
+  if (profileError)
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-gray-50">
+        <div className="flex flex-col items-center justify-center gap-4 text-center px-4">
+          <p className="text-gray-700 font-semibold">
+            Failed to load your profile.
+          </p>
+          <p className="text-gray-500 text-sm">
+            Please refresh the page or contact support.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-green-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-green-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
 
   if (!profile)
     return (
@@ -289,11 +312,11 @@ const Dashboard = () => {
               <div className="bg-gradient-to-br from-green-800 to-green-700 rounded-xl p-4 text-white">
                 <p className="text-green-200 text-xs mb-1">Total Earnings</p>
                 <p className="text-2xl font-bold">
-                  ₦{Number(profile?.total_referrals) * 500}
+                  ₦{Number(profile?.referral_earnings ?? 0).toLocaleString()}
                 </p>
                 <p className="text-green-300 text-xs mt-1">
                   {profile?.total_referrals} referral
-                  {profile?.total_referrals !== 1 ? "s" : ""}
+                  {profile?.total_referrals > 1 ? "s" : ""}
                 </p>
               </div>
 

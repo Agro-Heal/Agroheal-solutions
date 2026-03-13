@@ -71,7 +71,7 @@ const sections = [
       },
       {
         label: "b. Monthly Contribution",
-        text: "₦500 monthly per slot for farm rent and Agroheal oversight.",
+        text: "₦1,000 monthly per slot for farm rent and Agroheal oversight.",
       },
       {
         label: "c. Farm Purse",
@@ -79,7 +79,7 @@ const sections = [
       },
       {
         label: "d. Labour",
-        text: "One day (eight hours) labour per month (per slot), or option of ₦500 fine. Each participant shall have a one day a month work rotation and may exercise the option to pay a substitute to do the required work as stated.",
+        text: "One day (eight hours) labour per month (per slot), or option of ₦1,000 fine. Each participant shall have a one day a month work rotation and may exercise the option to pay a substitute to do the required work as stated.",
       },
     ],
   },

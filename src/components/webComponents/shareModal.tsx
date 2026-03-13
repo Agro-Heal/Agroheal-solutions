@@ -41,7 +41,7 @@ Trainer: Saka Adesoji (Saka Organic Foods)
 
 Session will be recorded and made available on user dashboards.
 
-Click on the link above to join the learning platform with a registration fee of N1,000 only.`;
+Click on the link above to join the learning platform with a registration fee of N2,000 only.`;
 
   const handleCopy = async () => {
     try {
@@ -150,7 +150,7 @@ Click on the link above to join the learning platform with a registration fee of
                     Share & Earn!
                   </h2>
                   <p className="text-green-200 text-sm">
-                    Invite friends and earn ₦500 per referral
+                    Invite friends and earn ₦1,000 per referral
                   </p>
                 </motion.div>
               </div>

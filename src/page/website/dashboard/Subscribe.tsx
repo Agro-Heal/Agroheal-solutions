@@ -19,7 +19,7 @@ declare global {
 
 // review this codebase
 const Subscribe = () => {
-  const SubscribeFee = 1000;
+  const SubscribeFee = 2000;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -108,6 +108,7 @@ const Subscribe = () => {
                     reference: response.reference,
                     provider: "paystack",
                     userId: user.id,
+                    referralCode: user.user_metadata?.referral_code || null, // ← add this
                   },
                 },
               );
@@ -253,7 +254,7 @@ const Subscribe = () => {
                     </p>
                     <div className="flex items-baseline justify-center gap-1">
                       <span className="text-4xl md:text-5xl font-display font-bold text-foreground">
-                        ₦1,000
+                        ₦2,000
                       </span>
                     </div>
                     <p className="text-muted-foreground text-sm mt-2">

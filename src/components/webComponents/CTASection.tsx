@@ -36,7 +36,7 @@ export function CTASection() {
           </h2>
           <p className="text-primary-foreground/80 text-lg md:text-xl mb-10 max-w-2xl mx-auto">
             Invite your friends to join the challenge. For every person that
-            signs up using your referral code, you earn ₦500 instantly. Grow
+            signs up using your referral code, you earn ₦1,000 instantly. Grow
             your income while farming to cut food costs!
           </p>
 
