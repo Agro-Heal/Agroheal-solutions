@@ -21,21 +21,111 @@ const Dashboard = () => {
   const [profile, setProfile] = useState<any>(null);
   const [showShareModal, setShowShareModal] = useState(false);
 
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     const {
+  //       data: { user },
+  //     } = await supabase.auth.getUser();
+  //     if (!user) return;
+
+  //     const { data: profileData } = await supabase
+  //       .from("profiles")
+  //       .select("*")
+  //       .eq("id", user.id)
+  //       .maybeSingle();
+
+  //     if (!profileData) {
+  //       await supabase // ← capture the result
+  //         .from("profiles")
+  //         .upsert(
+  //           {
+  //             id: user.id,
+  //             full_name: user.user_metadata?.full_name || user.email,
+  //             referral_code: Math.random()
+  //               .toString(36)
+  //               .substring(2, 8)
+  //               .toUpperCase(),
+  //             created_at: new Date().toISOString(),
+  //           },
+  //           { onConflict: "id" },
+  //         )
+  //         .select()
+  //         .maybeSingle();
+  //     }
+
+  //     // ── Apply referral if not yet processed ──────────────
+  //     const pendingReferral = user.user_metadata?.referral_code;
+  //     if (pendingReferral && !profileData.referred_by) {
+  //       const { data: referrer } = await supabase
+  //         .from("profiles")
+  //         .select("id")
+  //         .eq("referral_code", pendingReferral)
+  //         .maybeSingle();
+
+  //       if (referrer) {
+  //         await supabase
+  //           .from("profiles")
+  //           .update({ referred_by: referrer.id })
+  //           .eq("id", user.id);
+
+  //         profileData.referred_by = referrer.id;
+  //       }
+
+  //       // Clear it from metadata so it never runs again
+  //       await supabase.auth.updateUser({
+  //         data: { referral_code: null },
+  //       });
+  //     }
+  //     // referrls details
+  //     const { data: referrals, count } = await supabase
+  //       .from("profiles")
+  //       .select("id, full_name, created_at", { count: "exact" })
+  //       .eq("referred_by", user.id);
+
+  //     profileData.referrals = referrals || [];
+
+  //     setProfile({ ...profileData, total_referrals: count || 0 });
+  //   };
+
+  //   fetchProfile();
+  // }, []);
+
   useEffect(() => {
-    let cancelled = false;
     const fetchProfile = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: profileData } = await supabase
+      let { data: profileData } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user.id)
         .maybeSingle();
 
-      if (cancelled || !profileData) return;
+      // ✅ create profile if missing
+      if (!profileData) {
+        const { data: created } = await supabase
+          .from("profiles")
+          .upsert(
+            {
+              id: user.id,
+              full_name: user.user_metadata?.full_name || user.email,
+              referral_code: Math.random()
+                .toString(36)
+                .substring(2, 8)
+                .toUpperCase(),
+              created_at: new Date().toISOString(),
+            },
+            { onConflict: "id" },
+          )
+          .select()
+          .maybeSingle();
+
+        profileData = created;
+      }
+
+      if (!profileData) return; // RLS still blocking — check logs
 
       // ── Apply referral if not yet processed ──────────────
       const pendingReferral = user.user_metadata?.referral_code;
@@ -46,8 +136,6 @@ const Dashboard = () => {
           .eq("referral_code", pendingReferral)
           .maybeSingle();
 
-        if (cancelled) return;
-
         if (referrer) {
           await supabase
             .from("profiles")
@@ -57,32 +145,21 @@ const Dashboard = () => {
           profileData.referred_by = referrer.id;
         }
 
-        // Clear it from metadata so it never runs again
         await supabase.auth.updateUser({
           data: { referral_code: null },
         });
       }
-      if (cancelled) return;
 
-      // referrls details
       const { data: referrals, count } = await supabase
         .from("profiles")
         .select("id, full_name, created_at", { count: "exact" })
         .eq("referred_by", user.id);
 
-      if (cancelled) return;
-
-      profileData.total_referrals = count || 0;
       profileData.referrals = referrals || [];
-
       setProfile({ ...profileData, total_referrals: count || 0 });
     };
 
     fetchProfile();
-
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
   if (!profile)
@@ -299,11 +376,11 @@ const Dashboard = () => {
               <div className="bg-gradient-to-br from-green-800 to-green-700 rounded-xl p-4 text-white">
                 <p className="text-green-200 text-xs mb-1">Total Earnings</p>
                 <p className="text-2xl font-bold">
-                  ₦{Number(profile?.total_referrals) * 500}
+                  ₦{Number(profile?.referral_earnings).toLocaleString()}
                 </p>
                 <p className="text-green-300 text-xs mt-1">
                   {profile?.total_referrals} referral
-                  {profile?.total_referrals !== 1 ? "s" : ""}
+                  {profile?.total_referrals > 1 ? "s" : ""}
                 </p>
               </div>
 
