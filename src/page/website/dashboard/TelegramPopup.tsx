@@ -8,7 +8,7 @@ const FarmingInitiativePopup = () => {
 
   useEffect(() => {
     // Small delay so dashboard loads first
-    const timer = setTimeout(() => setIsOpen(true), 800);
+    const timer = setTimeout(() => setIsOpen(false), 800);
     return () => clearTimeout(timer);
   }, []);
 
