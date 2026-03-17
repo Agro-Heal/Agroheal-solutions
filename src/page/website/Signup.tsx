@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Leaf, Mail, Lock, User, EyeOff, Eye } from "lucide-react";
+import { Leaf, Mail, Lock, User, EyeOff, Eye, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -143,6 +143,22 @@ const Signup = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   type="email"
                   placeholder="you@example.com"
+                  className="pl-10"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone</Label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  id="phone"
+                  // value={phone}
+                  // onChange={(e) => setPhone(e.target.value)}
+                  type="phone"
+                  placeholder="090X-XXX-XXXX"
                   className="pl-10"
                   required
                 />
