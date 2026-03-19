@@ -24,17 +24,6 @@ interface referralProps {
   created_at: string;
 }
 
-// interface profileProps {
-// id: string;
-// full_name: string;
-// referral_code: string;
-// referred_by: string;
-// affiliate_balance: number;
-// courses: number;
-// total_referrals: number;
-// referral_earnings: number;
-// }
-
 const Dashboard = () => {
   const [profile, setProfile] = useState<any>(null);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -445,6 +434,7 @@ const Dashboard = () => {
 const NotificationCards = () => {
   const [dismissed, setDismissed] = useState<number[]>([]);
 
+  // notifications - training
   const notifications = [
     {
       id: 1,
@@ -462,22 +452,6 @@ const NotificationCards = () => {
       ctaStyle: "bg-green-800 hover:bg-green-700 text-white",
       time: "",
     },
-    // {
-    //   id: 2,
-    //   tag: "Earn Money",
-    //   title: "Refer a Friend, Earn ₦1,000 Instantly",
-    //   body: "For every person you refer who signs up on Agroheal, you earn ₦1,000 credited directly to your wallet. No limit — the more you share, the more you earn.",
-    //   cta: "Get My Referral Link",
-    //   ctaHref: "#referral",
-    //   Icon: Gift,
-    //   ActionIcon: Users,
-    //   tagStyle: "bg-amber-100 text-amber-800",
-    //   accentBar: "bg-amber-500",
-    //   iconBg: "bg-amber-50",
-    //   iconColor: "text-amber-700",
-    //   ctaStyle: "bg-amber-500 hover:bg-amber-600 text-white",
-    //   time: "Today, 8:30 AM",
-    // },
   ];
 
   const visible = notifications.filter((n) => !dismissed.includes(n.id));
