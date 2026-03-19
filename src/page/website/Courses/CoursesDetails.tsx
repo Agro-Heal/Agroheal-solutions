@@ -34,7 +34,7 @@ const CourseDetail = () => {
   if (!course) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <main className="pt-24 pb-16">
+        <main className="pb-16">
           <div className="container mx-auto px-4 text-center">
             <Lottie
               animationData={NoDataFound}
@@ -75,7 +75,7 @@ const CourseDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="pt-20">
+      <main className="pt-0">
         {/* Mobile Header */}
         <div className="lg:hidden sticky top-16 z-40 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-3">
           <div className="flex items-center justify-between">

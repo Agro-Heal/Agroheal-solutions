@@ -20,13 +20,13 @@ const Courses = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="pb-0">
-        <section className="relative overflow-hidden bg-green-800 px-6 md:px-12 pt-14 pb-24">
+        <section className="hidden relative overflow-hidden bg-green-800 px-6 md:px-12 pt-14 pb-24">
           {/* Background blobs */}
           <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-white/5 blur-3xl pointer-events-none" />
           <div className="absolute -bottom-16 -right-16 w-96 h-96 rounded-full bg-green-600/30 blur-3xl pointer-events-none" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-green-700/20 blur-3xl pointer-events-none" />
 
-          <div className="relative max-w-6xl mx-auto">
+          <div className="relative max-w-[96%] mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -141,7 +141,7 @@ const Courses = () => {
 
         <section
           id="course-list"
-          className="scroll-mt-20 max-w-6xl mx-auto px-6 md:px-12 mb-20"
+          className="scroll-mt-20 max-w-[96%] mx-auto px-6 md:px-12 mb-20"
         >
           {/* Section header */}
           <motion.div

@@ -24,7 +24,7 @@ const Slots = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <main className="pb-16 px-4 md:px-8 pt-8 max-w-6xl mx-auto">
+      <main className="pb-16 px-4 md:px-8 pt-8 max-w-[96%] mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

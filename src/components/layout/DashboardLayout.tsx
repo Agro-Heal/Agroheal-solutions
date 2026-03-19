@@ -30,10 +30,71 @@ const navItems = [
 
 const HIDDEN_ROUTES = ["/login", "/signup"];
 
+// Extracted so both desktop + mobile sidebars share the same nav markup
+const SidebarContent = ({
+  onLogout,
+  handleClose,
+}: {
+  onLogout: () => void;
+  handleClose: () => void;
+}) => {
+  return (
+    <div className="flex flex-col h-full">
+      {/* Logo */}
+      <div className="flex items-center gap-2 px-5 py-5 border-b border-green-700">
+        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+          <Leaf className="w-4 h-4 text-white" />
+        </div>
+        <span className="text-white font-bold text-lg">Agroheal</span>
+      </div>
+
+      {/* Nav Links */}
+      <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+        {navItems.map(({ label, path, icon: Icon }) => (
+          <NavLink
+            key={path}
+            to={path}
+            end={path === "/dashboard"}
+            onClick={handleClose}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                isActive
+                  ? "bg-white text-green-800"
+                  : "text-green-100 hover:bg-green-700 hover:text-white"
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                <span className="flex-1">{label}</span>
+                {isActive && (
+                  <ChevronRight className="w-4 h-4 text-green-600" />
+                )}
+              </>
+            )}
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* Logout */}
+      <div className="px-3 py-4 border-t border-green-700">
+        <button
+          onClick={onLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-green-100 hover:bg-red-500/20 hover:text-red-200 transition-all"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const DashboardLayout = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const normalizedPath = normalizePath(pathname);
 
@@ -43,11 +104,9 @@ const DashboardLayout = () => {
     }
   }, [pathname, normalizedPath, navigate]);
 
-  // Close sidebar on route change
-  useEffect(() => {
-    const timer = setTimeout(() => setSidebarOpen(false), 0);
-    return () => clearTimeout(timer);
-  }, [pathname]);
+  function handleClose() {
+    setMobileSidebarOpen(false);
+  }
 
   const hiddenPath = HIDDEN_ROUTES.includes(normalizedPath);
 
@@ -61,106 +120,66 @@ const DashboardLayout = () => {
     }
   }
 
-  if (hiddenPath) {
-    return <Outlet />;
-  }
+  if (hiddenPath) return <Outlet />;
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Overlay */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/40 z-30 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-      </AnimatePresence>
+      {/* ── DESKTOP SIDEBAR — always visible on lg+ ── */}
+      <aside className="hidden lg:flex flex-col w-64 bg-green-900 flex-shrink-0">
+        <SidebarContent onLogout={handleLogout} handleClose={handleClose} />
+      </aside>
 
-      {/* Sidebar */}
+      {/* ── MOBILE SIDEBAR — drawer on small screens only ── */}
       <AnimatePresence>
-        {sidebarOpen && (
-          <motion.aside
-            initial={{ x: -280 }}
-            animate={{ x: 0 }}
-            exit={{ x: -280 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed left-0 top-0 h-full w-64 bg-green-800 z-40 flex flex-col shadow-2xl"
-          >
-            {/* Logo */}
-            <div className="flex items-center justify-between px-5 py-5 border-b border-green-700">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                  <Leaf className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-white font-bold text-lg">Agroheal</span>
-              </div>
+        {mobileSidebarOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black/40 z-30 lg:hidden"
+              onClick={() => setMobileSidebarOpen(false)}
+            />
+
+            {/* Drawer */}
+            <motion.aside
+              initial={{ x: -280 }}
+              animate={{ x: 0 }}
+              exit={{ x: -280 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="fixed left-0 top-0 h-full w-64 bg-green-800 z-40 shadow-2xl lg:hidden"
+            >
+              {/* Close button — mobile only */}
               <button
-                onClick={() => setSidebarOpen(false)}
-                className="text-green-300 hover:text-white transition-colors"
+                onClick={() => setMobileSidebarOpen(false)}
+                className="absolute top-4 right-4 text-green-300 hover:text-white transition-colors z-50"
               >
                 <X className="w-5 h-5" />
               </button>
-            </div>
-
-            {/* Nav Links */}
-            <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
-              {navItems.map(({ label, path, icon: Icon }) => (
-                <NavLink
-                  key={path}
-                  to={path}
-                  end={path === "/dashboard"}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group ${
-                      isActive
-                        ? "bg-white text-green-800"
-                        : "text-green-100 hover:bg-green-700 hover:text-white"
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <Icon className="w-4 h-4 flex-shrink-0" />
-                      <span className="flex-1">{label}</span>
-                      {isActive && (
-                        <ChevronRight className="w-4 h-4 text-green-600" />
-                      )}
-                    </>
-                  )}
-                </NavLink>
-              ))}
-            </nav>
-
-            {/* Logout */}
-            <div className="px-3 py-4 border-t border-green-700">
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-green-100 hover:bg-red-500/20 hover:text-red-200 transition-all"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Logout</span>
-              </button>
-            </div>
-          </motion.aside>
+              <SidebarContent
+                onLogout={handleLogout}
+                handleClose={handleClose}
+              />
+            </motion.aside>
+          </>
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
+      {/* ── MAIN CONTENT ── */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Bar */}
+        {/* Top bar — hamburger only shows on mobile */}
         <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-4 z-20 flex-shrink-0">
+          {/* Hamburger — hidden on desktop since sidebar is always visible */}
           <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600"
+            onClick={() => setMobileSidebarOpen(true)}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600 lg:hidden"
           >
             <Menu className="w-5 h-5" />
           </button>
 
-          {/* Page Title */}
+          {/* Page title */}
           <div className="flex-1">
             <h1 className="text-sm font-semibold text-gray-900 capitalize">
               {navItems.find((item) =>
@@ -171,8 +190,8 @@ const DashboardLayout = () => {
             </h1>
           </div>
 
-          {/* Logo on mobile top bar */}
-          <div className="flex items-center gap-2">
+          {/* Logo — shown in top bar on mobile since sidebar is hidden */}
+          <div className="flex items-center gap-2 lg:hidden">
             <div className="w-7 h-7 rounded-full bg-green-800 flex items-center justify-center">
               <Leaf className="w-3.5 h-3.5 text-white" />
             </div>
@@ -182,7 +201,7 @@ const DashboardLayout = () => {
           </div>
         </header>
 
-        {/* Page Content */}
+        {/* Page content */}
         <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>
