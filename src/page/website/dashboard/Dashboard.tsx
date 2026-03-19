@@ -448,9 +448,9 @@ const NotificationCards = () => {
   const notifications = [
     {
       id: 1,
-      tag: "Free Training",
-      title: "Join Our Ginger & Pepper Farming Masterclass",
-      body: "Learn modern cultivation techniques, pest control, and how to maximise your harvest yield — straight from experienced agronomists. This live session is completely free.",
+      tag: "Training",
+      title: "Join Our Ginger & Pepper Farming Initiative",
+      body: "Join and unlock serious profits from intercropping",
       cta: "Join Telegram Group",
       ctaHref: "https://t.me/+8a7pjUluliZjNTg0",
       Icon: Sprout,
