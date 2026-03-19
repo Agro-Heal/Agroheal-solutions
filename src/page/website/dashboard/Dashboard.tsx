@@ -16,6 +16,24 @@ import { supabase } from "@/lib/supabaseClient";
 import { Toaster } from "react-hot-toast";
 import FarmingInitiativePopup from "./TelegramPopup";
 import ShareReferralModal from "@/components/webComponents/shareModal";
+import { X, Send, Bell } from "lucide-react";
+
+interface referralProps {
+  id: string;
+  full_name: string;
+  created_at: string;
+}
+
+// interface profileProps {
+// id: string;
+// full_name: string;
+// referral_code: string;
+// referred_by: string;
+// affiliate_balance: number;
+// courses: number;
+// total_referrals: number;
+// referral_earnings: number;
+// }
 
 const Dashboard = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -162,6 +180,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          className="max-w-[96%] mx-auto"
         >
           <p className="text-green-300 text-sm font-medium mb-1">
             {new Date().toLocaleDateString("en-NG", {
@@ -179,7 +198,7 @@ const Dashboard = () => {
         </motion.div>
       </div>
 
-      <div className="px-4 md:px-8 -mt-8 pb-12 max-w-6xl mx-auto">
+      <div className="px-4 md:px-8 -mt-8 pb-12 max-w-[96%] mx-auto">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {stats.map((stat, index) => (
             <motion.div
@@ -275,6 +294,9 @@ const Dashboard = () => {
                   </Button>
                 )}
               </div>
+              <div>
+                <NotificationCards />
+              </div>
             </div>
           </motion.div>
 
@@ -325,8 +347,8 @@ const Dashboard = () => {
                   <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">
                     People You Referred
                   </p>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
-                    {profile.referrals.map((r: any) => (
+                  <div className="space-y-2 max-h-80 overflow-y-auto">
+                    {profile.referrals.map((r: referralProps) => (
                       <div
                         key={r.id}
                         className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2"
@@ -416,6 +438,151 @@ const Dashboard = () => {
         onClose={() => setShowShareModal(false)}
         referralCode={profile?.referral_code}
       />
+    </div>
+  );
+};
+
+const NotificationCards = () => {
+  const [dismissed, setDismissed] = useState<number[]>([]);
+
+  const notifications = [
+    {
+      id: 1,
+      tag: "Free Training",
+      title: "Join Our Ginger & Pepper Farming Masterclass",
+      body: "Learn modern cultivation techniques, pest control, and how to maximise your harvest yield — straight from experienced agronomists. This live session is completely free.",
+      cta: "Join Telegram Group",
+      ctaHref: "https://t.me/+8a7pjUluliZjNTg0",
+      Icon: Sprout,
+      ActionIcon: Send,
+      tagStyle: "bg-green-100 text-green-800",
+      accentBar: "bg-green-800",
+      iconBg: "bg-green-50",
+      iconColor: "text-green-800",
+      ctaStyle: "bg-green-800 hover:bg-green-700 text-white",
+      time: "",
+    },
+    // {
+    //   id: 2,
+    //   tag: "Earn Money",
+    //   title: "Refer a Friend, Earn ₦1,000 Instantly",
+    //   body: "For every person you refer who signs up on Agroheal, you earn ₦1,000 credited directly to your wallet. No limit — the more you share, the more you earn.",
+    //   cta: "Get My Referral Link",
+    //   ctaHref: "#referral",
+    //   Icon: Gift,
+    //   ActionIcon: Users,
+    //   tagStyle: "bg-amber-100 text-amber-800",
+    //   accentBar: "bg-amber-500",
+    //   iconBg: "bg-amber-50",
+    //   iconColor: "text-amber-700",
+    //   ctaStyle: "bg-amber-500 hover:bg-amber-600 text-white",
+    //   time: "Today, 8:30 AM",
+    // },
+  ];
+
+  const visible = notifications.filter((n) => !dismissed.includes(n.id));
+
+  return (
+    <div className="bg-gray-50 px-4 py-6 sm:px-6 sm:py-10">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-6">
+        <div className="w-8 h-8 rounded-full bg-green-800 flex items-center justify-center flex-shrink-0">
+          <Bell className="w-4 h-4 text-white" />
+        </div>
+        <div>
+          <h2 className="text-base font-semibold text-gray-900 leading-tight">
+            Notifications
+          </h2>
+          {visible.length > 0 && (
+            <p className="text-xs text-gray-400">
+              {visible.length} unread message{visible.length > 1 ? "s" : ""}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Cards */}
+      <div className="flex flex-col gap-4">
+        {visible.length === 0 ? (
+          <div className="text-center py-16 text-gray-400">
+            <Bell className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <p className="text-sm font-medium">You're all caught up</p>
+            <p className="text-xs mt-1">No new notifications right now</p>
+          </div>
+        ) : (
+          visible.map((n) => (
+            <div
+              key={n.id}
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+            >
+              {/* Accent bar */}
+              <div className={`h-1 w-full ${n.accentBar}`} />
+
+              {/* Card body */}
+              <div className="p-4 sm:p-5">
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span
+                      className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${n.tagStyle}`}
+                    >
+                      {n.tag}
+                    </span>
+                    <span className="text-xs text-gray-400">{n.time}</span>
+                  </div>
+                  <button
+                    onClick={() => setDismissed((prev) => [...prev, n.id])}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors flex-shrink-0"
+                    aria-label="Dismiss notification"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Icon + content */}
+                <div className="flex gap-3 sm:gap-4">
+                  <div
+                    className={`w-11 h-11 rounded-xl ${n.iconBg} flex items-center justify-center flex-shrink-0`}
+                  >
+                    <n.Icon className={`w-5 h-5 ${n.iconColor}`} />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-gray-900 leading-snug mb-1.5">
+                      {n.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">
+                      {n.body}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="mx-4 sm:mx-5 border-t border-gray-100" />
+
+              {/* CTA footer */}
+              <div className="px-4 sm:px-5 py-3.5 flex items-center justify-between gap-3">
+                <a
+                  href={n.ctaHref}
+                  target={n.ctaHref.startsWith("http") ? "_blank" : undefined}
+                  rel="noreferrer"
+                  className={`inline-flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors ${n.ctaStyle}`}
+                >
+                  <n.ActionIcon className="w-4 h-4" />
+                  {n.cta}
+                </a>
+
+                <button
+                  onClick={() => setDismissed((prev) => [...prev, n.id])}
+                  className="text-xs text-gray-400 hover:text-gray-600 transition-colors whitespace-nowrap"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
