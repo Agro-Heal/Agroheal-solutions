@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Leaf, Mail, Lock, User, EyeOff, Eye, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabaseClient";
@@ -11,6 +12,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useSearchParams } from "react-router-dom";
 
 import * as Sentry from "@sentry/react";
+import AuthSidebar from "@/components/webComponents/authSidebar";
 
 const Signup = () => {
   const [searchParams] = useSearchParams();
@@ -92,31 +94,49 @@ const Signup = () => {
     }, 1000);
   };
 
-  return (
-    <div className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
-      <Toaster />
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-12 h-12 rounded-full bg-green-800 flex items-center justify-center">
-            <Leaf className="w-6 h-6 text-white" />
-          </div>
-          <span className="text-2xl font-semibold">Agroheal</span>
-        </Link>
+  const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 18 },
+    animate: { opacity: 1, y: 0 },
+    transition: {
+      duration: 0.5,
+      delay,
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+    },
+  });
 
-        <div className="bg-card rounded-2xl shadow-elevated border border-border/50 p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold">Create Your Account</h1>
-            <p className="text-muted-foreground mt-2">
+  return (
+    <div className="min-h-screen flex">
+      <Toaster />
+      <div className="flex-1 flex flex-col justify-center items-center px-6 py-12 bg-[#f8f7f4] relative">
+        <motion.div
+          {...fadeUp(0)}
+          className="lg:hidden flex items-center gap-2 mb-10"
+        >
+          <div className="w-9 h-9 rounded-xl bg-green-800 flex items-center justify-center">
+            <Leaf className="w-4.5 h-4.5 text-white" />
+          </div>
+          <span className="text-green-900 font-semibold text-lg">Agroheal</span>
+        </motion.div>
+
+        <div className="w-full max-w-[400px]">
+          {/* Heading */}
+          <motion.div {...fadeUp(0.1)} className="mb-8">
+            <h1
+              className="text-3xl font-bold text-gray-900 mb-2"
+              style={{ fontFamily: "'Georgia', serif" }}
+            >
+              Create your Account
+            </h1>
+            <p className="text-gray-500 text-sm">
               Start your organic farming journey today
             </p>
-          </div>
+          </motion.div>
 
-          <form className="space-y-6" onSubmit={handleSignup}>
+          <motion.form
+            {...fadeUp(0.2)}
+            className="space-y-5"
+            onSubmit={handleSignup}
+          >
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <div className="relative">
@@ -127,12 +147,11 @@ const Signup = () => {
                   onChange={(e) => setName(e.target.value)}
                   type="text"
                   placeholder="John Doe"
-                  className="pl-10"
+                  className="pl-10 h-11 bg-white border-gray-200 rounded-xl text-sm focus:border-green-700 focus:ring-green-700/20 transition-all"
                   required
                 />
               </div>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -143,12 +162,11 @@ const Signup = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   type="email"
                   placeholder="you@example.com"
-                  className="pl-10"
+                  className="pl-10 h-11 bg-white border-gray-200 rounded-xl text-sm focus:border-green-700 focus:ring-green-700/20 transition-all"
                   required
                 />
               </div>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="phone">Phone</Label>
               <div className="relative">
@@ -159,12 +177,11 @@ const Signup = () => {
                   // onChange={(e) => setPhone(e.target.value)}
                   type="phone"
                   placeholder="090X-XXX-XXXX"
-                  className="pl-10"
+                  className="pl-10 h-11 bg-white border-gray-200 rounded-xl text-sm focus:border-green-700 focus:ring-green-700/20 transition-all"
                   required
                 />
               </div>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -175,7 +192,7 @@ const Signup = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="pl-10"
+                  className="pl-10 h-11 bg-white border-gray-200 rounded-xl text-sm focus:border-green-700 focus:ring-green-700/20 transition-all"
                   minLength={8}
                   required
                 />
@@ -192,7 +209,6 @@ const Signup = () => {
                 </button>
               </div>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="referral">Referral Code (Optional)</Label>
               <Input
@@ -202,9 +218,36 @@ const Signup = () => {
                 type="text"
                 disabled={referral.length > 10 ? true : false}
                 placeholder="Enter referral code"
+                className="pl-4 h-11 bg-white border-gray-200 rounded-xl text-sm focus:border-green-700 focus:ring-green-700/20 transition-all"
               />
             </div>
 
+            <div className="flex items-start gap-3">
+              <Checkbox
+                id="terms"
+                required
+                className="mt-0.5 rounded border-gray-300 data-[state=checked]:bg-green-800 data-[state=checked]:border-green-800"
+              />
+              <label
+                htmlFor="terms"
+                className="text-xs text-gray-500 leading-relaxed cursor-pointer"
+              >
+                I agree to Agroheal's{" "}
+                <Link
+                  to="/terms"
+                  className="text-green-800 hover:text-green-700 font-semibold transition-colors underline-offset-2 hover:underline"
+                >
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link
+                  to="/privacy"
+                  className="text-green-800 hover:text-green-700 font-semibold transition-colors underline-offset-2 hover:underline"
+                >
+                  Privacy Policy
+                </Link>
+              </label>
+            </div>
             <Button
               type="submit"
               size="lg"
@@ -213,7 +256,7 @@ const Signup = () => {
             >
               {loading ? "Creating Account..." : "Create Account"}
             </Button>
-          </form>
+          </motion.form>
 
           <div className="mt-8 text-center text-sm">
             Already have an account?{" "}
@@ -225,7 +268,10 @@ const Signup = () => {
             </Link>
           </div>
         </div>
-      </motion.div>
+      </div>
+
+      {/* ── Right panel — form ── */}
+      <AuthSidebar />
     </div>
   );
 };
