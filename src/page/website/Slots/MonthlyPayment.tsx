@@ -20,6 +20,7 @@ import {
 import Lottie from "lottie-react";
 import NoDataFound from "../../../assets/Icon/searching.json";
 import { motion, AnimatePresence } from "framer-motion";
+import { FLUTTERWAVE_KEYS } from "@/config/Index";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Subscription {
@@ -31,6 +32,7 @@ interface Subscription {
   next_payment_date: string;
   last_payment_date: string;
   slots: string;
+  monthly_pay: number;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -100,10 +102,10 @@ function getDaysUntilPayment(slot: Subscription) {
   );
 }
 
-// ─── Page size ────────────────────────────────────────────────────────────────
+// Page size
 const PAGE_SIZE = 10;
 
-// ─── Detail View ──────────────────────────────────────────────────────────────
+// Detail View
 function SlotDetailView({
   slot,
   onBack,
@@ -165,7 +167,7 @@ function SlotDetailView({
               {
                 icon: CreditCard,
                 label: "Monthly Fee",
-                value: "₦1,000",
+                value: `₦${formatNumber(slot.monthly_pay)}`,
                 bold: true,
               },
               {
@@ -262,7 +264,7 @@ function SlotDetailView({
               ) : (
                 <span className="flex items-center gap-2">
                   <CreditCard className="w-4 h-4" />
-                  Pay ₦1,000 Monthly Fee
+                  Pay {formatNumber(slot.monthly_pay)} Monthly Fee
                 </span>
               )}
             </Button>
@@ -360,8 +362,8 @@ function SlotTableView({
                   {[
                     "Slot",
                     "Slots",
-                    "Slot Price",
                     "Amount Paid",
+                    "Slot Per Month",
                     "Last Payment",
                     "Next Due",
                     "Status",
@@ -408,7 +410,7 @@ function SlotTableView({
                       </td>
                       {/* Amount */}
                       <td className="px-5 py-4 font-bold text-gray-900">
-                        ₦{formatNumber(slot.amount)}
+                        ₦{formatNumber(Number(slot.monthly_pay))}
                       </td>
                       {/* Last payment */}
                       <td className="px-5 py-4 text-gray-500 text-xs whitespace-nowrap">
@@ -665,26 +667,26 @@ const MonthlyPayment = () => {
     load();
   }, []);
 
-  // ── Load Paystack script ───────────────────────────────────────────────────
+  // ── Load Flutterwave script ───────────────────────────────────────────────────
   useEffect(() => {
-    if (document.getElementById("paystack-script")) return;
+    if (document.getElementById("flutterwave-script")) return;
     const script = document.createElement("script");
-    script.id = "paystack-script";
-    script.src = "https://js.paystack.co/v1/inline.js";
+    script.id = "flutterwave-script";
+    script.src = "https://checkout.flutterwave.com/v3.js";
     script.async = true;
     document.body.appendChild(script);
   }, []);
 
-  // ── Payment handler ────────────────────────────────────────────────────────
+  // handle payment
   const handleMonthlyPayment = async (slot?: Subscription) => {
     // Priority: passed slot → selectedSlot → activeSubscription (same fallback as original)
     const targetSlot = slot ?? selectedSlot ?? activeSubscription;
     if (!targetSlot) return;
 
-    if (!(window as any).PaystackPop) {
+    if (!(window as any).FlutterwaveCheckout) {
       toast({
         title: "Payment Error",
-        description: "Paystack is still loading. Please try again.",
+        description: "Flutterwave is still loading. Please try again.",
         variant: "destructive",
       });
       return;
@@ -698,35 +700,38 @@ const MonthlyPayment = () => {
     setIsProcessing(true);
     setPayingId(targetSlot.id);
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("email")
-      .eq("id", user.id)
-      .single();
-
     try {
-      const config = {
-        key: import.meta.env.VITE_PAYSTACK_KEYS,
-        email: profile?.email || user.email,
-        amount: 1000 * 100,
+      (window as any).FlutterwaveCheckout({
+        public_key: FLUTTERWAVE_KEYS,
+        tx_ref: `MONTHLY_${targetSlot.id}_${Date.now()}`,
+        amount: targetSlot.monthly_pay,
         currency: "NGN",
-        ref: `SLOT_${targetSlot.id}_${Date.now()}`,
-        metadata: {
-          custom_fields: [
-            {
-              display_name: "Subscription ID",
-              variable_name: "subscription_id",
-              value: targetSlot.id,
-            },
-            {
-              display_name: "User ID",
-              variable_name: "user_id",
-              value: user.id,
-            },
-          ],
+        payment_options: "card, banktransfer, ussd",
+        customer: {
+          email: user.email,
+          name: user.user_metadata?.full_name || user.email,
+        },
+        meta: {
+          subscription_id: targetSlot.id,
+          user_id: user.id,
+        },
+        customizations: {
+          title: "Agroheal Monthly Fee",
+          description: `Monthly fee for ${targetSlot.slots} slot${Number(targetSlot.slots) > 1 ? "s" : ""}`,
+        },
+        onclose: () => {
+          toast({
+            title: "Payment cancelled",
+            description: "You closed the payment window.",
+          });
+          setIsProcessing(false);
+          setPayingId(null);
         },
         callback: function (response: any) {
-          if (response.status === "success") {
+          if (
+            response.status === "successful" ||
+            response.status === "completed"
+          ) {
             toast({
               title: "Payment successful",
               description: "Your subscription has been renewed for 30 days.",
@@ -746,18 +751,7 @@ const MonthlyPayment = () => {
             setPayingId(null);
           }
         },
-        onClose: function () {
-          toast({
-            title: "Payment cancelled",
-            description: "You closed the payment window.",
-          });
-          setIsProcessing(false);
-          setPayingId(null);
-        },
-      };
-
-      const handler = (window as any).PaystackPop.setup(config);
-      handler.openIframe();
+      });
     } catch (error) {
       toast({
         title: "Payment Error",

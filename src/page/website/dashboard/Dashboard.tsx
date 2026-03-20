@@ -30,6 +30,7 @@ const Dashboard = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [profileError, setProfileError] = useState(false);
   const [showPhoneModal, setShowPhoneModal] = useState<boolean>(false);
+  const [referralNumber, setReferralNumber] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -85,6 +86,18 @@ const Dashboard = () => {
         .eq("referred_by", user.id);
 
       profileData.referrals = referrals || [];
+
+      if (profileData.referred_by) {
+        const { data: referrerData } = await supabase
+          .from("profiles")
+          .select("phone")
+          .eq("id", profileData.referred_by)
+          .single();
+
+        profileData.referrer_phone = referrerData?.phone || null;
+        setReferralNumber(profileData?.referrer_phone);
+      }
+
       setProfile({ ...profileData });
     };
 
@@ -372,6 +385,19 @@ const Dashboard = () => {
 
               <p className="text-xs text-gray-400 leading-relaxed">
                 Withdrawals available in a future update.
+                {referralNumber.length <= 0 ? (
+                  ""
+                ) : (
+                  <>
+                    For Further information contact your referral - <br />
+                    <a
+                      className="text-green-800 font-bold"
+                      href={`tel:${referralNumber}`}
+                    >
+                      Call: {referralNumber}
+                    </a>
+                  </>
+                )}
               </p>
             </div>
           </motion.div>

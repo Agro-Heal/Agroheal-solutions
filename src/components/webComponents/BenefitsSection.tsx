@@ -19,7 +19,7 @@ const benefits = [
   },
   {
     icon: Users,
-    title: "Keep Your Slot Active (₦1,000 monthly per slot)",
+    title: "Keep Your Slot Active (₦500 monthly per slot)",
     description:
       "Just like maintaining a house, farmland has monthly utilities. The monthly fee covers your farmland rent, agronomy fee and Agroheal oversight.",
   },
