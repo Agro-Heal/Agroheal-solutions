@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Leaf, Mail, Lock, User, EyeOff, Eye, Phone } from "lucide-react";
+import { Leaf, Mail, Lock, User, EyeOff, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabaseClient";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { useSearchParams } from "react-router-dom";
+import { showToast } from "@/components/ui/ToastComponent";
 
 import * as Sentry from "@sentry/react";
 import AuthSidebar from "@/components/webComponents/authSidebar";
@@ -32,6 +33,23 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true);
 
+    // Check if email already registered
+    const { data: emailExists } = await supabase.rpc("check_email_exists", {
+      email_input: email.toLowerCase().trim(),
+    });
+
+    // if email exist call this
+    if (emailExists) {
+      setLoading(false);
+      showToast({
+        variant: "error",
+        title: "Email already exists",
+        description:
+          "An account with this email already exists. Please sign in.",
+      });
+      return;
+    }
+
     // 1️Sign up user
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -53,17 +71,10 @@ const Signup = () => {
         },
       });
 
-      toast.error(`${error.message}`, {
-        duration: 5000,
-        position: "top-right",
-        icon: "📩",
-        style: {
-          background: "crimson",
-          color: "#fff",
-          borderRadius: "10px",
-          padding: "12px 16px",
-          fontSize: "14px",
-        },
+      showToast({
+        variant: "error",
+        title: "Signup not successful!",
+        description: "Account failed to create, Retry or check your Network.",
       });
       return;
     }
@@ -71,22 +82,11 @@ const Signup = () => {
     const user = data.user;
     if (!user) return;
 
-    // Success toast
-    toast.success(
-      "Signup successful! An email has been sent to your registered mail acount, Please verify your email.",
-      {
-        duration: 5000,
-        position: "top-right",
-        icon: "📩",
-        style: {
-          background: "#065f46",
-          color: "#fff",
-          borderRadius: "10px",
-          padding: "12px 16px",
-          fontSize: "14px",
-        },
-      },
-    );
+    showToast({
+      variant: "success",
+      title: "Signup successful!",
+      description: "Check your email to verify your account.",
+    });
 
     Sentry.metrics.count("signup_completed", 1);
     setTimeout(() => {
@@ -167,21 +167,7 @@ const Signup = () => {
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="phone"
-                  // value={phone}
-                  // onChange={(e) => setPhone(e.target.value)}
-                  type="phone"
-                  placeholder="090X-XXX-XXXX"
-                  className="pl-10 h-11 bg-white border-gray-200 rounded-xl text-sm focus:border-green-700 focus:ring-green-700/20 transition-all"
-                  required
-                />
-              </div>
-            </div>
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">

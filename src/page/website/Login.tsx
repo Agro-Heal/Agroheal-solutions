@@ -6,7 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { Leaf, Mail, Lock, EyeOff, Eye, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import { showToast } from "@/components/ui/ToastComponent";
 import AuthSidebar from "@/components/webComponents/authSidebar";
 import * as Sentry from "@sentry/react";
 
@@ -36,34 +37,21 @@ const Login = () => {
       });
 
       const errorNotify = () =>
-        toast.error(`${error?.message}`, {
-          duration: 5000,
-          position: "top-right",
-          icon: "📩",
-          style: {
-            background: "crimson",
-            color: "#fff",
-            borderRadius: "10px",
-            padding: "12px 16px",
-            fontSize: "14px",
-          },
+        showToast({
+          variant: "error",
+          title: "Login failed",
+          description:
+            "Check that your email and password are correct. Also check your internet connections",
         });
       errorNotify();
       return;
     }
 
     const notify = () =>
-      toast.success("Signin successful.", {
-        duration: 5000,
-        position: "top-right",
-        icon: "📩",
-        style: {
-          background: "#065f46",
-          color: "#fff",
-          borderRadius: "10px",
-          padding: "12px 16px",
-          fontSize: "14px",
-        },
+      showToast({
+        variant: "success",
+        title: "SignIn successful!",
+        description: "Login Successful, Redirecting to dashboard",
       });
     Sentry.metrics.count("login_completed", 1);
     notify();
@@ -219,7 +207,7 @@ const Login = () => {
               to="/signup"
               className="text-green-800 font-semibold hover:text-green-700 transition-colors"
             >
-              Create one free
+              Create an account
             </Link>
           </motion.p>
 
