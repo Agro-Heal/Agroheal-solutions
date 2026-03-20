@@ -27,6 +27,9 @@ import HowItWorksTwo from "@/assets/Image/about-image-2.png";
 import initiative from "@/assets/Image/ginger.jpeg";
 // imports arranged alphabetically
 
+// auth image
+import authImage from "@/assets/Image/agroheal-img.svg";
+
 export const AgrohealImages = {
   HeaderLogo,
   HowItWorksOne,
@@ -54,4 +57,6 @@ export const AgrohealImages = {
   Maize,
   Bean,
   initiative,
+
+  authImage,
 };
