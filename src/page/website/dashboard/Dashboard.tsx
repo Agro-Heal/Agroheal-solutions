@@ -17,6 +17,7 @@ import { Toaster } from "react-hot-toast";
 import FarmingInitiativePopup from "./TelegramPopup";
 import ShareReferralModal from "@/components/webComponents/shareModal";
 import { X, Send, Bell } from "lucide-react";
+import PhoneModal from "./PhoneModal";
 
 interface referralProps {
   id: string;
@@ -28,6 +29,7 @@ const Dashboard = () => {
   const [profile, setProfile] = useState<any>(null);
   const [showShareModal, setShowShareModal] = useState(false);
   const [profileError, setProfileError] = useState(false);
+  const [showPhoneModal, setShowPhoneModal] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -51,6 +53,10 @@ const Dashboard = () => {
       if (!profileData) {
         setProfileError(true);
         return;
+      }
+
+      if (!profileData.phone) {
+        setShowPhoneModal(true);
       }
 
       // apply pending referral if not yet processed
@@ -427,6 +433,15 @@ const Dashboard = () => {
         onClose={() => setShowShareModal(false)}
         referralCode={profile?.referral_code}
       />
+      {showPhoneModal && profile && (
+        <PhoneModal
+          userId={profile.id}
+          onComplete={() => {
+            setShowPhoneModal(false);
+            setProfile((prev: any) => ({ ...prev, phone: true })); // suppress re-trigger
+          }}
+        />
+      )}
     </div>
   );
 };
