@@ -18,8 +18,14 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { reference, userId, orderId, slotQuantity, totalPrice } =
-      await req.json();
+    const {
+      reference,
+      provider = "paystack", // default to paystack so existing calls don't break
+      userId,
+      orderId,
+      slotQuantity,
+      totalPrice,
+    } = await req.json();
 
     if (!reference || !userId || !orderId) {
       return new Response(
@@ -31,22 +37,59 @@ Deno.serve(async (req) => {
       );
     }
 
-    const paystackRes = await fetch(
-      `https://api.paystack.co/transaction/verify/${reference}`,
-      {
-        headers: {
-          Authorization: `Bearer ${Deno.env.get("PAYSTACK_SECRET_KEY")}`,
+    let isVerified = false;
+    let amount = 0;
+
+    // ── Verify with Paystack ──────────────────────────────
+    if (provider === "paystack") {
+      const paystackRes = await fetch(
+        `https://api.paystack.co/transaction/verify/${reference}`,
+        {
+          headers: {
+            Authorization: `Bearer ${Deno.env.get("PAYSTACK_SECRET_KEY")}`,
+          },
         },
-      },
-    );
+      );
 
-    const paystackData = await paystackRes.json();
-    console.log("Paystack response:", JSON.stringify(paystackData));
+      const paystackData = await paystackRes.json();
+      console.log("Paystack response:", JSON.stringify(paystackData));
 
-    if (
-      paystackData.status !== true ||
-      paystackData.data?.status !== "success"
-    ) {
+      if (
+        paystackData.status === true &&
+        paystackData.data?.status === "success"
+      ) {
+        isVerified = true;
+        amount = paystackData.data.amount / 100; // convert from kobo
+      }
+    }
+
+    // ── Verify with Flutterwave ───────────────────────────
+    // NOTE: reference here must be the numeric transaction_id from Flutterwave
+    if (provider === "flutterwave") {
+      const flwRes = await fetch(
+        `https://api.flutterwave.com/v3/transactions/${reference}/verify`,
+        {
+          headers: {
+            Authorization: `Bearer ${Deno.env.get("FLUTTERWAVE_SECRET_KEY")}`,
+          },
+        },
+      );
+
+      const flwData = await flwRes.json();
+      console.log("Flutterwave response:", JSON.stringify(flwData));
+
+      if (
+        flwData.status === "success" &&
+        (flwData.data?.status === "successful" ||
+          flwData.data?.status === "completed")
+      ) {
+        isVerified = true;
+        amount = flwData.data.amount; // already in Naira, no conversion needed
+      }
+    }
+
+    // ── Reject if verification failed ────────────────────
+    if (!isVerified) {
       return new Response(
         JSON.stringify({
           success: false,
@@ -59,8 +102,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const amount = paystackData.data.amount / 100;
-
+    // ── Update checkout row ───────────────────────────────
     const { error: checkoutError } = await supabase
       .from("checkout")
       .update({ status: "paid", transaction_ref: reference })
@@ -68,6 +110,7 @@ Deno.serve(async (req) => {
 
     if (checkoutError) throw checkoutError;
 
+    // ── Create slot subscription ──────────────────────────
     const nextPaymentDate = new Date();
     nextPaymentDate.setDate(nextPaymentDate.getDate() + 30);
 
@@ -88,11 +131,12 @@ Deno.serve(async (req) => {
 
     if (subError) throw subError;
 
+    // ── Log the payment (non-critical) ────────────────────
     try {
       await supabase.from("payment_logs").insert({
         user_id: userId,
         reference,
-        provider: "paystack",
+        provider,
         amount,
         status: "success",
         created_at: new Date().toISOString(),

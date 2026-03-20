@@ -18,7 +18,7 @@ import * as Sentry from "@sentry/react";
 
 declare global {
   interface Window {
-    PaystackPop: any;
+    FlutterwaveCheckout: (config: any) => { close: () => void };
   }
 }
 
@@ -29,7 +29,6 @@ const Checkout = () => {
   const slotPrice = 2000;
   const totalPrice = slotPrice * slotQuantity;
   const [isProcessing, setIsProcessing] = useState(false);
-  // const [paymentReference, setPaymentReference] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -37,11 +36,12 @@ const Checkout = () => {
     email: "",
   });
 
+  // ── Load Flutterwave script ───────────────────────────────────────────────
   useEffect(() => {
-    if (document.getElementById("paystack-script")) return;
+    if (document.getElementById("flutterwave-script")) return;
     const script = document.createElement("script");
-    script.id = "paystack-script";
-    script.src = "https://js.paystack.co/v1/inline.js";
+    script.id = "flutterwave-script";
+    script.src = "https://checkout.flutterwave.com/v3.js";
     script.async = true;
     document.body.appendChild(script);
   }, []);
@@ -84,7 +84,7 @@ const Checkout = () => {
           email: formData.email,
           phone: formData.phone,
           amount: totalPrice,
-          payment_method: "paystack",
+          payment_method: "flutterwave",
           status: "pending",
         },
       ])
@@ -104,7 +104,7 @@ const Checkout = () => {
     return data;
   };
 
-  const handlePaystack = async () => {
+  const handleFlutterwave = async () => {
     if (!isFormValid) {
       toast({
         title: "Please fill all fields",
@@ -114,20 +114,20 @@ const Checkout = () => {
       return;
     }
 
-    if (!window.PaystackPop) {
+    if (!window.FlutterwaveCheckout) {
       toast({
         title: "Payment Error",
-        description: "Paystack is still loading. Please try again.",
+        description: "Flutterwave is still loading. Please try again.",
         variant: "destructive",
       });
       return;
     }
 
-    const paystackKey = import.meta.env.VITE_PAYSTACK_KEYS;
-    if (!paystackKey) {
+    const flwKey = import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY;
+    if (!flwKey) {
       toast({
         title: "Payment Error",
-        description: "Paystack key missing.",
+        description: "Flutterwave key missing.",
         variant: "destructive",
       });
       return;
@@ -143,34 +143,30 @@ const Checkout = () => {
     }
 
     try {
-      const ref = `SLOT_${order.id}_${Date.now()}`;
+      const txRef = `SLOT_${order.id}_${Date.now()}`;
 
-      const handler = window.PaystackPop.setup({
-        key: paystackKey,
-        email: order.email,
-        amount: Number(order.amount) * 100,
+      window.FlutterwaveCheckout({
+        public_key: flwKey,
+        tx_ref: txRef,
+        amount: totalPrice,
         currency: "NGN",
-        ref,
-        metadata: {
-          custom_fields: [
-            {
-              display_name: "Customer Name",
-              variable_name: "customer_name",
-              value: `${formData.firstName} ${formData.lastName}`,
-            },
-            {
-              display_name: "User ID",
-              variable_name: "user_id",
-              value: order.user_id,
-            },
-            {
-              display_name: "Plan",
-              variable_name: "plan",
-              value: "slot",
-            },
-          ],
+        payment_options: "card, banktransfer, ussd",
+        customer: {
+          email: order.email,
+          phone_number: order.phone,
+          name: `${formData.firstName} ${formData.lastName}`,
         },
-        onClose: () => {
+        meta: {
+          user_id: order.user_id,
+          order_id: order.id,
+          plan: "slot",
+        },
+        customizations: {
+          title: "Agroheal Farm Slot",
+          description: `${slotQuantity} slot${slotQuantity > 1 ? "s" : ""} — ₦${totalPrice.toLocaleString()}`,
+          logo: "https://ptowfacejneezksyhntk.supabase.co/storage/v1/object/sign/agroheal-%20buckets/logo.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iZGE2NjM1ZS00NTAzLTRkZDktOTdmOS0zYWExY2Y5NzNiOGQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhZ3JvaGVhbC0gYnVja2V0cy9sb2dvLnBuZyIsImlhdCI6MTc3NDAwODY3OCwiZXhwIjo0OTI3NjA4Njc4fQ.fuwva3-hMj5KmMRqElcclgJqzA5d4aigxCIlHVHgMak",
+        },
+        onclose: () => {
           toast({
             title: "Payment cancelled",
             description: "You closed the payment window.",
@@ -178,7 +174,10 @@ const Checkout = () => {
           setIsProcessing(false);
         },
         callback: function (response: any) {
-          if (response.status === "success") {
+          if (
+            response.status === "successful" ||
+            response.status === "completed"
+          ) {
             Sentry.metrics.count("payment_success", 1);
 
             const run = async () => {
@@ -186,8 +185,9 @@ const Checkout = () => {
                 "verify-slot-payment",
                 {
                   body: {
-                    reference: response.reference,
-                    provider: "paystack",
+                    // Flutterwave uses transaction_id (numeric) for server-side verify
+                    reference: response.transaction_id,
+                    provider: "flutterwave",
                     userId: order.user_id,
                     orderId: order.id,
                     slotQuantity: slotQuantity,
@@ -231,11 +231,12 @@ const Checkout = () => {
                 });
               })
               .finally(() => setIsProcessing(false));
+          } else {
+            // Payment was not successful
+            setIsProcessing(false);
           }
         },
       });
-
-      handler.openIframe();
     } catch (error) {
       Sentry.captureException(error);
       toast({
@@ -271,7 +272,7 @@ const Checkout = () => {
               Secure Your Farm Slot
             </h1>
             <p className="text-muted-foreground mb-8">
-              Pay securely via Paystack.
+              Pay securely via Flutterwave.
             </p>
           </motion.div>
 
@@ -384,7 +385,7 @@ const Checkout = () => {
 
                 <div className="mt-8 space-y-3">
                   <Button
-                    onClick={handlePaystack}
+                    onClick={handleFlutterwave}
                     disabled={isProcessing}
                     className="w-full h-12 bg-green-800 hover:bg-green-900 text-white font-semibold"
                   >
@@ -394,7 +395,7 @@ const Checkout = () => {
                         Processing...
                       </span>
                     ) : (
-                      "Pay with Paystack"
+                      "Pay with Flutterwave"
                     )}
                   </Button>
                 </div>
