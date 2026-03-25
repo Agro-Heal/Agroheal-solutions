@@ -196,7 +196,7 @@ const Signup = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="referral">Referral Code (Optional)</Label>
+              <Label htmlFor="referral">Referral Code</Label>
               <Input
                 id="referral"
                 value={referral}

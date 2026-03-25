@@ -106,7 +106,7 @@ Deno.serve(async (req) => {
     const { error: checkoutError } = await supabase
       .from("checkout")
       .update({ status: "paid", transaction_ref: reference })
-      .eq("id", orderId);
+      .eq("id", Number(orderId));
 
     if (checkoutError) throw checkoutError;
 
