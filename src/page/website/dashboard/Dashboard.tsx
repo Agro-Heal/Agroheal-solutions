@@ -22,6 +22,7 @@ import PhoneModal from "./PhoneModal";
 interface referralProps {
   id: string;
   full_name: string;
+  phone: string;
   created_at: string;
 }
 
@@ -82,7 +83,7 @@ const Dashboard = () => {
 
       const { data: referrals } = await supabase
         .from("profiles")
-        .select("id, full_name, created_at")
+        .select("id, full_name, phone, created_at")
         .eq("referred_by", user.id);
 
       profileData.referrals = referrals || [];
@@ -90,11 +91,12 @@ const Dashboard = () => {
       if (profileData.referred_by) {
         const { data: referrerData } = await supabase
           .from("profiles")
-          .select("phone")
+          .select("phone, full_name")
           .eq("id", profileData.referred_by)
           .single();
 
         profileData.referrer_phone = referrerData?.phone || null;
+        profileData.referrer_name = referrerData?.full_name || "Unknown";
         setReferralNumber(profileData?.referrer_phone);
       }
 
@@ -344,12 +346,53 @@ const Dashboard = () => {
                 <p className="text-2xl font-bold">
                   ₦{Number(profile?.referral_earnings ?? 0).toLocaleString()}
                 </p>
-                <p className="text-green-300 text-xs mt-1">
-                  {profile?.total_referrals} referral
-                  {profile?.total_referrals > 1 ? "s" : ""}
-                </p>
               </div>
+              {profile?.referred_by && (
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">
+                    Referred by
+                  </p>
+                  <div className="flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-100">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-green-800/10 flex items-center justify-center">
+                        <span className="text-xs font-bold text-green-800">
+                          {profile?.referrer_name?.charAt(0)?.toUpperCase() ??
+                            "?"}
+                        </span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-gray-700">
+                          {profile?.referrer_name ?? "Unknown referrer"}
+                        </p>
 
+                        <p className="text-xs text-gray-400">
+                          {profile?.referrer_phone ?? "No phone number"}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-xs text-gray-400 whitespace-nowrap">
+                      {profile?.referrer_created_at
+                        ? new Date(
+                            profile.referrer_created_at,
+                          ).toLocaleDateString("en-NG", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })
+                        : profile?.created_at
+                          ? new Date(profile.created_at).toLocaleDateString(
+                              "en-NG",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )
+                          : "No date"}
+                    </span>
+                  </div>
+                </div>
+              )}
               {profile?.referrals?.length > 0 && (
                 <div className="space-y-2">
                   <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">
@@ -361,15 +404,20 @@ const Dashboard = () => {
                         key={r.id}
                         className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2"
                       >
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-green-800/10 flex items-center justify-center">
+                        <div className="flex items-center gap-3 flex-1">
+                          <div className="w-7 h-7 rounded-full bg-green-800/10 flex items-center justify-center flex-shrink-0">
                             <span className="text-xs font-bold text-green-800">
                               {r.full_name?.charAt(0).toUpperCase()}
                             </span>
                           </div>
-                          <span className="text-sm font-medium text-gray-700">
-                            {r.full_name}
-                          </span>
+                          <div className="flex-1">
+                            <span className="text-sm font-medium text-gray-700 block">
+                              {r.full_name}
+                            </span>
+                            <span className="text-xs text-gray-400">
+                              {r.phone || "No Phone No."}
+                            </span>
+                          </div>
                         </div>
                         <span className="text-xs text-gray-400">
                           {new Date(r.created_at).toLocaleDateString("en-NG", {
