@@ -22,6 +22,7 @@ import PhoneModal from "./PhoneModal";
 interface referralProps {
   id: string;
   full_name: string;
+  phone: string;
   created_at: string;
 }
 
@@ -59,15 +60,6 @@ const Dashboard = () => {
       if (!profileData.phone) {
         setShowPhoneModal(true);
       }
-
-      const getReferrerName = async (referrerId: string) => {
-        const { data } = await supabase
-          .from("profiles")
-          .select("full_name")
-          .eq("id", referrerId)
-          .single();
-        return data?.full_name || "Unknown";
-      };
 
       // apply pending referral if not yet processed
       const pendingReferral = user.user_metadata?.referral_code;
