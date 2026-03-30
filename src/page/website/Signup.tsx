@@ -199,10 +199,10 @@ const Signup = () => {
               <Label htmlFor="referral">Referral Code</Label>
               <Input
                 id="referral"
-                value={referral}
+                value={referral || "356FV1"}
                 onChange={(e) => setReferral(e.target.value)}
                 type="text"
-                disabled={referral.length > 10 ? true : false}
+                disabled={true}
                 placeholder="Enter a valid referral code"
                 className="pl-4 h-11 bg-white border-gray-200 rounded-xl text-sm focus:border-green-700 focus:ring-green-700/20 transition-all"
               />
