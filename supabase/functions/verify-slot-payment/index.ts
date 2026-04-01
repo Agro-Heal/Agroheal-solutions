@@ -65,26 +65,131 @@ Deno.serve(async (req) => {
 
     // ── Verify with Flutterwave ───────────────────────────
     // NOTE: reference here must be the numeric transaction_id from Flutterwave
+    // if (provider === "flutterwave") {
+    //   // idempotency check - ensure same reference Id is not verified multiple times
+    //   const { data: existing, error: lookupError } = await supabase
+    //     .from("transactions")
+    //     .select("id, status")
+    //     .eq("reference", reference)
+    //     .maybeSingle();
+
+    //   if (lookupError) {
+    //     return new Response(
+    //       JSON.stringify({ success: false, message: "Database error" }),
+    //       {
+    //         status: 500,
+    //         headers: { ...corsHeaders, "Content-Type": "application/json" },
+    //       },
+    //     );
+    //   }
+
+    //   if (existing?.status === "completed") {
+    //     return new Response(
+    //       JSON.stringify({ success: true, message: "Already processed" }),
+    //       {
+    //         status: 200,
+    //         headers: { ...corsHeaders, "Content-Type": "application/json" },
+    //       },
+    //     );
+    //   }
+
+    //   const flwRes = await fetch(
+    //     `https://api.flutterwave.com/v3/transactions/${reference}/verify`,
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${Deno.env.get("FLUTTERWAVE_SECRET_KEY")}`,
+    //       },
+    //     },
+    //   );
+
+    //   const flwData = await flwRes.json();
+    //   console.log("Flutterwave response:", JSON.stringify(flwData)); // edge function check and console
+
+    //   // validates payment checks
+    //   if (
+    //     flwData.status === "success" &&
+    //     (flwData.data?.status === "successful" ||
+    //       flwData.data?.status === "completed")
+    //   ) {
+    //     isVerified = true;
+    //     amount = flwData.data.amount;
+    //   }
+    // }
+
     if (provider === "flutterwave") {
-      const flwRes = await fetch(
-        `https://api.flutterwave.com/v3/transactions/${reference}/verify`,
-        {
-          headers: {
-            Authorization: `Bearer ${Deno.env.get("FLUTTERWAVE_SECRET_KEY")}`,
-          },
-        },
+      // ── Idempotency: advisory lock scoped to this reference ──────────────
+      const hashBuffer = await crypto.subtle.digest(
+        "SHA-256",
+        new TextEncoder().encode(reference),
       );
+      const lockId = new DataView(hashBuffer).getInt32(0, false);
 
-      const flwData = await flwRes.json();
-      console.log("Flutterwave response:", JSON.stringify(flwData));
+      const { data: lockAcquired } = await supabase.rpc("try_acquire_lock", {
+        lock_id: lockId,
+      });
 
-      if (
-        flwData.status === "success" &&
-        (flwData.data?.status === "successful" ||
-          flwData.data?.status === "completed")
-      ) {
-        isVerified = true;
-        amount = flwData.data.amount; // already in Naira, no conversion needed
+      if (!lockAcquired) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: "Duplicate request in flight",
+          }),
+          {
+            status: 409,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      try {
+        const { data: existing, error: lookupError } = await supabase
+          .from("transactions")
+          .select("id, status")
+          .eq("reference", reference)
+          .maybeSingle();
+
+        if (lookupError) {
+          return new Response(
+            JSON.stringify({ success: false, message: "Database error" }),
+            {
+              status: 500,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
+        }
+
+        if (existing?.status === "completed") {
+          return new Response(
+            JSON.stringify({ success: true, message: "Already processed" }),
+            {
+              status: 200,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            },
+          );
+        }
+
+        const flwRes = await fetch(
+          `https://api.flutterwave.com/v3/transactions/${reference}/verify`,
+          {
+            headers: {
+              Authorization: `Bearer ${Deno.env.get("FLUTTERWAVE_SECRET_KEY")}`,
+            },
+          },
+        );
+
+        const flwData = await flwRes.json();
+        console.log("Flutterwave response:", JSON.stringify(flwData));
+
+        if (
+          flwData.status === "success" &&
+          (flwData.data?.status === "successful" ||
+            flwData.data?.status === "completed")
+        ) {
+          isVerified = true;
+          amount = flwData.data.amount;
+        }
+      } finally {
+        await supabase.rpc("release_lock", { lock_id: lockId });
       }
     }
 

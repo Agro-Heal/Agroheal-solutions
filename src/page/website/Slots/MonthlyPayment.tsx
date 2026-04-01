@@ -127,7 +127,7 @@ function SlotDetailView({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 40 }}
       transition={{ duration: 0.3 }}
-      className="min-h-screen bg-gray-50"
+      className="min-h-screen bg-gray-50 hidden"
     >
       {/* Top Banner */}
       <div className="bg-green-800 px-4 md:px-8 pt-6 pb-16">
@@ -367,7 +367,7 @@ function SlotTableView({
                     "Last Payment",
                     "Next Due",
                     "Status",
-                    "Actions",
+                    // "Actions",
                   ].map((h) => (
                     <th
                       key={h}
@@ -438,7 +438,7 @@ function SlotTableView({
                         </span>
                       </td>
                       {/* Actions */}
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-4 hidden">
                         <div className="flex items-center gap-2">
                           {needsPay && (
                             <Button
@@ -462,7 +462,7 @@ function SlotTableView({
                           )}
                           <button
                             onClick={() => onView(slot)}
-                            className="h-8 w-8 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+                            className="hidden h-8 w-8 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
                             title="View details"
                           >
                             <Eye className="w-3.5 h-3.5" />
