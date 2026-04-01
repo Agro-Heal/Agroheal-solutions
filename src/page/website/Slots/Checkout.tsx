@@ -29,6 +29,7 @@ const Checkout = () => {
   const slotPrice = 2000;
   const totalPrice = slotPrice * slotQuantity;
   const [isProcessing, setIsProcessing] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -38,6 +39,14 @@ const Checkout = () => {
 
   // ── Load Flutterwave script ───────────────────────────────────────────────
   useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+
     if (document.getElementById("flutterwave-script")) return;
     const script = document.createElement("script");
     script.id = "flutterwave-script";
@@ -180,6 +189,11 @@ const Checkout = () => {
           ) {
             Sentry.metrics.count("payment_success", 1);
 
+            const reference = `SUB_${Date.now()}_${user.id.slice(0, 8)}`;
+            localStorage.setItem("pending_payment_ref", reference);
+            localStorage.setItem("pending_payment_provider", "flutterwave");
+            localStorage.setItem("pending_payment_userId", user.id);
+
             const run = async () => {
               const { data, error } = await supabase.functions.invoke(
                 "verify-slot-payment",
@@ -214,9 +228,7 @@ const Checkout = () => {
                 description: "Your slot has been secured!",
               });
 
-              setTimeout(() => {
-                navigate("/dashboard/slots-subscription");
-              }, 2000);
+              navigate("/dashboard/slots-subscription"); // navigate to slots details page
             };
 
             run()

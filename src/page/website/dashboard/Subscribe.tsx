@@ -10,8 +10,8 @@ import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { CheckCircle, ArrowRight, Sparkles } from "lucide-react";
-import * as Sentry from "@sentry/react";
 import { FLUTTERWAVE_KEYS } from "@/config/Index";
+import * as Sentry from "@sentry/react";
 
 declare global {
   interface Window {
@@ -71,6 +71,9 @@ const Subscribe = () => {
     setLoading(true);
 
     const reference = `SUB_${Date.now()}_${user.id.slice(0, 8)}`;
+    localStorage.setItem("pending_payment_ref", reference);
+    localStorage.setItem("pending_payment_provider", "flutterwave");
+    localStorage.setItem("pending_payment_userId", user.id);
 
     try {
       window.FlutterwaveCheckout({
@@ -104,6 +107,10 @@ const Subscribe = () => {
             const txRef = response.tx_ref || reference;
             const txId = response.transaction_id;
             setPaymentReference(String(txId));
+
+            localStorage.setItem("pending_payment_ref", String(txId));
+            localStorage.setItem("pending_payment_provider", "flutterwave");
+            localStorage.setItem("pending_payment_userId", user.id);
 
             const run = async () => {
               const { data, error } = await supabase.functions.invoke(
@@ -156,6 +163,100 @@ const Subscribe = () => {
     }
   };
 
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === "visible") {
+        const pendingRef = localStorage.getItem("pending_payment_ref");
+        const pendingProvider = localStorage.getItem(
+          "pending_payment_provider",
+        );
+        const pendingUserId = localStorage.getItem("pending_payment_userId");
+
+        if (!pendingRef || !pendingProvider || !pendingUserId) return;
+
+        setLoading(true);
+        try {
+          const { data, error } = await supabase.functions.invoke(
+            "verify-payment",
+            {
+              body: {
+                reference: pendingRef,
+                provider: pendingProvider,
+                userId: pendingUserId,
+                referralCode: user?.user_metadata?.referral_code || null,
+              },
+            },
+          );
+
+          if (!error && data?.success) {
+            localStorage.removeItem("pending_payment_ref");
+            localStorage.removeItem("pending_payment_provider");
+            localStorage.removeItem("pending_payment_userId");
+            await supabase.auth.refreshSession();
+            setShowSuccess(true);
+          }
+        } catch (err) {
+          console.error("Auto-verify on return failed", err);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [user]);
+
+  // const retryActivation = async () => {
+  //   setActivationError(false);
+  //   setLoading(true);
+  //   try {
+  //     const {
+  //       data: { session },
+  //     } = await supabase.auth.getSession();
+  //     if (!session) {
+  //       navigate("/login");
+  //       return;
+  //     }
+
+  //     if (!paymentReference) {
+  //       navigate("/subscribe");
+  //       return;
+  //     }
+
+  //     const { data, error } = await supabase.functions.invoke(
+  //       "verify-payment",
+  //       {
+  //         body: {
+  //           reference: paymentReference,
+  //           provider: "flutterwave",
+  //           userId: session.user.id,
+  //         },
+  //       },
+  //     );
+
+  //     if (error || !data?.success) {
+  //       Sentry.captureException(error, {
+  //         extra: { action: "retry_activation", userId: user?.id },
+  //       });
+  //       setActivationError(true);
+  //       return;
+  //     }
+
+  //     await supabase.auth.refreshSession();
+  //     setShowSuccess(true);
+  //   } catch (err) {
+  //     Sentry.captureException(err, {
+  //       extra: { action: "retry_activation", userId: user?.id },
+  //     });
+  //     setActivationError(true);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // 3. Fix retryActivation to read from localStorage if state is null
   const retryActivation = async () => {
     setActivationError(false);
     setLoading(true);
@@ -168,7 +269,10 @@ const Subscribe = () => {
         return;
       }
 
-      if (!paymentReference) {
+      // Read from localStorage as fallback if state was lost
+      const ref =
+        paymentReference || localStorage.getItem("pending_payment_ref");
+      if (!ref) {
         navigate("/subscribe");
         return;
       }
@@ -177,7 +281,7 @@ const Subscribe = () => {
         "verify-payment",
         {
           body: {
-            reference: paymentReference,
+            reference: ref,
             provider: "flutterwave",
             userId: session.user.id,
           },
@@ -185,19 +289,16 @@ const Subscribe = () => {
       );
 
       if (error || !data?.success) {
-        Sentry.captureException(error, {
-          extra: { action: "retry_activation", userId: user?.id },
-        });
         setActivationError(true);
         return;
       }
 
+      localStorage.removeItem("pending_payment_ref");
+      localStorage.removeItem("pending_payment_provider");
+      localStorage.removeItem("pending_payment_userId");
       await supabase.auth.refreshSession();
       setShowSuccess(true);
     } catch (err) {
-      Sentry.captureException(err, {
-        extra: { action: "retry_activation", userId: user?.id },
-      });
       setActivationError(true);
     } finally {
       setLoading(false);
