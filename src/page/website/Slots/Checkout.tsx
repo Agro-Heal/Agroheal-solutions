@@ -26,7 +26,7 @@ const Checkout = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [slotQuantity, setSlotQuantity] = useState(1);
-  const slotPrice = 100;
+  const slotPrice = 2000;
   const totalPrice = slotPrice * slotQuantity;
   const [isProcessing, setIsProcessing] = useState(false);
   const [user, setUser] = useState<any>(null);
