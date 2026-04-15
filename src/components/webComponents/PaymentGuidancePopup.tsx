@@ -81,10 +81,27 @@ const PaymentGuidancePopup = () => {
                   </div>
                 </div>
 
+                <div className="rounded-xl sm:rounded-2xl bg-gray-50 border border-gray-100 p-3.5 sm:p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-green-100 text-green-800 text-xs font-bold flex items-center justify-center mt-0.5 flex-shrink-0">
+                      3
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-gray-900 mb-1">
+                        You can use different payment method
+                      </p>
+                      <p className="text-sm text-gray-600 leading-relaxed text-justify">
+                        When you get to the payment page, you can select the
+                        method you want to use. Card, Bank Transfer etc.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="rounded-xl sm:rounded-2xl bg-amber-50 border border-amber-200 p-3.5 sm:p-4">
                   <div className="flex items-start gap-3">
                     <div className="w-6 h-6 rounded-full bg-amber-100 text-amber-800 text-xs font-bold flex items-center justify-center mt-0.5 flex-shrink-0">
-                      3
+                      4
                     </div>
                     <div>
                       <p className="text-sm font-bold text-amber-800 mb-1">
