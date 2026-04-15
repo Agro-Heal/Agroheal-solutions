@@ -144,12 +144,6 @@ function SlotDetailView({
         <h1 className="text-2xl md:text-3xl font-bold text-white">
           Slot Detail
         </h1>
-<<<<<<< HEAD
-=======
-        <p className="text-green-200 mt-1 text-sm">
-          Manage your farm slot monthly fee
-        </p>
->>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
       </div>
 
       <div className="px-4 md:px-8 -mt-8 pb-12 max-w-2xl mx-auto space-y-4">
@@ -333,12 +327,6 @@ function SlotTableView({
           <h1 className="text-2xl md:text-3xl font-bold text-white">
             Monthly Subscription
           </h1>
-<<<<<<< HEAD
-=======
-          <p className="text-green-200 mt-1 text-sm">
-            Manage your farm slot monthly fees
-          </p>
->>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
         </motion.div>
       </div>
 
@@ -365,20 +353,7 @@ function SlotTableView({
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/60">
-<<<<<<< HEAD
                   {["Slot", "Slots", "Amount Paid", "Payment Date"].map((h) => (
-=======
-                  {[
-                    "Slot",
-                    "Slots",
-                    "Amount Paid",
-                    "Slot Per Month",
-                    "Last Payment",
-                    "Next Due",
-                    "Status",
-                    // "Actions",
-                  ].map((h) => (
->>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
                     <th
                       key={h}
                       className="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap"
@@ -390,20 +365,11 @@ function SlotTableView({
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {paged.map((slot, index) => {
-<<<<<<< HEAD
-=======
-                  const cfg = getStatusConfig(slot);
-                  const needsPay = cfg.isDue || cfg.isOverdue;
->>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
                   return (
                     <tr
                       key={slot.id}
                       className="hover:bg-gray-50/60 transition-colors"
                     >
-<<<<<<< HEAD
-=======
-                      {/* Slot */}
->>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-2">
                           <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
@@ -416,7 +382,6 @@ function SlotTableView({
                           </span>
                         </div>
                       </td>
-<<<<<<< HEAD
                       <td className="px-5 py-4 text-gray-700 font-medium">
                         {slot.slots}
                       </td>
@@ -426,77 +391,6 @@ function SlotTableView({
                       <td className="px-5 py-4 text-gray-500 text-xs whitespace-nowrap">
                         {formatDate(slot.last_payment_date)}
                       </td>
-=======
-                      {/* Slots count */}
-                      <td className="px-5 py-4 text-gray-700 font-medium">
-                        {slot.slots}
-                      </td>
-                      {/* Slot price */}
-                      <td className="px-5 py-4 text-gray-600">
-                        ₦{formatNumber(slot.slotprice)}
-                      </td>
-                      {/* Amount */}
-                      <td className="px-5 py-4 font-bold text-gray-900">
-                        ₦{formatNumber(Number(slot.monthly_pay))}
-                      </td>
-                      {/* Last payment */}
-                      <td className="px-5 py-4 text-gray-500 text-xs whitespace-nowrap">
-                        {formatDate(slot.last_payment_date)}
-                      </td>
-                      {/* Next due */}
-                      <td className="px-5 py-4 text-gray-500 text-xs whitespace-nowrap">
-                        {formatDate(slot.next_payment_date)}
-                      </td>
-                      {/* Status */}
-                      <td className="px-5 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${cfg.pill}`}
-                        >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`}
-                          />
-                          {cfg.isOverdue
-                            ? "Overdue"
-                            : cfg.isDue
-                              ? "Due"
-                              : slot.status === "active"
-                                ? "Active"
-                                : slot.status}
-                        </span>
-                      </td>
-                      {/* Actions */}
-                      <td className="px-5 py-4 hidden">
-                        <div className="flex items-center gap-2">
-                          {needsPay && (
-                            <Button
-                              size="sm"
-                              onClick={() => onPay(slot)}
-                              disabled={isProcessing && payingId === slot.id}
-                              className="h-8 text-xs px-3 bg-green-700 hover:bg-green-800 text-white rounded-lg"
-                            >
-                              {isProcessing && payingId === slot.id ? (
-                                <span className="flex items-center gap-1.5">
-                                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                  Paying…
-                                </span>
-                              ) : (
-                                <span className="flex items-center gap-1.5">
-                                  <CreditCard className="w-3 h-3" />
-                                  Pay ₦1,000
-                                </span>
-                              )}
-                            </Button>
-                          )}
-                          <button
-                            onClick={() => onView(slot)}
-                            className="hidden h-8 w-8 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
-                            title="View details"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
->>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
                     </tr>
                   );
                 })}
@@ -523,12 +417,7 @@ function SlotTableView({
                             ((page - 1) * PAGE_SIZE + index)}
                         </p>
                         <p className="text-xs text-gray-400">
-<<<<<<< HEAD
                           {slot.slots} slot{Number(slot.slots) !== 1 ? "s" : ""}
-=======
-                          {slot.slots} slot{Number(slot.slots) !== 1 ? "s" : ""}{" "}
-                          · ₦{formatNumber(slot.slotprice)} each
->>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
                         </p>
                       </div>
                     </div>
@@ -554,15 +443,9 @@ function SlotTableView({
                       </p>
                     </div>
                     <div>
-<<<<<<< HEAD
                       <p className="text-gray-400">Payment Date</p>
                       <p className="font-semibold text-gray-700">
                         {formatDate(slot.last_payment_date)}
-=======
-                      <p className="text-gray-400">Next Due</p>
-                      <p className="font-semibold text-gray-700">
-                        {formatDate(slot.next_payment_date)}
->>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
                       </p>
                     </div>
                   </div>
