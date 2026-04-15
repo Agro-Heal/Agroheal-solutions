@@ -90,7 +90,11 @@ const Signup = () => {
 
     Sentry.metrics.count("signup_completed", 1);
     setTimeout(() => {
+<<<<<<< HEAD
       navigate("/verify-account");
+=======
+      navigate("/login");
+>>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
     }, 1000);
   };
 

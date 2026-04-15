@@ -12,7 +12,10 @@ import { AnimatePresence } from "framer-motion";
 import { CheckCircle, ArrowRight, Sparkles } from "lucide-react";
 import { FLUTTERWAVE_KEYS } from "@/config/Index";
 import * as Sentry from "@sentry/react";
+<<<<<<< HEAD
 import PaymentGuidancePopup from "@/components/webComponents/PaymentGuidancePopup";
+=======
+>>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
 
 declare global {
   interface Window {
@@ -317,7 +320,10 @@ const Subscribe = () => {
         onRetry={retryActivation}
         loading={loading}
       />
+<<<<<<< HEAD
       <PaymentGuidancePopup />
+=======
+>>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
       {/* <div className="min-h-screen bg-background">
         <main className="pt-10 pb-16">
           <div className="container mx-auto px-4 max-w-4xl">

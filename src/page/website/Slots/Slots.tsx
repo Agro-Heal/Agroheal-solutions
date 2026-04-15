@@ -14,7 +14,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+<<<<<<< HEAD
 import PaymentGuidancePopup from "@/components/webComponents/PaymentGuidancePopup";
+=======
+>>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
 
 const Slots = () => {
   const slotPrice = "₦2,000";
@@ -25,7 +28,10 @@ const Slots = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+<<<<<<< HEAD
       <PaymentGuidancePopup />
+=======
+>>>>>>> cdf63437e8d4b850a9e048146d4328d841e723a5
       <main className="pb-16 px-4 md:px-8 pt-8 max-w-[96%] mx-auto">
         {/* Header */}
         <motion.div

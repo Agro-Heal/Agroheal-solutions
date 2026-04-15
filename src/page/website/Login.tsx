@@ -168,6 +168,11 @@ const Login = () => {
               </div>
             </div>
 
+            <p className="text-sm text-red-600">
+              New users should check their email (or spam) to verify their
+              accounts before the first login.
+            </p>
+
             {/* Submit */}
             <div className="pt-1">
               <Button
@@ -178,7 +183,7 @@ const Login = () => {
                 {loading ? (
                   <span className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                    Signing in....
+                    Signing in...
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
