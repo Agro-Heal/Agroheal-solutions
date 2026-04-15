@@ -1,0 +1,104 @@
+import * as Sentry from "@sentry/react";
+
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import "./index.css";
+
+// pages imports for routes
+import Home from "./page/website/Home";
+import Layout from "./components/layout/Layout";
+import Error from "./page/error/Error";
+import About from "./page/website/About";
+import Login from "./page/website/Login";
+import Signup from "./page/website/Signup";
+import VerifyAccount from "./page/website/VerifyAccount";
+import Slots from "./page/website/Slots/Slots";
+import Courses from "./page/website/Courses/Courses";
+import Dashboard from "./page/website/dashboard/Dashboard";
+import SingleCoursePage from "./page/website/Courses/CoursesDetails";
+import ProtectedRoute from "./routes/ProtectedRoutes";
+import DashboardLayout from "./components/layout/DashboardLayout";
+import Checkout from "./page/website/Slots/Checkout";
+import DashboardError from "./page/error/DashboardError";
+import RequireSubscription from "./page/website/dashboard/RequireSubscription";
+import Subscribe from "./page/website/dashboard/Subscribe";
+import ForgotPasswordForm from "./page/ForgotPassword";
+import UpdatePasswordForm from "./page/UpdatePassword";
+import ProfileComponent from "./page/website/dashboard/Profile";
+import MonthlyPayment from "./page/website/Slots/MonthlyPayment";
+import Legal from "./page/website/Legal";
+import { Analytics } from "@vercel/analytics/react";
+
+Sentry.init({
+  dsn: "https://b74e0d2a3ed4c6b73902514350956ee3@o4511001958416384.ingest.de.sentry.io/4511001967722576",
+  integrations: [
+    Sentry.browserTracingIntegration(),
+    Sentry.replayIntegration(),
+  ],
+  release: "agroheal@0.0.0",
+  tracePropagationTargets: ["localhost", /^https:\/\/agroheal\.solutions/],
+  tracesSampleRate: 1.0,
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
+  sendDefaultPii: true,
+});
+
+const route = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    errorElement: <Error />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: "about", element: <About /> },
+      { path: "login", element: <Login /> },
+      { path: "signup", element: <Signup /> },
+      { path: "verify-account", element: <VerifyAccount /> },
+      { path: "legal", element: <Legal /> },
+      { path: "forgot-password", element: <ForgotPasswordForm /> },
+      { path: "reset-password", element: <UpdatePasswordForm /> },
+    ],
+  },
+
+  // Only login protection
+  {
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      { path: "/subscribe", element: <Subscribe /> },
+
+      // subscription protected area
+      {
+        path: "/dashboard",
+        element: (
+          <RequireSubscription>
+            <Outlet />
+          </RequireSubscription>
+        ),
+        errorElement: <DashboardError />,
+        children: [
+          { index: true, element: <Dashboard /> },
+          { path: "slots", element: <Slots /> },
+          { path: "checkout", element: <Checkout /> },
+          { path: "courses", element: <Courses /> },
+          { path: "courses/:slug", element: <SingleCoursePage /> },
+          { path: "profile", element: <ProfileComponent /> },
+          { path: "slots-subscription", element: <MonthlyPayment /> },
+          { path: "legal", element: <Legal /> },
+        ],
+      },
+    ],
+  },
+]);
+
+// RouterProvider setup
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <RouterProvider router={route} />
+    <Analytics />
+  </StrictMode>,
+);
