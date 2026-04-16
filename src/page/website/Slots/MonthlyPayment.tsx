@@ -11,7 +11,6 @@ import {
   Sprout,
   ArrowRight,
   LandPlot,
-  Eye,
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
@@ -273,15 +272,6 @@ function SlotDetailView({
           </motion.div>
         )}
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-xs text-gray-400 text-center leading-relaxed"
-        >
-          Monthly fees cover farm rent and Agroheal oversight. Your slot remains
-          active as long as payments are up to date.
-        </motion.p>
       </div>
     </motion.div>
   );
@@ -291,15 +281,9 @@ function SlotDetailView({
 function SlotTableView({
   subscriptions,
   onView,
-  onPay,
-  isProcessing,
-  payingId,
 }: {
   subscriptions: Subscription[];
   onView: (slot: Subscription) => void;
-  onPay: (slot: Subscription) => void;
-  isProcessing: boolean;
-  payingId: string | null;
 }) {
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(subscriptions.length / PAGE_SIZE);
@@ -398,90 +382,57 @@ function SlotTableView({
             </table>
           </div>
 
-          {/* ── Mobile card list ── */}
-          <div className="md:hidden divide-y divide-gray-100">
-            {paged.map((slot, index) => {
-              const cfg = getStatusConfig(slot);
-              const needsPay = cfg.isDue || cfg.isOverdue;
-              return (
-                <div key={slot.id} className="px-4 py-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-                        <Sprout className="w-3.5 h-3.5 text-green-700" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-gray-900">
-                          Slot #
-                          {subscriptions.length -
-                            ((page - 1) * PAGE_SIZE + index)}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          {slot.slots} slot{Number(slot.slots) !== 1 ? "s" : ""}
-                        </p>
-                      </div>
-                    </div>
-                    <span
-                      className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${cfg.pill}`}
+          {/* ── Mobile (desktop-like) table ── */}
+          <div className="md:hidden overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 bg-gray-50/60">
+                  {["Slot", "Amount Paid", "Payment Date"].map((h) => (
+                    <th
+                      key={h}
+                      className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap"
                     >
-                      <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-                      {cfg.isOverdue
-                        ? "Overdue"
-                        : cfg.isDue
-                          ? "Due"
-                          : slot.status === "active"
-                            ? "Active"
-                            : slot.status}
-                    </span>
-                  </div>
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {paged.map((slot, index) => {
+                  const slotNumber =
+                    subscriptions.length -
+                    ((page - 1) * PAGE_SIZE + index);
 
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div>
-                      <p className="text-gray-400">Amount Paid</p>
-                      <p className="font-bold text-gray-900">
-                        ₦{formatNumber(slot.amount)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">Payment Date</p>
-                      <p className="font-semibold text-gray-700">
-                        {formatDate(slot.last_payment_date)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-1">
-                    {needsPay && (
-                      <Button
-                        size="sm"
-                        onClick={() => onPay(slot)}
-                        disabled={isProcessing && payingId === slot.id}
-                        className="flex-1 h-8 text-xs bg-green-700 hover:bg-green-800 text-white rounded-lg"
-                      >
-                        {isProcessing && payingId === slot.id ? (
-                          <span className="flex items-center gap-1.5">
-                            <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            Paying…
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1.5">
-                            <CreditCard className="w-3 h-3" />
-                            Pay ₦1,000
-                          </span>
-                        )}
-                      </Button>
-                    )}
-                    <button
+                  return (
+                    <tr
+                      key={slot.id}
                       onClick={() => onView(slot)}
-                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 transition-colors"
+                      role="button"
+                      className="cursor-pointer hover:bg-gray-50/60 transition-colors"
                     >
-                      <Eye className="w-3.5 h-3.5" />
-                      View
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+                            <Sprout className="w-3.5 h-3.5 text-green-700" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900 text-xs">
+                              {slotNumber}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 font-bold text-gray-900 whitespace-nowrap">
+                        ₦{formatNumber(slot.amount)}
+                      </td>
+                      <td className="px-4 py-4 text-gray-500 text-xs whitespace-nowrap">
+                        {formatDate(slot.last_payment_date)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
 
           {/* Pagination */}
@@ -527,15 +478,6 @@ function SlotTableView({
           )}
         </motion.div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-xs text-gray-400 text-center mt-6 leading-relaxed"
-        >
-          Monthly fees cover farm rent and Agroheal oversight. Your slot remains
-          active as long as payments are up to date.
-        </motion.p>
       </div>
     </motion.div>
   );
@@ -744,9 +686,6 @@ const MonthlyPayment = () => {
           key="table"
           subscriptions={subscriptions}
           onView={(slot) => setSelectedSlotId(slot.id)}
-          onPay={(slot) => handleMonthlyPayment(slot)}
-          isProcessing={isProcessing}
-          payingId={payingId}
         />
       )}
     </AnimatePresence>
