@@ -492,7 +492,6 @@ const MonthlyPayment = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
-  const [payingId, setPayingId] = useState<string | null>(null);
 
   // Derive selectedSlot from subscriptions so it always has fresh data
   const selectedSlot = selectedSlotId
@@ -561,8 +560,6 @@ const MonthlyPayment = () => {
     if (!user) return;
 
     setIsProcessing(true);
-    setPayingId(targetSlot.id);
-
     try {
       (window as any).FlutterwaveCheckout({
         public_key: FLUTTERWAVE_KEYS,
@@ -588,7 +585,6 @@ const MonthlyPayment = () => {
             description: "You closed the payment window.",
           });
           setIsProcessing(false);
-          setPayingId(null);
         },
         callback: function (response: any) {
           if (
@@ -602,7 +598,6 @@ const MonthlyPayment = () => {
             setTimeout(() => {
               fetchSubscription();
               setIsProcessing(false);
-              setPayingId(null);
             }, 3000);
           } else {
             toast({
@@ -611,7 +606,6 @@ const MonthlyPayment = () => {
               variant: "destructive",
             });
             setIsProcessing(false);
-            setPayingId(null);
           }
         },
       });
@@ -622,7 +616,6 @@ const MonthlyPayment = () => {
         variant: "destructive",
       });
       setIsProcessing(false);
-      setPayingId(null);
     }
   };
 
