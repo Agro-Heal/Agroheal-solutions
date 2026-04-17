@@ -160,7 +160,7 @@ const Dashboard = () => {
   const stats = [
     {
       label: "Start Learning",
-      value: "Organic Farming",
+      value: "Organic Farming Courses",
       icon: BookOpen,
       bg: "bg-green-50",
       iconColor: "text-green-700",
