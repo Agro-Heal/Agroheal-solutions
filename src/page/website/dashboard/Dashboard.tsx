@@ -160,7 +160,7 @@ const Dashboard = () => {
   const stats = [
     {
       label: "Start Learning",
-      value: "Organic Farming Course",
+      value: "Organic Farming Courses",
       icon: BookOpen,
       bg: "bg-green-50",
       iconColor: "text-green-700",
@@ -243,7 +243,7 @@ const Dashboard = () => {
                   stat.actionTo ||
                   stat.actionHref ||
                   stat.label === "Total Referrals"
-                    ? "text-base sm:text-xl leading-snug sm:leading-relaxed"
+                    ? "text-base sm:text-lg leading-snug sm:leading-relaxed"
                     : "text-xl sm:text-3xl"
                 } font-bold ${stat.valueColor} text-center sm:text-left`}
               >
