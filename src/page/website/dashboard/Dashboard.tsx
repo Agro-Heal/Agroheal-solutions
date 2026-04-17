@@ -164,24 +164,27 @@ const Dashboard = () => {
       iconColor: "text-green-700",
       valueColor: "text-gray-700",
       actionTo: "/dashboard/courses",
+      actionLabel: undefined,
     },
     {
-      label: "Join Telegram",
-      value: "Get updates and support",
+      label: "Telegram Group",
+      value: "Access our community",
       icon: SendHorizontal,
       bg: "bg-[#e8f4ff]",
       iconColor: "text-[#229ED9]",
       valueColor: "text-gray-700",
       actionHref: "https://t.me/+8a7pjUluliZjNTg0",
+      actionLabel: undefined,
     },
     {
-      label: "Secure your slot",
-      value: `Total Slots: ${totalSlotsPurchased}`,
+      label: "Total Slots",
+      value: `${totalSlotsPurchased}`,
       icon: Sprout,
       bg: "bg-green-50",
       iconColor: "text-green-700",
       valueColor: "text-gray-700",
       actionTo: "/dashboard/slots",
+      actionLabel: "Secure Slot",
     },
     {
       label: "Total Referrals",
@@ -190,6 +193,7 @@ const Dashboard = () => {
       bg: "bg-yellow-50",
       iconColor: "text-[#e8b130]",
       valueColor: "text-gray-900",
+      actionLabel: undefined,
     },
   ];
 
@@ -212,35 +216,32 @@ const Dashboard = () => {
       </div>
 
       <div className="px-4 md:px-8 -mt-8 pb-12 max-w-[96%] mx-auto">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.08 }}
-              className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col h-full"
+              className="bg-white rounded-2xl p-3 sm:p-5 shadow-sm border border-gray-100 flex flex-col h-full items-center text-center sm:items-start sm:text-left"
             >
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div
-                  className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}
+                  className={`flex w-9 h-9 rounded-xl ${stat.bg} items-center justify-center`}
                 >
                   <stat.icon className={`w-4 h-4 ${stat.iconColor}`} />
                 </div>
-                {stat.actionHref && (
-                  <span className="text-xs font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
-                    Community
-                  </span>
-                )}
               </div>
 
-              <p className="text-xs text-gray-500 font-medium mb-1">{stat.label}</p>
+              <p className="text-xs sm:text-sm text-gray-500 font-semibold mb-1 text-center sm:text-left">
+                {stat.label}
+              </p>
               <p
                 className={`${
                   stat.actionTo || stat.actionHref || stat.label === "Total Referrals"
-                    ? "text-sm leading-relaxed"
-                    : "text-xl"
-                } font-bold ${stat.valueColor}`}
+                    ? "text-base sm:text-xl leading-snug sm:leading-relaxed"
+                    : "text-xl sm:text-3xl"
+                } font-bold ${stat.valueColor} text-center sm:text-left`}
               >
                 {stat.value}
               </p>
@@ -249,16 +250,16 @@ const Dashboard = () => {
                 <Button
                   asChild
                   variant="outline"
-                  className={`mt-4 w-full rounded-lg border px-3 py-2.5 text-xs font-medium shadow-none transition-all duration-200 ${
-                    stat.label === "Secure your slot"
-                      ? "border-[#d17547]/40 bg-[#d17547]/10 text-[#d17547] hover:bg-[#d17547] hover:text-white hover:border-[#d17547] hover:shadow-sm"
-                      : "border-green-800/30 bg-green-50 text-green-800 hover:bg-green-800 hover:text-white hover:border-green-800 hover:shadow-sm"
+                  className={`mt-2.5 sm:mt-4 w-full rounded-lg border px-2.5 sm:px-3 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold shadow-sm transition-all duration-200 ${
+                    stat.label === "Total Slots"
+                      ? "border-[#d17547] bg-[#d17547] text-white"
+                      : "border-green-800 bg-green-800 text-white"
                   }`}
                 >
                   <Link to={stat.actionTo}>
-                    {stat.label === "Secure your slot"
-                      ? "Secure your slot"
-                      : "Start Learning"}
+                    {stat.label === "Start Learning"
+                      ? "View Courses"
+                      : stat.actionLabel ?? stat.label}
                   </Link>
                 </Button>
               )}
@@ -267,7 +268,7 @@ const Dashboard = () => {
                 <Button
                   asChild
                   variant="outline"
-                  className="mt-4 w-full rounded-lg border border-green-800/30 bg-green-50 text-green-800 px-3 py-2.5 text-xs font-medium shadow-none hover:bg-green-800 hover:text-white hover:border-green-800 hover:shadow-sm transition-all duration-200"
+                  className="mt-2.5 sm:mt-4 w-full rounded-lg border border-green-800 bg-green-800 text-white px-2.5 sm:px-3 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold shadow-sm transition-all duration-200"
                 >
                   <a href={stat.actionHref} target="_blank" rel="noreferrer">
                     Join Telegram
@@ -288,10 +289,10 @@ const Dashboard = () => {
                       toast.error("Failed to copy referral link");
                     }
                   }}
-                  className="mt-4 w-full rounded-lg border border-green-800/30 bg-green-50 text-green-800 px-3 py-2.5 text-xs font-medium shadow-none hover:bg-green-800 hover:text-white hover:border-green-800 hover:shadow-sm transition-all duration-200"
+                  className="mt-2.5 sm:mt-4 w-full rounded-lg border border-green-800 bg-green-800 text-white px-2.5 sm:px-3 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold shadow-sm transition-all duration-200"
                 >
                   <Copy className="w-3.5 h-3.5 shrink-0" />
-                  Copy referral link
+                  Referral Link
                 </Button>
               )}
             </motion.div>
