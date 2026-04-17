@@ -124,7 +124,9 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-50">
         <div className="flex flex-col items-center justify-center gap-4 text-center px-4">
-          <p className="text-gray-700 font-semibold">Failed to load your profile.</p>
+          <p className="text-gray-700 font-semibold">
+            Failed to load your profile.
+          </p>
           <p className="text-gray-500 text-sm">
             Please refresh the page or contact support.
           </p>
@@ -158,7 +160,7 @@ const Dashboard = () => {
   const stats = [
     {
       label: "Start Learning",
-      value: "Explore your courses",
+      value: "Organic Farming",
       icon: BookOpen,
       bg: "bg-green-50",
       iconColor: "text-green-700",
@@ -167,8 +169,8 @@ const Dashboard = () => {
       actionLabel: undefined,
     },
     {
-      label: "Telegram Group",
-      value: "Access our community",
+      label: "LEAP Community",
+      value: "Live trainings & updates",
       icon: SendHorizontal,
       bg: "bg-[#e8f4ff]",
       iconColor: "text-[#229ED9]",
@@ -177,7 +179,7 @@ const Dashboard = () => {
       actionLabel: undefined,
     },
     {
-      label: "Total Slots",
+      label: "Total Farm Slots",
       value: `${totalSlotsPurchased}`,
       icon: Sprout,
       bg: "bg-green-50",
@@ -238,7 +240,9 @@ const Dashboard = () => {
               </p>
               <p
                 className={`${
-                  stat.actionTo || stat.actionHref || stat.label === "Total Referrals"
+                  stat.actionTo ||
+                  stat.actionHref ||
+                  stat.label === "Total Referrals"
                     ? "text-base sm:text-xl leading-snug sm:leading-relaxed"
                     : "text-xl sm:text-3xl"
                 } font-bold ${stat.valueColor} text-center sm:text-left`}
@@ -251,15 +255,15 @@ const Dashboard = () => {
                   asChild
                   variant="outline"
                   className={`mt-2.5 sm:mt-4 w-full rounded-lg border px-2.5 sm:px-3 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold shadow-sm transition-all duration-200 ${
-                    stat.label === "Total Slots"
+                    stat.actionLabel === "Secure Slot"
                       ? "border-[#d17547] bg-[#d17547] text-white"
                       : "border-green-800 bg-green-800 text-white"
                   }`}
                 >
                   <Link to={stat.actionTo}>
                     {stat.label === "Start Learning"
-                      ? "View Courses"
-                      : stat.actionLabel ?? stat.label}
+                      ? "View Modules"
+                      : (stat.actionLabel ?? stat.label)}
                   </Link>
                 </Button>
               )}
@@ -307,7 +311,9 @@ const Dashboard = () => {
             className="order-2 lg:order-1 lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col h-full min-h-0 lg:min-h-[calc(100vh-11rem)]"
           >
             <div className="flex items-center justify-between mb-5 shrink-0">
-              <h2 className="text-base font-bold text-gray-900">Your Subscriptions</h2>
+              <h2 className="text-base font-bold text-gray-900">
+                Your Subscriptions
+              </h2>
               <span className="text-xs text-gray-400">2 services</span>
             </div>
 
@@ -321,7 +327,9 @@ const Dashboard = () => {
                     <h3 className="font-semibold text-gray-900 text-sm">
                       Platform Subscription
                     </h3>
-                    <p className="text-xs text-gray-500">Access to all courses</p>
+                    <p className="text-xs text-gray-500">
+                      Access to all courses
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 text-green-700 bg-green-50 px-3 py-1 rounded-full">
@@ -332,7 +340,9 @@ const Dashboard = () => {
 
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden shrink-0">
                 <div className="px-4 py-3.5 sm:px-5 border-b border-green-700 bg-green-800 flex items-center justify-between">
-                  <h3 className="text-base font-bold text-white">Slot History</h3>
+                  <h3 className="text-base font-bold text-white">
+                    Slot History
+                  </h3>
                   <Button
                     asChild
                     size="sm"
@@ -371,21 +381,23 @@ const Dashboard = () => {
                             </td>
                             <td className="py-3 text-gray-500">
                               {item.last_payment_date
-                                ? new Date(item.last_payment_date).toLocaleDateString(
-                                    "en-NG",
-                                    {
-                                      day: "numeric",
-                                      month: "short",
-                                      year: "numeric",
-                                    },
-                                  )
+                                ? new Date(
+                                    item.last_payment_date,
+                                  ).toLocaleDateString("en-NG", {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                  })
                                 : "-"}
                             </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={3} className="py-6 text-center text-gray-400">
+                          <td
+                            colSpan={3}
+                            className="py-6 text-center text-gray-400"
+                          >
                             No slot payments yet.
                           </td>
                         </tr>
@@ -430,7 +442,9 @@ const Dashboard = () => {
                       <div
                         className={`w-9 h-9 rounded-xl ${action.iconBg} flex items-center justify-center`}
                       >
-                        <action.icon className={`w-4 h-4 ${action.iconColor}`} />
+                        <action.icon
+                          className={`w-4 h-4 ${action.iconColor}`}
+                        />
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-900">
@@ -493,7 +507,8 @@ const Dashboard = () => {
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-green-800/10 flex items-center justify-center">
                         <span className="text-xs font-bold text-green-800">
-                          {profile?.referrer_name?.charAt(0)?.toUpperCase() ?? "?"}
+                          {profile?.referrer_name?.charAt(0)?.toUpperCase() ??
+                            "?"}
                         </span>
                       </div>
                       <div className="min-w-0">
