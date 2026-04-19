@@ -28,6 +28,7 @@ import UpdatePasswordForm from "./page/UpdatePassword";
 import ProfileComponent from "./page/website/dashboard/Profile";
 import MonthlyPayment from "./page/website/Slots/MonthlyPayment";
 import Legal from "./page/website/Legal";
+import RoadmapGuide from "./page/website/dashboard/RoadmapGuide";
 import { Analytics } from "@vercel/analytics/react";
 
 Sentry.init({
@@ -88,6 +89,7 @@ const route = createBrowserRouter([
           { path: "courses/:slug", element: <SingleCoursePage /> },
           { path: "profile", element: <ProfileComponent /> },
           { path: "slots-subscription", element: <MonthlyPayment /> },
+          { path: "roadmap-guide", element: <RoadmapGuide /> },
           { path: "legal", element: <Legal /> },
         ],
       },

@@ -5,6 +5,8 @@ import {
   Sprout,
   CreditCard,
   ScrollText,
+  FileText,
+  Route,
   LogOut,
   Menu,
   X,
@@ -25,7 +27,8 @@ const navItems = [
     path: "/dashboard/slots-subscription",
     icon: CreditCard,
   },
-  { label: "Legal Agreement", path: "/dashboard/legal", icon: ScrollText },
+  { label: "Website Roadmap", path: "/dashboard/roadmap-guide", icon: Route },
+  { label: "Legal Agreement", path: "/dashboard/legal", icon: FileText },
 ];
 
 const HIDDEN_ROUTES = ["/login", "/signup"];
