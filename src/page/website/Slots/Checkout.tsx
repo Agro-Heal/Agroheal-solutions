@@ -378,20 +378,50 @@ const Checkout = () => {
                       </button>
                     </div>
 
-                    {slotQuantity > 1 && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-between bg-green-50 border border-green-100 rounded-xl px-4 py-3 mt-2"
-                      >
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="space-y-4 mt-2"
+                    >
+                      <div className="flex items-center justify-between bg-green-50 border border-green-100 rounded-xl px-4 py-3">
                         <span className="text-sm text-green-700 font-medium">
                           {slotQuantity} × ₦{slotPrice.toLocaleString()}
                         </span>
                         <span className="text-sm font-bold text-green-800">
                           = ₦{totalPrice.toLocaleString()}
                         </span>
-                      </motion.div>
-                    )}
+                      </div>
+
+                      <div className="space-y-3 bg-muted/30 rounded-xl p-4 border border-border/50">
+                        <h4 className="text-sm font-semibold text-foreground flex items-stretch gap-2 leading-tight text-justify">
+                          <div className="w-1 bg-primary rounded-full shrink-0" />
+                          <span>
+                            After paying for farm slot, below are the fees you need to pay for, to keep your farm going.
+                          </span>
+                        </h4>
+                        
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-muted-foreground">Farm Setup Fee/month</span>
+                            <span className="text-foreground font-bold text-lg">
+                              ₦{(5000 * slotQuantity).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-muted-foreground">Farm Support Fee/month</span>
+                            <span className="text-foreground font-bold text-lg">
+                              ₦{(500 * slotQuantity).toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="bg-amber-50 border border-amber-100 rounded-lg p-4">
+                          <p className="text-amber-800 leading-tight">
+                            <span className="text-base font-bold">Absentee Fine = ₦{(500 * slotQuantity).toLocaleString()}/month</span>
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
                   </div>
                 </div>
 
@@ -455,6 +485,8 @@ const Checkout = () => {
                       </span>
                     </div>
                   </div>
+
+
 
                   <ul className="text-sm text-muted-foreground space-y-2 pt-4 border-t border-border">
                     <li className="flex items-center gap-2">
