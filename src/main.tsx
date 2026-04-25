@@ -29,6 +29,10 @@ import ProfileComponent from "./page/website/dashboard/Profile";
 import MonthlyPayment from "./page/website/Slots/MonthlyPayment";
 import Legal from "./page/website/Legal";
 import RoadmapGuide from "./page/website/dashboard/RoadmapGuide";
+import CreateFarmGroup from "./page/website/dashboard/CreateFarmGroup";
+import FarmRecordsView from "./page/website/dashboard/FarmRecordsView";
+import FarmAdmin from "./page/website/dashboard/FarmAdmin";
+import FarmManagement from "./page/group-farm/FarmManagement";
 import { Analytics } from "@vercel/analytics/react";
 
 Sentry.init({
@@ -62,6 +66,18 @@ const route = createBrowserRouter([
     ],
   },
 
+  // Farm management route (direct access)
+  {
+    path: "/:farmSlug",
+    element: <FarmManagement />,
+  },
+
+  // Farm management route (direct access)
+  {
+    path: "/:farmSlug",
+    element: <FarmManagement />,
+  },
+
   // Only login protection
   {
     element: (
@@ -89,6 +105,10 @@ const route = createBrowserRouter([
           { path: "courses/:slug", element: <SingleCoursePage /> },
           { path: "profile", element: <ProfileComponent /> },
           { path: "slots-subscription", element: <MonthlyPayment /> },
+          // { path: "withdrawals", element: <Withdrawals /> }, // Hidden for now
+          { path: "farm-records", element: <FarmRecordsView /> },
+          { path: "create-farm-group", element: <CreateFarmGroup /> },
+          { path: "farm-admin", element: <FarmAdmin /> },
           { path: "roadmap-guide", element: <RoadmapGuide /> },
           { path: "legal", element: <Legal /> },
         ],

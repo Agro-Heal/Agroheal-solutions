@@ -8,6 +8,10 @@ const corsHeaders = {
 
 type Action = "banks" | "resolve" | "withdraw" | "list";
 
+function isIpWhitelistError(message: unknown) {
+  return /ip\s*whitelist/i.test(String(message ?? ""));
+}
+
 function json(status: number, body: unknown) {
   return new Response(JSON.stringify(body), {
     status,
@@ -44,6 +48,14 @@ async function fetchFlutterwaveBanks(): Promise<Array<{ name: string; code: stri
   });
   const data = await safeJson(res);
   if (!res.ok) {
+        if (isIpWhitelistError(data?.message ?? data?._raw)) {
+          return json(503, {
+            success: false,
+            code: "IP_WHITELIST_REQUIRED",
+            message:
+              "Please enable IP Whitelisting to access this service. Add your backend service IP to the provider allowlist.",
+          });
+        }
     throw new Error(
       `Flutterwave banks request failed (${res.status}): ${String(
         data?.message ?? data?._raw ?? "Unknown error",
@@ -153,6 +165,14 @@ Deno.serve(async (req) => {
       });
       const data = await safeJson(res);
       if (!res.ok || data?.status !== "success" || !data?.data?.account_name) {
+        if (isIpWhitelistError(data?.message ?? data?._raw)) {
+          return json(503, {
+            success: false,
+            code: "IP_WHITELIST_REQUIRED",
+            message:
+              "Please enable IP Whitelisting to access this service. Add your backend service IP to the provider allowlist.",
+          });
+        }
         return json(400, {
           success: false,
           message: data?.message || "Unable to resolve account",
@@ -275,6 +295,15 @@ Deno.serve(async (req) => {
       const flwData = await safeJson(flwRes);
 
       if (!flwRes.ok || flwData?.status !== "success") {
+        if (isIpWhitelistError(flwData?.message ?? flwData?._raw)) {
+          return json(503, {
+            success: false,
+            code: "IP_WHITELIST_REQUIRED",
+            message:
+              "Please enable IP Whitelisting to access this service. Add your backend service IP to the provider allowlist.",
+            providerResponse: flwData,
+          });
+        }
         return json(400, {
           success: false,
           message: flwData?.message || "Transfer failed",

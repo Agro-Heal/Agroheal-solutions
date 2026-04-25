@@ -12,6 +12,7 @@ import {
   X,
   Leaf,
   ChevronRight,
+  BookOpen,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { motion, AnimatePresence } from "framer-motion";
@@ -27,6 +28,8 @@ const navItems = [
     path: "/dashboard/slots-subscription",
     icon: CreditCard,
   },
+  { label: "Farm Records", path: "/dashboard/farm-records", icon: BookOpen },
+  // { label: "Withdrawals", path: "/dashboard/withdrawals", icon: Wallet }, // Hidden for now
   { label: "Website Roadmap", path: "/dashboard/roadmap-guide", icon: Route },
   { label: "Legal Agreement", path: "/dashboard/legal", icon: FileText },
 ];

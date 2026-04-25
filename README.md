@@ -40,42 +40,42 @@ Agroheal LEAP is a subscription-based agriculture education platform. Users sign
 
 ### Frontend
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| [React](https://react.dev/) | 19.x | UI framework |
-| [TypeScript](https://www.typescriptlang.org/) | ~5.9 | Type safety |
-| [Vite](https://vitejs.dev/) | 7.x | Build tool & dev server (SWC plugin) |
-| [React Router DOM](https://reactrouter.com/) | 7.x | Client-side routing |
-| [Tailwind CSS](https://tailwindcss.com/) | 3.4 | Utility-first styling |
-| [shadcn/ui](https://ui.shadcn.com/) | — | Component library (Radix UI primitives) |
-| [Radix UI](https://www.radix-ui.com/) | Various | Accessible headless UI primitives |
-| [Chakra UI](https://chakra-ui.com/) | 2.x | Additional UI components |
-| [Framer Motion](https://www.framer.com/motion/) | 12.x | Animations & transitions |
-| [Lottie React](https://github.com/LottieFiles/lottie-react) | 2.x | Lottie animation playback |
-| [Embla Carousel](https://www.embla-carousel.com/) | 8.x | Carousel / slider |
-| [Lucide React](https://lucide.dev/) | 0.575 | Icon set |
-| [react-hot-toast](https://react-hot-toast.com/) | 2.x | Toast notifications |
-| [react-youtube](https://github.com/tjallingt/react-youtube) | 10.x | YouTube player embed |
-| [clsx](https://github.com/lukeed/clsx) + [tailwind-merge](https://github.com/nicolo-ribaudo/tailwind-merge) | Latest | Conditional class merging |
-| [class-variance-authority](https://cva.style/docs) | 0.7 | Component variant management |
-| [Axios](https://axios-http.com/) | 1.14 | HTTP client (reserved, not yet wired) |
+| Technology                                                                                                  | Version | Purpose                                 |
+| ----------------------------------------------------------------------------------------------------------- | ------- | --------------------------------------- |
+| [React](https://react.dev/)                                                                                 | 19.x    | UI framework                            |
+| [TypeScript](https://www.typescriptlang.org/)                                                               | ~5.9    | Type safety                             |
+| [Vite](https://vitejs.dev/)                                                                                 | 7.x     | Build tool & dev server (SWC plugin)    |
+| [React Router DOM](https://reactrouter.com/)                                                                | 7.x     | Client-side routing                     |
+| [Tailwind CSS](https://tailwindcss.com/)                                                                    | 3.4     | Utility-first styling                   |
+| [shadcn/ui](https://ui.shadcn.com/)                                                                         | —       | Component library (Radix UI primitives) |
+| [Radix UI](https://www.radix-ui.com/)                                                                       | Various | Accessible headless UI primitives       |
+| [Chakra UI](https://chakra-ui.com/)                                                                         | 2.x     | Additional UI components                |
+| [Framer Motion](https://www.framer.com/motion/)                                                             | 12.x    | Animations & transitions                |
+| [Lottie React](https://github.com/LottieFiles/lottie-react)                                                 | 2.x     | Lottie animation playback               |
+| [Embla Carousel](https://www.embla-carousel.com/)                                                           | 8.x     | Carousel / slider                       |
+| [Lucide React](https://lucide.dev/)                                                                         | 0.575   | Icon set                                |
+| [react-hot-toast](https://react-hot-toast.com/)                                                             | 2.x     | Toast notifications                     |
+| [react-youtube](https://github.com/tjallingt/react-youtube)                                                 | 10.x    | YouTube player embed                    |
+| [clsx](https://github.com/lukeed/clsx) + [tailwind-merge](https://github.com/nicolo-ribaudo/tailwind-merge) | Latest  | Conditional class merging               |
+| [class-variance-authority](https://cva.style/docs)                                                          | 0.7     | Component variant management            |
+| [Axios](https://axios-http.com/)                                                                            | 1.14    | HTTP client (reserved, not yet wired)   |
 
 ### Backend (BaaS)
 
-| Technology | Purpose |
-|------------|---------|
-| [Supabase](https://supabase.com/) | Postgres database, Auth, Storage, Edge Functions |
-| Supabase Auth | Email/password authentication & session management |
-| Supabase PostgREST | Auto-generated REST API over Postgres |
-| Supabase Edge Functions | Serverless Deno functions for payment verification & webhooks |
+| Technology                        | Purpose                                                       |
+| --------------------------------- | ------------------------------------------------------------- |
+| [Supabase](https://supabase.com/) | Postgres database, Auth, Storage, Edge Functions              |
+| Supabase Auth                     | Email/password authentication & session management            |
+| Supabase PostgREST                | Auto-generated REST API over Postgres                         |
+| Supabase Edge Functions           | Serverless Deno functions for payment verification & webhooks |
 
 ### Tooling & Quality
 
-| Tool | Purpose |
-|------|---------|
-| ESLint 9 (Flat Config) | Linting (TypeScript + React Hooks + React Refresh) |
-| PostCSS + Autoprefixer | CSS processing |
-| TypeScript Project References | Separate TS configs for app and node |
+| Tool                          | Purpose                                            |
+| ----------------------------- | -------------------------------------------------- |
+| ESLint 9 (Flat Config)        | Linting (TypeScript + React Hooks + React Refresh) |
+| PostCSS + Autoprefixer        | CSS processing                                     |
+| TypeScript Project References | Separate TS configs for app and node               |
 
 ---
 
@@ -208,6 +208,7 @@ VITE_WHATSAPP_REDIRECT=https://chat.whatsapp.com/your-group-link
 ```
 
 > **Note:** The Edge Functions deployed on Supabase require additional **server-side** secrets (set in the Supabase Dashboard under Project Settings → Edge Functions):
+>
 > - `SUPABASE_SERVICE_ROLE_KEY`
 > - `PAYSTACK_SECRET_KEY`
 > - `FLUTTERWAVE_SECRET_KEY`
@@ -223,12 +224,12 @@ npm run dev
 
 ## Available Scripts
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `dev` | `vite` | Start the local dev server on port **5174** with HMR |
-| `build` | `tsc -b && vite build` | Type-check then produce an optimised production build in `dist/` |
-| `preview` | `vite preview` | Locally preview the production build |
-| `lint` | `eslint .` | Run ESLint across the entire project |
+| Script    | Command                | Description                                                      |
+| --------- | ---------------------- | ---------------------------------------------------------------- |
+| `dev`     | `vite`                 | Start the local dev server on port **5174** with HMR             |
+| `build`   | `tsc -b && vite build` | Type-check then produce an optimised production build in `dist/` |
+| `preview` | `vite preview`         | Locally preview the production build                             |
+| `lint`    | `eslint .`             | Run ESLint across the entire project                             |
 
 ---
 
@@ -236,34 +237,34 @@ npm run dev
 
 ### Public Routes
 
-| Path | Page | Description |
-|------|------|-------------|
-| `/` | Home | Marketing landing page (Hero, How It Works, Benefits, Testimonials, FAQ, CTA) |
-| `/about` | About | About the Agroheal platform |
-| `/login` | Login | Email/password sign-in |
-| `/signup` | Sign Up | New account registration with optional referral code |
-| `/legal` | Legal | Terms of service / privacy policy |
-| `/forgot-password` | Forgot Password | Send password reset email via Supabase |
-| `/reset-password` | Update Password | Set a new password from the reset email link |
+| Path               | Page            | Description                                                                   |
+| ------------------ | --------------- | ----------------------------------------------------------------------------- |
+| `/`                | Home            | Marketing landing page (Hero, How It Works, Benefits, Testimonials, FAQ, CTA) |
+| `/about`           | About           | About the Agroheal platform                                                   |
+| `/login`           | Login           | Email/password sign-in                                                        |
+| `/signup`          | Sign Up         | New account registration with optional referral code                          |
+| `/legal`           | Legal           | Terms of service / privacy policy                                             |
+| `/forgot-password` | Forgot Password | Send password reset email via Supabase                                        |
+| `/reset-password`  | Update Password | Set a new password from the reset email link                                  |
 
 ### Authenticated Routes (require active session)
 
-| Path | Page | Description |
-|------|------|-------------|
+| Path         | Page      | Description                                                         |
+| ------------ | --------- | ------------------------------------------------------------------- |
 | `/subscribe` | Subscribe | Purchase a yearly platform subscription via Flutterwave or Paystack |
 
 ### Subscription-Gated Routes (require active session + active subscription)
 
-| Path | Page | Description |
-|------|------|-------------|
-| `/dashboard` | Dashboard | Main member dashboard |
-| `/dashboard/slots` | Slots | Browse available farm slots |
-| `/dashboard/checkout` | Checkout | Purchase / reserve a farm slot |
-| `/dashboard/slots-subscription` | Monthly Payment | Manage recurring slot payments |
-| `/dashboard/courses` | Courses | Browse the organic farming course catalogue |
-| `/dashboard/courses/:slug` | Course Detail | Watch lessons (YouTube) for a specific course |
-| `/dashboard/profile` | Profile | View and edit member profile, referral code |
-| `/dashboard/legal` | Legal (Dashboard) | In-app legal documents |
+| Path                            | Page              | Description                                   |
+| ------------------------------- | ----------------- | --------------------------------------------- |
+| `/dashboard`                    | Dashboard         | Main member dashboard                         |
+| `/dashboard/slots`              | Slots             | Browse available farm slots                   |
+| `/dashboard/checkout`           | Checkout          | Purchase / reserve a farm slot                |
+| `/dashboard/slots-subscription` | Monthly Payment   | Manage recurring slot payments                |
+| `/dashboard/courses`            | Courses           | Browse the organic farming course catalogue   |
+| `/dashboard/courses/:slug`      | Course Detail     | Watch lessons (YouTube) for a specific course |
+| `/dashboard/profile`            | Profile           | View and edit member profile, referral code   |
+| `/dashboard/legal`              | Legal (Dashboard) | In-app legal documents                        |
 
 ### Route Guards
 
@@ -278,36 +279,36 @@ The application uses **Supabase** as its entire backend — no custom server is 
 
 ### Supabase Tables
 
-| Table | Description |
-|-------|-------------|
-| `profiles` | User profile data, `referral_code`, `referred_by` |
-| `subscriptions` | Platform membership records — `status`, `expires_at` |
-| `checkout` | Farm slot orders created before payment confirmation |
-| `slot_subscriptions` | Active slot plans with renewal tracking |
-| `payment_logs` | Audit log for all payment events |
-| `transactions` | Flutterwave idempotency records |
-| `subscription_payments` | Slot renewal payment records |
-| `withdrawals` | Paystack transfer / withdrawal events |
+| Table                   | Description                                          |
+| ----------------------- | ---------------------------------------------------- |
+| `profiles`              | User profile data, `referral_code`, `referred_by`    |
+| `subscriptions`         | Platform membership records — `status`, `expires_at` |
+| `checkout`              | Farm slot orders created before payment confirmation |
+| `slot_subscriptions`    | Active slot plans with renewal tracking              |
+| `payment_logs`          | Audit log for all payment events                     |
+| `transactions`          | Flutterwave idempotency records                      |
+| `subscription_payments` | Slot renewal payment records                         |
+| `withdrawals`           | Paystack transfer / withdrawal events                |
 
 ### Database RPCs (Postgres Functions)
 
-| RPC | Purpose |
-|-----|---------|
-| `increment_referral_earnings` | Credits the referrer when a referred user subscribes |
-| `try_acquire_lock` | Concurrency lock before processing a Flutterwave verify |
-| `release_lock` | Releases the lock after processing |
+| RPC                           | Purpose                                                 |
+| ----------------------------- | ------------------------------------------------------- |
+| `increment_referral_earnings` | Credits the referrer when a referred user subscribes    |
+| `try_acquire_lock`            | Concurrency lock before processing a Flutterwave verify |
+| `release_lock`                | Releases the lock after processing                      |
 
 ### Edge Functions
 
 All Edge Functions live in `supabase/functions/` and are deployed to the Supabase project.
 
-| Function | Trigger | Description |
-|----------|---------|-------------|
-| `verify-payment` | Client invocation (from `Subscribe.tsx`) | Verifies a Paystack or Flutterwave **platform subscription** payment. On success: upserts `subscriptions` (1-year expiry), ensures `profiles` row exists, calls `increment_referral_earnings`, logs to `payment_logs`. |
-| `verify-slot-payment` | Client invocation (from `Checkout.tsx`) | Verifies a Paystack or Flutterwave **farm slot** payment. On success: updates `checkout`, inserts `slot_subscriptions` and `payment_logs`. Uses `try_acquire_lock` / `release_lock` RPCs for Flutterwave concurrency safety. |
-| `paystack-webhook` | Paystack webhook (HMAC validated) | Handles `charge.success` and `charge.failed` Paystack events for platform subscriptions; also handles `transfer.success` / `transfer.failed` for `withdrawals`. |
-| `monthly-slot-payment` | Paystack webhook (references starting with `SLOT_`) | Processes recurring slot payment events; updates `slot_subscriptions`, inserts `subscription_payments`. |
-| `process-monthly-payments` | Scheduled / cron invocation | Suspends overdue `slot_subscriptions` where the renewal date has passed without payment. |
+| Function                   | Trigger                                             | Description                                                                                                                                                                                                                  |
+| -------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `verify-payment`           | Client invocation (from `Subscribe.tsx`)            | Verifies a Paystack or Flutterwave **platform subscription** payment. On success: upserts `subscriptions` (1-year expiry), ensures `profiles` row exists, calls `increment_referral_earnings`, logs to `payment_logs`.       |
+| `verify-slot-payment`      | Client invocation (from `Checkout.tsx`)             | Verifies a Paystack or Flutterwave **farm slot** payment. On success: updates `checkout`, inserts `slot_subscriptions` and `payment_logs`. Uses `try_acquire_lock` / `release_lock` RPCs for Flutterwave concurrency safety. |
+| `paystack-webhook`         | Paystack webhook (HMAC validated)                   | Handles `charge.success` and `charge.failed` Paystack events for platform subscriptions; also handles `transfer.success` / `transfer.failed` for `withdrawals`.                                                              |
+| `monthly-slot-payment`     | Paystack webhook (references starting with `SLOT_`) | Processes recurring slot payment events; updates `slot_subscriptions`, inserts `subscription_payments`.                                                                                                                      |
+| `process-monthly-payments` | Scheduled / cron invocation                         | Suspends overdue `slot_subscriptions` where the renewal date has passed without payment.                                                                                                                                     |
 
 ---
 
@@ -333,18 +334,18 @@ Agroheal integrates two payment gateways to support users across different prefe
 
 ## Third-Party Integrations
 
-| Service | Integration Point | Purpose |
-|---------|-----------------|---------|
-| **Supabase** | `src/lib/supabaseClient.ts`, Edge Functions | Auth, database, storage, serverless compute |
-| **Paystack** | `index.html` (SDK), Edge Functions | Payment processing & webhooks |
-| **Flutterwave** | `index.html` (SDK), Edge Functions | Payment processing |
-| **Sentry** | `src/main.tsx` (`Sentry.init`) | Frontend error tracking, session replay, performance tracing. Release tagged `agroheal@0.0.0` |
-| **Vercel Analytics** | `src/main.tsx` (`<Analytics />`) | Page view & traffic analytics |
-| **YouTube** | `CoursesDetails.tsx` (`react-youtube`) | Course video lesson playback |
-| **Framer Motion** | Throughout `src/` | Page and component animations |
-| **Lottie** | `src/assets/Icon/` + `lottie-react` | Vector animations for UI illustrations |
-| **WhatsApp** | UI copy + `VITE_WHATSAPP_REDIRECT` env | Community redirect link (configurable) |
-| **Telegram** | `TelegramPopup.tsx` | In-app prompt linking members to Telegram community |
+| Service              | Integration Point                           | Purpose                                                                                       |
+| -------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| **Supabase**         | `src/lib/supabaseClient.ts`, Edge Functions | Auth, database, storage, serverless compute                                                   |
+| **Paystack**         | `index.html` (SDK), Edge Functions          | Payment processing & webhooks                                                                 |
+| **Flutterwave**      | `index.html` (SDK), Edge Functions          | Payment processing                                                                            |
+| **Sentry**           | `src/main.tsx` (`Sentry.init`)              | Frontend error tracking, session replay, performance tracing. Release tagged `agroheal@0.0.0` |
+| **Vercel Analytics** | `src/main.tsx` (`<Analytics />`)            | Page view & traffic analytics                                                                 |
+| **YouTube**          | `CoursesDetails.tsx` (`react-youtube`)      | Course video lesson playback                                                                  |
+| **Framer Motion**    | Throughout `src/`                           | Page and component animations                                                                 |
+| **Lottie**           | `src/assets/Icon/` + `lottie-react`         | Vector animations for UI illustrations                                                        |
+| **WhatsApp**         | UI copy + `VITE_WHATSAPP_REDIRECT` env      | Community redirect link (configurable)                                                        |
+| **Telegram**         | `TelegramPopup.tsx`                         | In-app prompt linking members to Telegram community                                           |
 
 ---
 
