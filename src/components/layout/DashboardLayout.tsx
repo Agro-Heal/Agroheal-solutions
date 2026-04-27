@@ -5,11 +5,14 @@ import {
   Sprout,
   CreditCard,
   ScrollText,
+  FileText,
+  Route,
   LogOut,
   Menu,
   X,
   Leaf,
   ChevronRight,
+  BookOpen,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,7 +28,11 @@ const navItems = [
     path: "/dashboard/slots-subscription",
     icon: CreditCard,
   },
-  { label: "Legal Agreement", path: "/dashboard/legal", icon: ScrollText },
+  { label: "Group Farm Accounts", path: "/dashboard/group-farm-accounts", icon: BookOpen },
+  // { label: "Other Payments", path: "/dashboard/other-payments", icon: CreditCard },
+  // { label: "Withdrawals", path: "/dashboard/withdrawals", icon: Wallet }, // Hidden for now
+  { label: "Step-by-Step Guide", path: "/dashboard/roadmap-guide", icon: Route },
+  { label: "Legal Agreement", path: "/dashboard/legal", icon: FileText },
 ];
 
 const HIDDEN_ROUTES = ["/login", "/signup"];
