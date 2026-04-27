@@ -27,9 +27,9 @@ const roadmapSteps = [
     bg: "bg-orange-50",
   },
   {
-    title: "Step 4: Manage Payments",
+    title: "Step 4: Pay for Farm Setup Fee and Farm Support Fee",
     description:
-      "Visit Slot Management to view subscriptions, payment history, and upcoming slot obligations.",
+      "Pay your Farm Setup Fee and Farm Support Fee in the Other Payments section. These fees are required to activate your farm group and cover ongoing technical support and infrastructure.",
     icon: CreditCard,
     color: "text-green-700",
     bg: "bg-green-50",

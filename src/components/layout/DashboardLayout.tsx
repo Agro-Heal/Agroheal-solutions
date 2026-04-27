@@ -31,7 +31,7 @@ const navItems = [
   { label: "Group Farm Accounts", path: "/dashboard/group-farm-accounts", icon: BookOpen },
   // { label: "Other Payments", path: "/dashboard/other-payments", icon: CreditCard },
   // { label: "Withdrawals", path: "/dashboard/withdrawals", icon: Wallet }, // Hidden for now
-  { label: "Website Roadmap", path: "/dashboard/roadmap-guide", icon: Route },
+  { label: "Step-by-Step Guide", path: "/dashboard/roadmap-guide", icon: Route },
   { label: "Legal Agreement", path: "/dashboard/legal", icon: FileText },
 ];
 
