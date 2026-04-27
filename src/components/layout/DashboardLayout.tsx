@@ -28,7 +28,8 @@ const navItems = [
     path: "/dashboard/slots-subscription",
     icon: CreditCard,
   },
-  { label: "Farm Records", path: "/dashboard/farm-records", icon: BookOpen },
+  { label: "Group Farm Accounts", path: "/dashboard/group-farm-accounts", icon: BookOpen },
+  // { label: "Other Payments", path: "/dashboard/other-payments", icon: CreditCard },
   // { label: "Withdrawals", path: "/dashboard/withdrawals", icon: Wallet }, // Hidden for now
   { label: "Website Roadmap", path: "/dashboard/roadmap-guide", icon: Route },
   { label: "Legal Agreement", path: "/dashboard/legal", icon: FileText },

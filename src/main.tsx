@@ -32,6 +32,7 @@ import RoadmapGuide from "./page/website/dashboard/RoadmapGuide";
 import CreateFarmGroup from "./page/website/dashboard/CreateFarmGroup";
 import FarmRecordsView from "./page/website/dashboard/FarmRecordsView";
 import FarmAdmin from "./page/website/dashboard/FarmAdmin";
+import OtherPayments from "./page/website/dashboard/OtherPayments";
 import FarmManagement from "./page/group-farm/FarmManagement";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -106,10 +107,11 @@ const route = createBrowserRouter([
           { path: "profile", element: <ProfileComponent /> },
           { path: "slots-subscription", element: <MonthlyPayment /> },
           // { path: "withdrawals", element: <Withdrawals /> }, // Hidden for now
-          { path: "farm-records", element: <FarmRecordsView /> },
+          { path: "group-farm-accounts", element: <FarmRecordsView /> },
           { path: "create-farm-group", element: <CreateFarmGroup /> },
           { path: "farm-admin", element: <FarmAdmin /> },
           { path: "roadmap-guide", element: <RoadmapGuide /> },
+          { path: "other-payments", element: <OtherPayments /> },
           { path: "legal", element: <Legal /> },
         ],
       },

@@ -33,7 +33,7 @@ const CreateFarmGroup = () => {
 
       if (existing) {
         // Already has a farm — redirect straight to farm records
-        navigate("/dashboard/farm-records", { replace: true });
+        navigate("/dashboard/group-farm-accounts", { replace: true });
       } else {
         setChecking(false);
       }
@@ -96,7 +96,7 @@ const CreateFarmGroup = () => {
     }
 
     showToast({ variant: "success", title: "Farm group created!" });
-    navigate("/dashboard/farm-records", { replace: true });
+    navigate("/dashboard/group-farm-accounts", { replace: true });
   };
 
   const fadeUp = {
