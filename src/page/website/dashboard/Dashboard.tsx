@@ -341,7 +341,7 @@ const Dashboard = () => {
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden shrink-0">
                 <div className="px-4 py-3.5 sm:px-5 border-b border-green-700 bg-green-800 flex items-center justify-between">
                   <h3 className="text-base font-bold text-white">
-                    Slot History
+                    Slot & Payment History
                   </h3>
                   <Button
                     asChild

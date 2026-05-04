@@ -34,6 +34,21 @@ interface Subscription {
   monthly_pay: number;
 }
 
+interface OtherPayment {
+  id: string;
+  payment_type: string;
+  months: number;
+  amount: number;
+  created_at: string;
+  status: string;
+}
+
+const PAYMENT_TYPE_LABELS: Record<string, string> = {
+  farm_setup: "Farm Setup Fee",
+  farm_support: "Farm Support Fee",
+  absentee_fine: "Absentee Fee",
+};
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatNumber(value: number | string): string {
   const num = Number(value);
@@ -280,9 +295,11 @@ function SlotDetailView({
 // ─── Table View ───────────────────────────────────────────────────────────────
 function SlotTableView({
   subscriptions,
+  otherPayments,
   onView,
 }: {
   subscriptions: Subscription[];
+  otherPayments: OtherPayment[];
   onView: (slot: Subscription) => void;
 }) {
   const [page, setPage] = useState(1);
@@ -309,7 +326,7 @@ function SlotTableView({
             Slot Management
           </p>
           <h1 className="text-2xl md:text-3xl font-bold text-white">
-            Monthly Subscription
+            Slot & Payments History
           </h1>
         </motion.div>
       </div>
@@ -478,6 +495,74 @@ function SlotTableView({
           )}
         </motion.div>
 
+        {/* ── Other Payments Table ── */}
+        {otherPayments.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mt-8"
+          >
+            <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="font-bold text-gray-900 text-sm">
+                Other Payments
+              </h2>
+              <span className="text-xs bg-blue-100 text-blue-700 font-semibold px-2.5 py-1 rounded-full">
+                {otherPayments.length} record
+                {otherPayments.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100 bg-gray-50/60">
+                    {["Name", "No. of Months", "Amount Paid", "Payment Date"].map(
+                      (h) => (
+                        <th
+                          key={h}
+                          className="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap"
+                        >
+                          {h}
+                        </th>
+                      ),
+                    )}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {otherPayments.map((payment) => (
+                    <tr
+                      key={payment.id}
+                      className="hover:bg-gray-50/60 transition-colors"
+                    >
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                            <CreditCard className="w-3.5 h-3.5 text-blue-700" />
+                          </div>
+                          <span className="font-semibold text-gray-900 text-xs">
+                            {PAYMENT_TYPE_LABELS[payment.payment_type] ||
+                              payment.payment_type.replace("_", " ")}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-4 text-gray-700 font-medium text-xs">
+                        {payment.months}{" "}
+                        {payment.months === 1 ? "month" : "months"}
+                      </td>
+                      <td className="px-5 py-4 font-bold text-gray-900 text-xs">
+                        ₦{formatNumber(payment.amount)}
+                      </td>
+                      <td className="px-5 py-4 text-gray-500 text-xs whitespace-nowrap">
+                        {formatDate(payment.created_at)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );
@@ -487,6 +572,7 @@ function SlotTableView({
 const MonthlyPayment = () => {
   const { toast } = useToast();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [otherPayments, setOtherPayments] = useState<OtherPayment[]>([]);
   const [activeSubscription, setActiveSubscription] =
     useState<Subscription | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -515,6 +601,17 @@ const MonthlyPayment = () => {
 
     const all = data || [];
     setSubscriptions(all);
+
+    // Fetch other payments
+    const { data: otherData, error: otherError } = await supabase
+      .from("other_payments")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("status", "success")
+      .order("created_at", { ascending: false });
+
+    if (otherError) console.error(otherError);
+    setOtherPayments(otherData || []);
 
     // Use most recent active slot, fallback to most recent — same as original
     const active = all.find((s) => s.status === "active") || all[0] || null;
@@ -678,6 +775,7 @@ const MonthlyPayment = () => {
         <SlotTableView
           key="table"
           subscriptions={subscriptions}
+          otherPayments={otherPayments}
           onView={(slot) => setSelectedSlotId(slot.id)}
         />
       )}

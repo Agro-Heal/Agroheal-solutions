@@ -95,7 +95,7 @@ const route = createBrowserRouter([
         element: (
           <RequireSubscription>
             <Outlet />
-          </RequireSubscription>
+          </RequireSubscription>  
         ),
         errorElement: <DashboardError />,
         children: [

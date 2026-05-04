@@ -24,7 +24,7 @@ const Signup = () => {
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [referral, setReferral] = useState<string>(() => {
-    return searchParams.get("ref") || "";
+    return searchParams.get("ref") || "356FV1";
   });
 
   // console.log("ref param:", searchParams.get("ref"));
@@ -33,10 +33,20 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true);
 
+    const formattedEmail = email.toLowerCase().trim();
+
     // Check if email already registered
-    const { data: emailExists } = await supabase.rpc("check_email_exists", {
-      email_input: email.toLowerCase().trim(),
-    });
+    const { data: emailExists, error: rpcError } = await supabase.rpc(
+      "check_email_exists",
+      {
+        email_input: formattedEmail,
+      }
+    );
+
+    if (rpcError) {
+      console.error("RPC Error (check_email_exists):", rpcError);
+      // We continue to signUp even if RPC fails, as signUp will also check for existing users
+    }
 
     // if email exist call this
     if (emailExists) {
@@ -52,7 +62,7 @@ const Signup = () => {
 
     // 1️Sign up user
     const { data, error } = await supabase.auth.signUp({
-      email,
+      email: formattedEmail,
       password,
       options: {
         data: {
@@ -65,16 +75,18 @@ const Signup = () => {
     setLoading(false);
 
     if (error) {
+      console.error("Signup Error Details:", error);
       Sentry.captureException(error, {
         extra: {
           action: "signup",
+          errorDetails: error,
         },
       });
 
       showToast({
         variant: "error",
         title: "Signup not successful!",
-        description: "Account failed to create, Retry or check your Network.",
+        description: error.message || "Account failed to create, Retry or check your Network.",
       });
       return;
     }

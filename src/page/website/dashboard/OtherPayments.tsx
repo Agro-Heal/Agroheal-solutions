@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   CreditCard,
@@ -15,6 +16,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { FLUTTERWAVE_KEYS } from "@/config/Index";
 import * as Sentry from "@sentry/react";
 import { Toaster } from "react-hot-toast";
+import PaymentGuidancePopup from "@/components/webComponents/PaymentGuidancePopup";
 
 const OtherPayments = () => {
   const [paymentType, setPaymentType] = useState<
@@ -25,6 +27,7 @@ const OtherPayments = () => {
   const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const navigate = useNavigate();
 
   const FEES = {
     farm_setup: 5000,
@@ -180,6 +183,9 @@ const OtherPayments = () => {
 
             // Optional: Redirect or refresh
             setIsProcessing(false);
+            setTimeout(() => {
+              navigate("/dashboard/slots-subscription");
+            }, 1000);
           } else {
             setIsProcessing(false);
           }
@@ -207,6 +213,7 @@ const OtherPayments = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <Toaster />
+      <PaymentGuidancePopup />
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -288,7 +295,7 @@ const OtherPayments = () => {
                       Maximum allowed for this type: {paymentType ? MAX_MONTHS[paymentType] : "0"} months
                     </p>
                     {paymentType && (
-                      <div className="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 rounded-full text-[10px] font-bold border border-green-100">
+                      <div className="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-bold border border-green-100">
                         {months} month{months > 1 ? "s" : ""} × {totalSlots} slot{totalSlots > 1 ? "s" : ""} × ₦{FEES[paymentType].toLocaleString()} = ₦{totalPrice.toLocaleString()}
                       </div>
                     )}
