@@ -154,7 +154,7 @@ const OtherPayments = () => {
           type: paymentType,
         },
         customizations: {
-          title: "Agroheal Other Payments",
+          title: `${paymentType.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())} Payment`,
           description: `${paymentType.replace("_", " ").toUpperCase()} - ${months} months for ${totalSlots} slots`,
           logo: "https://ptowfacejneezksyhntk.supabase.co/storage/v1/object/sign/agroheal-%20buckets/logo.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iZGE2NjM1ZS00NTAzLTRkZDktOTdmOS0zYWExY2Y5NzNiOGQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhZ3JvaGVhbC0gYnVja2V0cy9sb2dvLnBuZyIsImlhdCI6MTc3NDAwODY3OCwiZXhwIjo0OTI3NjA4Njc4fQ.fuwva3-hMj5KmMRqElcclgJqzA5d4aigxCIlHVHgMak",
         },
