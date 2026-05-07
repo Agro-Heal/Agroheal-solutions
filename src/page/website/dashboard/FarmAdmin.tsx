@@ -9,9 +9,6 @@ import { Toaster } from "react-hot-toast";
 import { Plus, Edit, Trash2, Save, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const FARM_SETUP_RATE = 5000;
-const FARM_SUPPORT_RATE = 500;
-const ABSENTEE_FINE_RATE = 500;
 
 interface FarmRecord {
   id: string;
@@ -19,9 +16,12 @@ interface FarmRecord {
   email: string;
   phone: string;
   farm_slots: number;
-  months_farm_setup: number;
-  months_farm_support: number;
-  absentee_fine: number;
+  months_farm_setup: string;
+  months_farm_support: string;
+  absentee_fine: string;
+  setup_paid?: number;
+  support_paid?: number;
+  fine_paid?: number;
 }
 
 interface FarmExpense {
@@ -35,7 +35,7 @@ interface FarmExpense {
 
 const EXPENSE_CATEGORIES = [
   "Ginger seedlings + compost fertilizer",
-  "Garlic intercrop",
+  "Pepper intercrop",
   "Bush clearing & de-stumping",
   "Borehole",
   "Tank + scaffold",
@@ -52,10 +52,18 @@ const EXPENSE_CATEGORIES = [
 
 interface FarmGroup { id: string; name: string; slug: string; coordinator_id: string; }
 
-const calcSetup = (r: FarmRecord) => FARM_SETUP_RATE * r.farm_slots * r.months_farm_setup;
-const calcSupport = (r: FarmRecord) => FARM_SUPPORT_RATE * r.farm_slots * r.months_farm_support;
+
+const calcSetup = (r: FarmRecord) => 
+  Math.max(r.setup_paid || 0, Number(r.months_farm_setup) || 0);
+
+const calcSupport = (r: FarmRecord) => 
+  Math.max(r.support_paid || 0, Number(r.months_farm_support) || 0);
+
 const calcSlotFee = (r: Pick<FarmRecord, "farm_slots">) => r.farm_slots * 2000;
-const calcFine = (r: Pick<FarmRecord, "farm_slots" | "absentee_fine">) => ABSENTEE_FINE_RATE * r.farm_slots * r.absentee_fine;
+
+const calcFine = (r: FarmRecord) => 
+  Math.max(r.fine_paid || 0, Number(r.absentee_fine) || 0);
+
 const calcTotal = (r: FarmRecord) => calcSetup(r) + calcSupport(r) + calcSlotFee(r) + calcFine(r);
 
 const FarmAdmin = () => {
@@ -82,6 +90,63 @@ const FarmAdmin = () => {
     setLoading(false);
   };
 
+  const enrichRecordsWithBatches = async (records: any[]) => {
+    if (!records || records.length === 0) return [];
+    const enrichedRecords = [...records] as FarmRecord[];
+    const emails = [...new Set(enrichedRecords
+      .map(r => r.email?.trim().toLowerCase())
+      .filter(e => e && e.includes("@"))
+    )];
+    
+    if (emails.length === 0) return enrichedRecords;
+    
+    // Get user_ids from auth.users via RPC
+    const { data: authUsers } = await supabase.rpc("get_user_ids_by_emails", { emails });
+    
+    if (authUsers && authUsers.length > 0) {
+      const userIds = authUsers.map((u: any) => u.user_id);
+      const { data: payments } = await supabase
+        .from("other_payments")
+        .select("user_id, payment_type, created_at, slots, amount, months")
+        .in("user_id", userIds)
+        .eq("status", "success")
+        .order("created_at", { ascending: true });
+
+      if (payments) {
+        return enrichedRecords.map(record => {
+          const authUser = authUsers.find((u: any) => u.email?.toLowerCase() === record.email?.toLowerCase());
+          if (!authUser) return record;
+
+          const userPayments = payments.filter((p: any) => p.user_id === authUser.user_id);
+          const getBatchInfo = (type: string) => {
+            const typePayments = userPayments.filter((p: any) => p.payment_type === type);
+            if (typePayments.length === 0) return { months: "", total: undefined };
+            
+            const monthsStr = typePayments.map((p: any) => p.months || 0).join(", ");
+            const totalPaid = typePayments.reduce((sum: number, p: any) => sum + (p.amount || 0), 0);
+            return { months: monthsStr, total: totalPaid };
+          };
+
+          const setup = getBatchInfo("farm_setup");
+          const support = getBatchInfo("farm_support");
+          const fine = getBatchInfo("absentee_fine");
+
+          return {
+            ...record,
+            setup_paid: setup.total,
+            support_paid: support.total,
+            fine_paid: fine.total,
+            // Keep the original DB columns untouched so manual amounts aren't lost
+            setup_batches: setup.months,
+            support_batches: support.months,
+            fine_batches: fine.months
+          };
+        });
+      }
+    }
+    return enrichedRecords;
+  };
+
   const fetchRecords = async (farmId: string) => {
     const [recRes, expRes] = await Promise.all([
       supabase.from("farm_records").select("*").eq("farm_id", farmId).order("name"),
@@ -89,7 +154,10 @@ const FarmAdmin = () => {
     ]);
 
     if (recRes.error) { showToast({ variant: "error", title: "Failed to load records", description: recRes.error.message }); }
-    else { setRecords(recRes.data || []); }
+    else { 
+      const enriched = await enrichRecordsWithBatches(recRes.data || []);
+      setRecords(enriched); 
+    }
 
     if (expRes.error) { console.error("Error fetching expenses:", expRes.error); }
     else { setExpenses(expRes.data || []); }
@@ -103,7 +171,7 @@ const FarmAdmin = () => {
   };
 
   const handleAdd = () => {
-    setFormData({ name: "", email: "", phone: "", farm_slots: 0, months_farm_setup: 0, months_farm_support: 0, absentee_fine: 0 });
+    setFormData({ name: "", email: "", phone: "", farm_slots: 0, months_farm_setup: "0", months_farm_support: "0", absentee_fine: "0" });
     setAutoFilled(false);
     setShowAddForm(true);
   };
@@ -111,51 +179,83 @@ const FarmAdmin = () => {
   const lookupUserByEmail = async (email: string) => {
     if (!email || !email.includes("@")) return;
     setEmailLookupLoading(true);
-    const { data, error } = await supabase.rpc("get_member_details_by_email", { email_input: email });
-    if (error || !data) { setAutoFilled(false); setEmailLookupLoading(false); return; }
 
-    // Fetch setup and support months from other_payments
-    let setupMonths = 0;
-    let supportMonths = 0;
+    const emailTrimmed = email.trim().toLowerCase();
 
-    // Try to get user ID from the RPC data first
-    let userId = data.id || data.user_id;
+    // 1. Get member details (name, phone, slots) — may be null if user has no slots
+    const { data: rpcData } = await supabase.rpc("get_member_details_by_email", {
+      email_input: emailTrimmed,
+    });
+    const memberData = Array.isArray(rpcData) ? rpcData[0] : rpcData;
+    const slots = Number(memberData?.total_slots || 0);
 
-    // If not found, try looking up profile by phone number (returned by RPC)
-    if (!userId && data.phone) {
-      const { data: profileByPhone } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("phone", data.phone)
-        .maybeSingle();
-      if (profileByPhone) userId = profileByPhone.id;
+    // 2. Get user_id from auth.users via RPC (works for ANY registered user)
+    const { data: authData } = await supabase.rpc("get_user_ids_by_emails", {
+      emails: [emailTrimmed],
+    });
+    const userId = Array.isArray(authData) && authData.length > 0 ? authData[0].user_id : null;
+
+    if (!memberData && !userId) {
+      setAutoFilled(false);
+      setEmailLookupLoading(false);
+      return;
     }
 
+    // 3. If no memberData but we have userId, get profile info (name, phone) from profiles table
+    let profileName = memberData?.full_name || "";
+    let profilePhone = memberData?.phone || "";
+
+    if (!memberData && userId) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, phone")
+        .eq("id", userId)
+        .maybeSingle();
+      profileName = profile?.full_name || "";
+      profilePhone = profile?.phone || "";
+    }
+
+    // 4. Get payment totals from other_payments
     if (userId) {
-      const { data: payments } = await supabase
+      const { data: payments, error: payErr } = await supabase
         .from("other_payments")
-        .select("months, payment_type")
+        .select("amount, payment_type")
         .eq("user_id", userId)
         .eq("status", "success");
 
-      if (payments) {
-        setupMonths = payments
-          .filter((p) => p.payment_type === "farm_setup")
-          .reduce((sum, p) => sum + (p.months || 0), 0);
-        supportMonths = payments
-          .filter((p) => p.payment_type === "farm_support")
-          .reduce((sum, p) => sum + (p.months || 0), 0);
-      }
+      console.log("[Lookup] userId:", userId);
+      console.log("[Lookup] payments result:", payments, "error:", payErr);
+
+      const getTotalPaid = (type: string) => {
+        if (!payments) return 0;
+        return payments
+          .filter(p => p.payment_type?.toLowerCase() === type.toLowerCase())
+          .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+      };
+
+      const setupAmt = getTotalPaid("farm_setup");
+      const supportAmt = getTotalPaid("farm_support");
+      const fineAmt = getTotalPaid("absentee_fine");
+      console.log("[Lookup] totals → setup:", setupAmt, "support:", supportAmt, "fine:", fineAmt);
+
+      setFormData((prev) => ({
+        ...prev,
+        name: profileName || prev.name || "",
+        phone: profilePhone || prev.phone || "",
+        farm_slots: Math.max(Number(prev.farm_slots) || 0, slots),
+        months_farm_setup: Math.max(Number(prev.months_farm_setup) || 0, setupAmt).toString(),
+        months_farm_support: Math.max(Number(prev.months_farm_support) || 0, supportAmt).toString(),
+        absentee_fine: Math.max(Number(prev.absentee_fine) || 0, fineAmt).toString(),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        name: profileName || prev.name || "",
+        phone: profilePhone || prev.phone || "",
+        farm_slots: Math.max(Number(prev.farm_slots) || 0, slots),
+      }));
     }
 
-    setFormData((prev) => ({
-      ...prev,
-      name: data.full_name || "",
-      phone: data.phone || "",
-      farm_slots: Number(data.total_slots) || 0,
-      months_farm_setup: setupMonths,
-      months_farm_support: supportMonths,
-    }));
     setAutoFilled(true);
     setEmailLookupLoading(false);
   };
@@ -188,7 +288,6 @@ const FarmAdmin = () => {
       }
     }
 
-    // Prepare strictly typed payload for Supabase
     const payload = {
       name: formData.name,
       email: formData.email,
@@ -282,10 +381,8 @@ const FarmAdmin = () => {
   const handleDeleteFarm = async (farmId: string) => {
     if (!confirm("Delete this entire farm group and all its member records? This cannot be undone.")) return;
     
-    // 1. Delete expenses
     await supabase.from("farm_expenses").delete().eq("farm_id", farmId);
 
-    // 2. Delete member records
     const { error: recordsError } = await supabase.from("farm_records").delete().eq("farm_id", farmId);
     if (recordsError) {
       console.error("Supabase Records Cleanup Error:", recordsError);
@@ -293,7 +390,6 @@ const FarmAdmin = () => {
       return;
     }
 
-    // 3. Delete farm group
     const { error: farmError } = await supabase.from("farm_groups").delete().eq("id", farmId);
     if (farmError) {
       console.error("Supabase Farm Delete Error:", farmError);
@@ -310,8 +406,6 @@ const FarmAdmin = () => {
   const cancelExpenseEdit = () => { setShowExpenseForm(false); setEditingExpenseId(null); setExpenseFormData({}); };
   const set = (field: keyof FarmRecord, val: string | number) =>
     setFormData((prev) => ({ ...prev, [field]: val }));
-  const setNum = (field: keyof FarmRecord) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    set(field, e.target.value === "" ? 0 : Number(e.target.value));
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
@@ -322,9 +416,6 @@ const FarmAdmin = () => {
     </div>
   );
 
-  const slots = formData.farm_slots || 0;
-  const mSetup = formData.months_farm_setup || 0;
-  const mSupport = formData.months_farm_support || 0;
 
   const totalFarmSlots = records.reduce((s, r) => s + r.farm_slots, 0);
   const totalFarmSupport = records.reduce((s, r) => s + calcSupport(r), 0);
@@ -346,7 +437,6 @@ const FarmAdmin = () => {
           <p className="text-gray-600">Manage all farm groups and member records</p>
         </motion.div>
 
-        {/* Farm Group Selector */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
           <label htmlFor="farm-select" className="text-sm font-medium text-gray-700 whitespace-nowrap">
             Select Farm Group:
@@ -393,7 +483,6 @@ const FarmAdmin = () => {
                       <CardHeader><CardTitle>{editingId ? "Edit Record" : "Add New Record"}</CardTitle></CardHeader>
                       <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {/* Email first — triggers auto-lookup */}
                           <div className="md:col-span-2 lg:col-span-3">
                             <Label>Email</Label>
                             <div className="relative">
@@ -444,29 +533,31 @@ const FarmAdmin = () => {
                             />
                           </div>
                           <div>
-                            <Label>No. of Months for Farm Setup</Label>
+                            <Label>Total Farm Setup Paid (₦)</Label>
                             <Input
                               type="number"
-                              min={0}
-                              value={formData.months_farm_setup ?? 0}
-                              onChange={setNum("months_farm_setup")}
+                              value={formData.months_farm_setup ?? "0"}
+                              onChange={(e) => setFormData(prev => ({ ...prev, months_farm_setup: e.target.value }))}
+                              placeholder="Auto-filled or enter amount"
                             />
-                            {slots > 0 && mSetup > 0 && <p className="text-xs text-green-700 mt-1 font-medium">= ₦{(FARM_SETUP_RATE * slots * mSetup).toLocaleString()}</p>}
                           </div>
                           <div>
-                            <Label>No. of Months for Farm Support</Label>
+                            <Label>Total Farm Support Paid (₦)</Label>
                             <Input
                               type="number"
-                              min={0}
-                              value={formData.months_farm_support ?? 0}
-                              onChange={setNum("months_farm_support")}
+                              value={formData.months_farm_support ?? "0"}
+                              onChange={(e) => setFormData(prev => ({ ...prev, months_farm_support: e.target.value }))}
+                              placeholder="Auto-filled or enter amount"
                             />
-                            {slots > 0 && mSupport > 0 && <p className="text-xs text-green-700 mt-1 font-medium">= ₦{(FARM_SUPPORT_RATE * slots * mSupport).toLocaleString()}</p>}
                           </div>
                           <div>
-                            <Label>No. of Months for Absentee Fine</Label>
-                            <Input type="number" min={0} value={formData.absentee_fine ?? 0} onChange={setNum("absentee_fine")} />
-                            {slots > 0 && (formData.absentee_fine ?? 0) > 0 && <p className="text-xs text-green-700 mt-1 font-medium">= ₦{(ABSENTEE_FINE_RATE * slots * (formData.absentee_fine || 0)).toLocaleString()}</p>}
+                            <Label>Total Absentee Fine Paid (₦)</Label>
+                            <Input
+                              type="number"
+                              value={formData.absentee_fine ?? "0"}
+                              onChange={(e) => setFormData(prev => ({ ...prev, absentee_fine: e.target.value }))}
+                              placeholder="Auto-filled or enter amount"
+                            />
                           </div>
                         </div>
                         <div className="flex gap-2">
@@ -503,16 +594,6 @@ const FarmAdmin = () => {
                               onChange={(e) => setExpenseFormData(prev => ({ ...prev, amount: Number(e.target.value) }))}
                             />
                           </div>
-                          {/* 
-                          <div className="md:col-span-2">
-                            <Label>Description (Optional)</Label>
-                            <Input
-                              value={expenseFormData.description || ""}
-                              onChange={(e) => setExpenseFormData(prev => ({ ...prev, description: e.target.value }))}
-                              placeholder="Brief details about the expense"
-                            />
-                          </div>
-                          */}
                         </div>
                         <div className="flex gap-2">
                           <Button onClick={handleSaveExpense} className="bg-green-800 hover:bg-green-700"><Save className="w-4 h-4 mr-2" />Save</Button>
@@ -554,16 +635,22 @@ const FarmAdmin = () => {
                                 <td className="p-2">{record.farm_slots}</td>
                                 <td className="p-2">₦{calcSlotFee(record).toLocaleString()}</td>
                                 <td className="p-2">
-                                  <div>₦{calcSetup(record).toLocaleString()}</div>
-                                  <div className="text-xs text-gray-400">{record.months_farm_setup} month{record.months_farm_setup !== 1 ? "s" : ""}</div>
+                                  <div className="font-semibold text-green-900">₦{calcSetup(record).toLocaleString()}</div>
+                                  {(record as any).setup_batches && (
+                                    <div className="text-[10px] text-gray-400 leading-tight">Months: {(record as any).setup_batches}</div>
+                                  )}
                                 </td>
                                 <td className="p-2">
-                                  <div>₦{calcSupport(record).toLocaleString()}</div>
-                                  <div className="text-xs text-gray-400">{record.months_farm_support} month{record.months_farm_support !== 1 ? "s" : ""}</div>
+                                  <div className="font-semibold text-blue-900">₦{calcSupport(record).toLocaleString()}</div>
+                                  {(record as any).support_batches && (
+                                    <div className="text-[10px] text-gray-400 leading-tight">Months: {(record as any).support_batches}</div>
+                                  )}
                                 </td>
                                 <td className="p-2">
-                                  <div>₦{calcFine(record).toLocaleString()}</div>
-                                  <div className="text-xs text-gray-400">{record.absentee_fine} month{record.absentee_fine !== 1 ? "s" : ""}</div>
+                                  <div className="font-semibold text-orange-900">₦{calcFine(record).toLocaleString()}</div>
+                                  {(record as any).fine_batches && (
+                                    <div className="text-[10px] text-gray-400 leading-tight">Months: {(record as any).fine_batches}</div>
+                                  )}
                                 </td>
                                 <td className="p-2 font-semibold text-green-800">₦{calcTotal(record).toLocaleString()}</td>
                                 <td className="p-2">
