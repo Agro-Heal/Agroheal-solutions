@@ -9,7 +9,6 @@ import {
   LoaderCircle,
   ArrowUpRight,
   SendHorizontal,
-  X,
   AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
