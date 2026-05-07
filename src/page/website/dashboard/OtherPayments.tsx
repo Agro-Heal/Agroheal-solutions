@@ -24,6 +24,8 @@ const OtherPayments = () => {
   >("");
   const [months, setMonths] = useState(1);
   const [totalSlots, setTotalSlots] = useState(0);
+  const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -53,12 +55,14 @@ const OtherPayments = () => {
         setUser(user);
 
         // Fetch total slots
-        const { data: subscriptions } = await supabase
+        const { data: subs } = await supabase
           .from("slot_subscriptions")
-          .select("slots")
+          .select("*")
           .eq("user_id", user.id);
 
-        const slotsCount = (subscriptions || []).reduce((total, item) => {
+        setSubscriptions(subs || []);
+
+        const slotsCount = (subs || []).reduce((total, item) => {
           const slotValue = Number(item?.slots ?? 0);
           return total + (Number.isNaN(slotValue) ? 0 : slotValue);
         }, 0);
@@ -127,6 +131,7 @@ const OtherPayments = () => {
             payment_type: paymentType,
             months: months,
             slots: totalSlots,
+            subscription_id: selectedSubscriptionId || null,
             amount: totalPrice,
             status: "pending",
           },
@@ -151,6 +156,7 @@ const OtherPayments = () => {
         meta: {
           user_id: user.id,
           payment_id: paymentRecord.id,
+          subscription_id: selectedSubscriptionId || null,
           type: paymentType,
         },
         customizations: {
@@ -256,6 +262,51 @@ const OtherPayments = () => {
                     <option value="farm_support">Farm Support Fee</option>
                     <option value="absentee_fine">Absentee Fine</option>
                   </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">
+                    Select Slot Batch (Optional)
+                  </label>
+                  <select
+                    value={selectedSubscriptionId}
+                    onChange={(e) => {
+                      const subId = e.target.value;
+                      setSelectedSubscriptionId(subId);
+                      if (subId) {
+                        const sub = subscriptions.find((s) => s.id === subId);
+                        if (sub) setTotalSlots(Number(sub.slots));
+                      } else {
+                        // All Slots selected, recalculate total
+                        const slotsCount = subscriptions.reduce((total, item) => {
+                          const slotValue = Number(item?.slots ?? 0);
+                          return total + (Number.isNaN(slotValue) ? 0 : slotValue);
+                        }, 0);
+                        setTotalSlots(slotsCount);
+                      }
+                    }}
+                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                  >
+                    <option value="">All Slots (Total: {subscriptions.reduce((s, b) => s + Number(b.slots), 0)})</option>
+                    {subscriptions.map((sub, idx) => (
+                      <option key={sub.id} value={sub.id}>
+                        Batch #{subscriptions.length - idx} ({sub.slots} slots) - {new Date(sub.last_payment_date).toLocaleDateString()}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">
+                    Number of Slots to pay for
+                  </label>
+                  <div className="w-full h-12 rounded-xl border border-gray-200 bg-gray-100 px-4 text-sm flex items-center justify-between">
+                    <span className="font-bold text-gray-900">{totalSlots}</span>
+                    <span className="text-xs font-bold text-green-700 uppercase">Slots</span>
+                  </div>
+                  <p className="text-[10px] text-gray-400 italic">
+                    {selectedSubscriptionId ? "Calculated based on selected batch." : "Calculated based on total active slots."}
+                  </p>
                 </div>
 
                 <div className="space-y-4">

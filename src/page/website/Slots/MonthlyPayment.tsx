@@ -41,6 +41,8 @@ interface OtherPayment {
   amount: number;
   created_at: string;
   status: string;
+  slots?: number;
+  subscription_id?: string | null;
 }
 
 const PAYMENT_TYPE_LABELS: Record<string, string> = {
@@ -517,7 +519,7 @@ function SlotTableView({
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/60">
-                    {["Name", "No. of Months", "Amount Paid", "Payment Date"].map(
+                    {["Name", "Slot Name", "No. of Slots", "No. of Months", "Amount Paid", "Payment Date"].map(
                       (h) => (
                         <th
                           key={h}
@@ -545,6 +547,15 @@ function SlotTableView({
                               payment.payment_type.replace("_", " ")}
                           </span>
                         </div>
+                      </td>
+                      <td className="px-5 py-4 text-gray-700 font-medium text-xs">
+                        {payment.subscription_id ? (() => {
+                          const subIdx = [...subscriptions].reverse().findIndex(s => s.id === payment.subscription_id);
+                          return subIdx !== -1 ? `Slot #${subIdx + 1}` : "Batch Selection";
+                        })() : "Full Slots"}
+                      </td>
+                      <td className="px-5 py-4 text-gray-700 font-medium text-xs">
+                        {payment.slots || "N/A"}
                       </td>
                       <td className="px-5 py-4 text-gray-700 font-medium text-xs">
                         {payment.months}{" "}
