@@ -10,6 +10,7 @@ import {
   ArrowUpRight,
   SendHorizontal,
   AlertCircle,
+  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -662,11 +663,35 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-green-800 to-green-700 rounded-xl p-4 text-white">
-                <p className="text-green-200 text-xs mb-1">Total Earnings</p>
-                <p className="text-2xl font-bold">
-                  ₦{Number(profile?.referral_earnings ?? 0).toLocaleString()}
-                </p>
+              <div className="bg-gradient-to-br from-green-800 to-green-700 rounded-xl p-5 text-white shadow-lg overflow-hidden relative">
+                <div className="relative z-10">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <p className="text-green-200 text-xs font-semibold uppercase tracking-wider mb-0.5">Total Earnings</p>
+                      <p className="text-3xl font-bold">
+                        ₦{(Number(profile?.referral_earnings ?? 0) + Number(profile?.slot_bonus ?? 0)).toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="bg-white/10 rounded-lg px-2 py-1 backdrop-blur-sm border border-white/10">
+                      <TrendingUp className="w-4 h-4 text-green-300" />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2 pt-4 border-t border-white/10">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-green-200">Referral Earnings</span>
+                      <span className="font-semibold font-mono">₦{Number(profile?.referral_earnings ?? 0).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-green-200">Slot Bonus</span>
+                      <span className="font-semibold font-mono text-green-300">
+                        + ₦{Number(profile?.slot_bonus ?? 0).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                {/* Decorative element */}
+                <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/5 rounded-full blur-2xl pointer-events-none" />
               </div>
 
               {profile?.referred_by && (

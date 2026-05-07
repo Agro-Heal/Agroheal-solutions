@@ -236,6 +236,44 @@ Deno.serve(async (req) => {
 
     if (subError) throw subError;
 
+    // ── Credit Referrer with Slot Bonus (₦500 per slot) ───
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("referred_by")
+        .eq("id", userId)
+        .single();
+
+      if (profile?.referred_by) {
+        const bonusAmount = 500 * Number(slotQuantity);
+
+        // Use a single query to increment the bonus
+        const { error: bonusError } = await supabase.rpc('increment_slot_bonus', {
+          user_id: profile.referred_by,
+          amount: bonusAmount
+        });
+
+        if (bonusError) {
+          console.error("Failed to credit slot bonus via RPC:", bonusError);
+          // Fallback if RPC doesn't exist
+          const { data: referrerProfile } = await supabase
+            .from("profiles")
+            .select("slot_bonus")
+            .eq("id", profile.referred_by)
+            .single();
+
+          if (referrerProfile) {
+            await supabase
+              .from("profiles")
+              .update({ slot_bonus: (Number(referrerProfile.slot_bonus || 0) + bonusAmount) })
+              .eq("id", profile.referred_by);
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Referral bonus error (non-critical):", err);
+    }
+
     // ── Log the payment (non-critical) ────────────────────
     try {
       await supabase.from("payment_logs").insert({
