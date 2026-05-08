@@ -382,11 +382,11 @@ const Dashboard = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="order-2 lg:order-1 lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 flex flex-col h-full min-h-0 lg:min-h-[calc(100vh-11rem)] overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-5 shrink-0">
-              <h2 className="text-base font-bold text-gray-900">
-                Your Subscriptions
-              </h2>
-            </div>
+              <div className="flex items-center justify-between mb-5 shrink-0">
+                <h2 className="text-base font-bold text-gray-900">
+                  Your Subscriptions
+                </h2>
+              </div>
 
             <div className="flex-1 flex flex-col min-h-0 gap-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-gray-50 border border-gray-100 hover:border-green-200 transition-colors shrink-0 gap-3">
