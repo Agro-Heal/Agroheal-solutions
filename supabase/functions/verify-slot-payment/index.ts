@@ -168,8 +168,11 @@ Deno.serve(async (req) => {
           );
         }
 
+        const verifyUrl = `https://api.flutterwave.com/v3/transactions/${String(reference)}/verify`;
+        console.log(`Verifying Flutterwave transaction via: ${verifyUrl}`);
+        
         const flwRes = await fetch(
-          `https://api.flutterwave.com/v3/transactions/${reference}/verify`,
+          verifyUrl,
           {
             headers: {
               Authorization: `Bearer ${Deno.env.get("FLUTTERWAVE_SECRET_KEY")}`,
@@ -208,14 +211,19 @@ Deno.serve(async (req) => {
     }
 
     // ── Update checkout row ───────────────────────────────
+    console.log(`Updating checkout ${orderId} to 'paid'...`);
     const { error: checkoutError } = await supabase
       .from("checkout")
-      .update({ status: "paid", transaction_ref: reference })
+      .update({ status: "paid", transaction_ref: String(reference) })
       .eq("id", Number(orderId));
 
-    if (checkoutError) throw checkoutError;
+    if (checkoutError) {
+      console.error("Checkout update failed:", checkoutError);
+      throw checkoutError;
+    }
 
     // ── Create slot subscription ──────────────────────────
+    console.log(`Creating slot subscription for user ${userId}...`);
     const nextPaymentDate = new Date();
     nextPaymentDate.setDate(nextPaymentDate.getDate() + 30);
 
@@ -225,24 +233,73 @@ Deno.serve(async (req) => {
         {
           user_id: userId,
           checkout_id: Number(orderId),
-          amount,
-          slotprice: totalPrice,
+          amount: Number(amount),
+          slotprice: Number(totalPrice),
           status: "active",
-          slots: slotQuantity,
+          slots: Number(slotQuantity),
           last_payment_date: new Date().toISOString(),
           next_payment_date: nextPaymentDate.toISOString(),
         },
       ]);
 
-    if (subError) throw subError;
+    if (subError) {
+      console.error("Slot subscription creation failed:", subError);
+      throw subError;
+    }
+
+    console.log("Slot created successfully.");
+
+    // ── Credit Referrer with Slot Bonus (₦500 per slot) ───
+    // This is wrapped in its own try/catch to ensure it doesn't break the main flow
+    try {
+      console.log(`Checking for referrer of user ${userId}...`);
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("referred_by")
+        .eq("id", userId)
+        .single();
+
+      if (profile?.referred_by) {
+        const bonusAmount = 500 * Number(slotQuantity);
+        console.log(`Crediting referrer ${profile.referred_by} with ₦${bonusAmount}...`);
+        
+        const { error: bonusError } = await supabase.rpc('increment_slot_bonus', {
+          user_id: profile.referred_by,
+          amount: bonusAmount
+        });
+
+        if (bonusError) {
+          console.warn("RPC increment failed, trying direct update:", bonusError);
+          const { data: referrerProfile } = await supabase
+            .from("profiles")
+            .select("slot_bonus")
+            .eq("id", profile.referred_by)
+            .single();
+          
+          if (referrerProfile) {
+            await supabase
+              .from("profiles")
+              .update({ slot_bonus: (Number(referrerProfile.slot_bonus || 0) + bonusAmount) })
+              .eq("id", profile.referred_by);
+            console.log("Direct bonus update successful.");
+          }
+        } else {
+          console.log("Bonus credited via RPC successfully.");
+        }
+      } else {
+        console.log("No referrer found for this user.");
+      }
+    } catch (err) {
+      console.error("Referral bonus logic failed (non-critical):", err);
+    }
 
     // ── Log the payment (non-critical) ────────────────────
     try {
       await supabase.from("payment_logs").insert({
         user_id: userId,
-        reference,
+        reference: String(reference),
         provider,
-        amount,
+        amount: Number(amount),
         status: "success",
         created_at: new Date().toISOString(),
       });
@@ -251,7 +308,7 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ success: true, message: "Slot payment activated" }),
+      JSON.stringify({ success: true, message: "Slot payment activated successfully" }),
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

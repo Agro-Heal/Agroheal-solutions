@@ -10,6 +10,7 @@ import {
   ArrowUpRight,
   SendHorizontal,
   AlertCircle,
+  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -381,11 +382,11 @@ const Dashboard = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="order-2 lg:order-1 lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 flex flex-col h-full min-h-0 lg:min-h-[calc(100vh-11rem)] overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-5 shrink-0">
-              <h2 className="text-base font-bold text-gray-900">
-                Your Subscriptions
-              </h2>
-            </div>
+              <div className="flex items-center justify-between mb-5 shrink-0">
+                <h2 className="text-base font-bold text-gray-900">
+                  Your Subscriptions
+                </h2>
+              </div>
 
             <div className="flex-1 flex flex-col min-h-0 gap-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-gray-50 border border-gray-100 hover:border-green-200 transition-colors shrink-0 gap-3">
@@ -662,11 +663,35 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-green-800 to-green-700 rounded-xl p-4 text-white">
-                <p className="text-green-200 text-xs mb-1">Total Earnings</p>
-                <p className="text-2xl font-bold">
-                  ₦{Number(profile?.referral_earnings ?? 0).toLocaleString()}
-                </p>
+              <div className="bg-gradient-to-br from-green-800 to-green-700 rounded-xl p-5 text-white shadow-lg overflow-hidden relative">
+                <div className="relative z-10">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <p className="text-green-200 text-xs font-semibold uppercase tracking-wider mb-0.5">Total Earnings</p>
+                      <p className="text-3xl font-bold">
+                        ₦{(Number(profile?.referral_earnings ?? 0) + Number(profile?.slot_bonus ?? 0)).toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="bg-white/10 rounded-lg px-2 py-1 backdrop-blur-sm border border-white/10">
+                      <TrendingUp className="w-4 h-4 text-green-300" />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2 pt-4 border-t border-white/10">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-green-200">Referral Earnings</span>
+                      <span className="font-semibold font-mono">₦{Number(profile?.referral_earnings ?? 0).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-green-200">Slot Bonus</span>
+                      <span className="font-semibold font-mono text-green-300">
+                        + ₦{Number(profile?.slot_bonus ?? 0).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                {/* Decorative element */}
+                <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/5 rounded-full blur-2xl pointer-events-none" />
               </div>
 
               {profile?.referred_by && (

@@ -26,7 +26,7 @@ const Checkout = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [slotQuantity, setSlotQuantity] = useState(1);
-  const slotPrice = 2000;
+  const slotPrice = 100;
   const totalPrice = slotPrice * slotQuantity;
   const [isProcessing, setIsProcessing] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -194,57 +194,63 @@ const Checkout = () => {
             localStorage.setItem("pending_payment_provider", "flutterwave");
             localStorage.setItem("pending_payment_userId", user.id);
 
-            const run = async () => {
-              const { data, error } = await supabase.functions.invoke(
-                "verify-slot-payment",
-                {
-                  body: {
-                    // Flutterwave uses transaction_id (numeric) for server-side verify
-                    reference: response.transaction_id,
-                    provider: "flutterwave",
-                    userId: order.user_id,
-                    orderId: order.id,
-                    slotQuantity: slotQuantity,
-                    totalPrice: totalPrice,
-                  },
-                },
-              );
+            const flwTransactionId = response.transaction_id || response.id || response.flw_ref;
+            console.log("Payment successful. Activating slot directly...");
 
-              if (error || !data?.success) {
-                Sentry.captureException(error, {
-                  extra: { action: "verify_slot_payment", orderId: order.id },
+            const activateSlot = async () => {
+              try {
+                // 1. Update checkout status
+                const { error: checkoutErr } = await supabase
+                  .from("checkout")
+                  .update({ 
+                    status: "paid", 
+                    transaction_ref: String(flwTransactionId) 
+                  })
+                  .eq("id", order.id);
+
+                if (checkoutErr) throw checkoutErr;
+
+                // 2. Create the subscription
+                const nextPaymentDate = new Date();
+                nextPaymentDate.setDate(nextPaymentDate.getDate() + 30);
+
+                const { error: subErr } = await supabase
+                  .from("slot_subscriptions")
+                  .insert([
+                    {
+                      user_id: user.id,
+                      checkout_id: order.id,
+                      amount: totalPrice,
+                      slotprice: slotPrice,
+                      status: "active",
+                      slots: slotQuantity,
+                      last_payment_date: new Date().toISOString(),
+                      next_payment_date: nextPaymentDate.toISOString(),
+                    },
+                  ]);
+
+                if (subErr) throw subErr;
+
+                toast({
+                  title: "Payment successful",
+                  description: "Your slot has been secured!",
                 });
+
+                navigate("/dashboard/slots-subscription");
+              } catch (err) {
+                console.error("Direct activation failed:", err);
                 toast({
                   title: "Activation Error",
-                  description:
-                    "Payment received but activation failed. Please contact support.",
+                  description: "Payment received but failed to update record. Please contact support.",
                   variant: "destructive",
                 });
-                return;
+              } finally {
+                setIsProcessing(false);
               }
-
-              toast({
-                title: "Payment successful",
-                description: "Your slot has been secured!",
-              });
-
-              navigate("/dashboard/slots-subscription"); // navigate to slots details page
             };
 
-            run()
-              .catch((err) => {
-                Sentry.captureException(err, {
-                  extra: { action: "post_slot_payment", orderId: order.id },
-                });
-                toast({
-                  title: "Warning",
-                  description: "Payment received but failed to update record.",
-                  variant: "destructive",
-                });
-              })
-              .finally(() => setIsProcessing(false));
+            activateSlot();
           } else {
-            // Payment was not successful
             setIsProcessing(false);
           }
         },
