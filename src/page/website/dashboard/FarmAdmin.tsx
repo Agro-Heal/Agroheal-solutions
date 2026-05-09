@@ -615,14 +615,14 @@ const FarmAdmin = () => {
                           <thead>
                             <tr className="border-b bg-gray-50">
                               <th className="text-left p-2">Name</th>
-                              <th className="text-left p-2">Email</th>
-                              <th className="text-left p-2">Phone</th>
                               <th className="text-left p-2">Farm Slots</th>
                               <th className="text-left p-2">Slot Fee</th>
                               <th className="text-left p-2">Farm Setup</th>
                               <th className="text-left p-2">Farm Support</th>
                               <th className="text-left p-2">Absentee Fine</th>
                               <th className="text-left p-2">Total</th>
+                              <th className="text-left p-2">Email</th>
+                              <th className="text-left p-2">Phone</th>
                               <th className="text-left p-2">Actions</th>
                             </tr>
                           </thead>
@@ -630,8 +630,6 @@ const FarmAdmin = () => {
                             {records.map((record) => (
                               <tr key={record.id} className="border-b hover:bg-gray-50">
                                 <td className="p-2 font-medium">{record.name}</td>
-                                <td className="p-2 text-gray-600">{record.email}</td>
-                                <td className="p-2 text-gray-600">{record.phone}</td>
                                 <td className="p-2">{record.farm_slots}</td>
                                 <td className="p-2">₦{calcSlotFee(record).toLocaleString()}</td>
                                 <td className="p-2">
@@ -653,6 +651,8 @@ const FarmAdmin = () => {
                                   )}
                                 </td>
                                 <td className="p-2 font-semibold text-green-800">₦{calcTotal(record).toLocaleString()}</td>
+                                <td className="p-2 text-gray-600">{record.email}</td>
+                                <td className="p-2 text-gray-600">{record.phone}</td>
                                 <td className="p-2">
                                   <div className="flex gap-1">
                                     <Button onClick={() => handleEdit(record)} variant="outline" size="sm"><Edit className="w-4 h-4" /></Button>
@@ -665,13 +665,13 @@ const FarmAdmin = () => {
                           <tfoot>
                             <tr className="border-t-2 font-semibold bg-gray-100">
                               <td className="p-2">Total</td>
-                              <td className="p-2" /><td className="p-2" />
                               <td className="p-2">{records.reduce((s, r) => s + r.farm_slots, 0)}</td>
                               <td className="p-2">₦{records.reduce((s, r) => s + calcSlotFee(r), 0).toLocaleString()}</td>
                               <td className="p-2">₦{records.reduce((s, r) => s + calcSetup(r), 0).toLocaleString()}</td>
                               <td className="p-2">₦{records.reduce((s, r) => s + calcSupport(r), 0).toLocaleString()}</td>
                               <td className="p-2">₦{records.reduce((s, r) => s + calcFine(r), 0).toLocaleString()}</td>
                               <td className="p-2 font-bold text-green-800">₦{records.reduce((s, r) => s + calcTotal(r), 0).toLocaleString()}</td>
+                              <td className="p-2" /><td className="p-2" />
                               <td className="p-2" />
                             </tr>
                           </tfoot>
@@ -752,8 +752,8 @@ const FarmAdmin = () => {
 
                         <div className="p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-gray-50/50">
                           <div>
-                            <h4 className="font-semibold text-gray-900">Agroheal Fees (Farm Slot, Marketing & Support)</h4>
-                            <p className="text-xs text-gray-500">(Farm Slot Fee + Total Support Fee)</p>
+                            <h4 className="font-semibold text-gray-900">Agroheal Fees</h4>
+                            <p className="text-xs text-gray-500 font-medium">(Farm Slot Admin/Marketing + Agroheal Farm Support)</p>
                           </div>
                           <span className="text-xl font-bold text-green-800">₦{agrohealBalance.toLocaleString()}</span>
                         </div>

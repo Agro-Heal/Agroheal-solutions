@@ -70,16 +70,16 @@ const sections = [
         text: "₦2,000 yearly admin fee per slot.",
       },
       {
-        label: "b. Monthly Contribution",
-        text: "₦1,000 monthly per slot for farm rent and Agroheal oversight.",
+        label: "b. Farm Purse",
+        text: "₦5,000 monthly contribution to the Group Farm purse for farm set-up over the first 5 months: ₦25,000 total per slot.",
       },
       {
-        label: "c. Farm Purse",
-        text: "₦5,000 monthly contribution to the Group farm purse for farm establishment over the first five months. The funds shall be managed by participants in accordance with the Group farm template.",
+        label: "c. Labour",
+        text: "One day (eight hours) a month work rotation per slot or option of ₦500 fine to pay a substitute to do your work.",
       },
       {
-        label: "d. Labour",
-        text: "One day (eight hours) labour per month (per slot), or option of ₦1,000 fine. Each participant shall have a one day a month work rotation and may exercise the option to pay a substitute to do the required work as stated.",
+        label: "d. Agroheal farm support",
+        text: "₦500 monthly payment for Agroheal Farm support and farm estate oversight.",
       },
     ],
   },

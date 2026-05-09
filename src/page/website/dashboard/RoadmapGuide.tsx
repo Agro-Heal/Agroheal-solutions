@@ -3,7 +3,7 @@ import { BookOpen, Sprout, Users, CreditCard, GraduationCap, Rocket } from "luci
 
 const roadmapSteps = [
   {
-    title: "Step 1: Learn the Platform",
+    title: "Step 1: Learn on the Platform",
     description:
       "Start with the course modules to understand organic farming principles and practical techniques.",
     icon: BookOpen,
