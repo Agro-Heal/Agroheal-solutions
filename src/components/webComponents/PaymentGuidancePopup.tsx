@@ -91,8 +91,7 @@ const PaymentGuidancePopup = () => {
                         You can use different payment method
                       </p>
                       <p className="text-sm text-gray-600 leading-relaxed text-justify">
-                        When you get to the payment page, you can select the
-                        method you want to use. Card, Bank Transfer etc.
+                        When you get to the payment section, you can use the Card Option or scroll down the page to 'change payment method' to Bank Transfer, etc.
                       </p>
                     </div>
                   </div>
