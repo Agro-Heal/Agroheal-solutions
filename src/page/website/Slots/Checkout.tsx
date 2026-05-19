@@ -15,6 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabaseClient";
 import * as Sentry from "@sentry/react";
+import { PROJECT_CATEGORIES, DEFAULT_CATEGORY } from "@/constant/projectCategories";
 
 declare global {
   interface Window {
@@ -26,6 +27,7 @@ const Checkout = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [slotQuantity, setSlotQuantity] = useState(1);
+  const [category, setCategory] = useState("");
   const slotPrice = 2000;
   const totalPrice = slotPrice * slotQuantity;
   const [isProcessing, setIsProcessing] = useState(false);
@@ -36,6 +38,7 @@ const Checkout = () => {
     phone: "",
     email: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // ── Load Flutterwave script ───────────────────────────────────────────────
   useEffect(() => {
@@ -67,7 +70,8 @@ const Checkout = () => {
     formData.firstName.trim() &&
     formData.lastName.trim() &&
     formData.email.trim() &&
-    formData.phone.trim();
+    formData.phone.trim() &&
+    category !== "";
 
   const createCheckout = async () => {
     const {
@@ -95,6 +99,7 @@ const Checkout = () => {
           amount: totalPrice,
           payment_method: "flutterwave",
           status: "pending",
+          project_category: category,
         },
       ])
       .select()
@@ -114,14 +119,24 @@ const Checkout = () => {
   };
 
   const handleFlutterwave = async () => {
-    if (!isFormValid) {
+    const newErrors: Record<string, string> = {};
+    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!formData.email.trim()) newErrors.email = "Email address is required";
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+    if (!category) newErrors.category = "Please select a project category";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       toast({
-        title: "Please fill all fields",
-        description: "All billing details are required.",
+        title: "Missing Information",
+        description: "Please fill in all required fields marked in red.",
         variant: "destructive",
       });
       return;
     }
+
+    setErrors({}); // Clear errors if valid
 
     if (!window.FlutterwaveCheckout) {
       toast({
@@ -169,6 +184,7 @@ const Checkout = () => {
           user_id: order.user_id,
           order_id: order.id,
           plan: "slot",
+          project_category: category,
         },
         customizations: {
           title: "Agroheal Farm Slot",
@@ -226,7 +242,8 @@ const Checkout = () => {
                       slots: slotQuantity,
                       last_payment_date: new Date().toISOString(),
                       next_payment_date: nextPaymentDate.toISOString(),
-                    },
+                      project_category: category,
+                    },    
                   ]);
 
                 if (subErr) throw subErr;
@@ -317,8 +334,13 @@ const Checkout = () => {
                         name="firstName"
                         placeholder="John"
                         value={formData.firstName}
-                        onChange={handleInputChange}
+                        onChange={(e) => {
+                          handleInputChange(e);
+                          if (errors.firstName) setErrors(prev => ({ ...prev, firstName: "" }));
+                        }}
+                        className={errors.firstName ? "border-red-500" : ""}
                       />
+                      {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">Last Name</Label>
@@ -327,8 +349,13 @@ const Checkout = () => {
                         name="lastName"
                         placeholder="Doe"
                         value={formData.lastName}
-                        onChange={handleInputChange}
+                        onChange={(e) => {
+                          handleInputChange(e);
+                          if (errors.lastName) setErrors(prev => ({ ...prev, lastName: "" }));
+                        }}
+                        className={errors.lastName ? "border-red-500" : ""}
                       />
+                      {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>}
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -339,8 +366,13 @@ const Checkout = () => {
                       type="email"
                       placeholder="john@example.com"
                       value={formData.email}
-                      onChange={handleInputChange}
+                      onChange={(e) => {
+                        handleInputChange(e);
+                        if (errors.email) setErrors(prev => ({ ...prev, email: "" }));
+                      }}
+                      className={errors.email ? "border-red-500" : ""}
                     />
+                    {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
@@ -350,9 +382,36 @@ const Checkout = () => {
                       type="tel"
                       placeholder="+234 800 000 0000"
                       value={formData.phone}
-                      onChange={handleInputChange}
+                      onChange={(e) => {
+                        handleInputChange(e);
+                        if (errors.phone) setErrors(prev => ({ ...prev, phone: "" }));
+                      }}
+                      className={errors.phone ? "border-red-500" : ""}
                     />
+                    {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Project Category</Label>
+                    <select
+                      id="category"
+                      value={category}
+                      onChange={(e) => {
+                        setCategory(e.target.value);
+                        if (errors.category) setErrors(prev => ({ ...prev, category: "" }));
+                      }}
+                      className={`w-full h-10 px-3 rounded-md border bg-background text-sm mb-4 ${errors.category ? "border-red-500" : "border-input"}`}
+                      required
+                    >
+                      <option value="" disabled>Select Project Category</option>
+                      {PROJECT_CATEGORIES.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.category && <p className="text-xs text-red-500 mt-0.5 mb-4">{errors.category}</p>}
+                  </div>
+
                   <div className="space-y-2">
                     <Label>Number of Slots</Label>
                     <div className="flex items-center gap-4">

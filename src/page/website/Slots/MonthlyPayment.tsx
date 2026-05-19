@@ -20,6 +20,7 @@ import Lottie from "lottie-react";
 import NoDataFound from "../../../assets/Icon/searching.json";
 import { motion, AnimatePresence } from "framer-motion";
 import { FLUTTERWAVE_KEYS } from "@/config/Index";
+import { PROJECT_CATEGORIES, DEFAULT_CATEGORY } from "@/constant/projectCategories";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Subscription {
@@ -32,6 +33,7 @@ interface Subscription {
   last_payment_date: string;
   slots: string;
   monthly_pay: number;
+  project_category?: string;
 }
 
 interface OtherPayment {
@@ -43,6 +45,7 @@ interface OtherPayment {
   status: string;
   slots?: number;
   subscription_id?: string | null;
+  project_category?: string;
 }
 
 const PAYMENT_TYPE_LABELS: Record<string, string> = {
@@ -351,12 +354,18 @@ function SlotTableView({
             </span>
           </div>
 
-          {/* ── Desktop table ── */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
+          {subscriptions.length === 0 ? (
+            <div className="py-12 text-center text-gray-500 font-medium">
+              No record found
+            </div>
+          ) : (
+            <>
+              {/* ── Desktop table ── */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/60">
-                  {["Slot", "Slots", "Amount Paid", "Payment Date"].map((h) => (
+                  {["Slot", "Category", "Slots", "Amount Paid", "Payment Date"].map((h) => (
                     <th
                       key={h}
                       className="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap"
@@ -384,6 +393,11 @@ function SlotTableView({
                               ((page - 1) * PAGE_SIZE + index)}
                           </span>
                         </div>
+                      </td>
+                      <td className="px-5 py-4 text-gray-700 font-medium">
+                        <span className="text-[10px] px-2 py-0.5 bg-gray-100 rounded text-gray-600">
+                          {slot.project_category || "Gingertown"}
+                        </span>
                       </td>
                       <td className="px-5 py-4 text-gray-700 font-medium">
                         {slot.slots}
@@ -495,6 +509,8 @@ function SlotTableView({
               </div>
             </div>
           )}
+          </>
+        )}
         </motion.div>
 
         {/* ── Other Payments Table ── */}
@@ -519,7 +535,7 @@ function SlotTableView({
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/60">
-                    {["Name", "Slot Name", "No. of Slots", "No. of Months", "Amount Paid", "Payment Date"].map(
+                    {["Name", "Category", "Slot Name", "No. of Slots", "No. of Months", "Amount Paid", "Payment Date"].map(
                       (h) => (
                         <th
                           key={h}
@@ -547,6 +563,11 @@ function SlotTableView({
                               payment.payment_type.replace("_", " ")}
                           </span>
                         </div>
+                      </td>
+                      <td className="px-5 py-4 text-gray-700 font-medium text-xs">
+                        <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-[10px]">
+                          {payment.project_category || "Gingertown"}
+                        </span>
                       </td>
                       <td className="px-5 py-4 text-gray-700 font-medium text-xs">
                         {payment.subscription_id ? (() => {
@@ -589,6 +610,10 @@ const MonthlyPayment = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORY);
+
+  const filteredSubscriptions = subscriptions.filter(s => (s.project_category || "Gingertown") === selectedCategory);
+  const filteredOtherPayments = otherPayments.filter(p => (p.project_category || "Gingertown") === selectedCategory);
 
   // Derive selectedSlot from subscriptions so it always has fresh data
   const selectedSlot = selectedSlotId
@@ -682,6 +707,7 @@ const MonthlyPayment = () => {
         meta: {
           subscription_id: targetSlot.id,
           user_id: user.id,
+          project_category: targetSlot.project_category || "Gingertown",
         },
         customizations: {
           title: "Agroheal Monthly Fee",
@@ -773,24 +799,46 @@ const MonthlyPayment = () => {
 
   // ── Main render ────────────────────────────────────────────────────────────
   return (
-    <AnimatePresence mode="wait">
-      {selectedSlot ? (
-        <SlotDetailView
-          key="detail"
-          slot={selectedSlot}
-          onBack={() => setSelectedSlotId(null)}
-          onPay={() => handleMonthlyPayment(selectedSlot)}
-          isProcessing={isProcessing}
-        />
-      ) : (
-        <SlotTableView
-          key="table"
-          subscriptions={subscriptions}
-          otherPayments={otherPayments}
-          onView={(slot) => setSelectedSlotId(slot.id)}
-        />
+    <div className="min-h-screen bg-gray-50">
+      {/* Category Selection Filter (Sticky at the top) */}
+      {!selectedSlot && (
+        <div className="bg-white border-b border-gray-100 px-4 md:px-8 py-3 sticky top-0 z-10 shadow-sm flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Project:</span>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="h-8 w-full max-w-[220px] sm:max-w-[280px] md:max-w-xs rounded-lg border border-gray-200 bg-white px-2 text-xs font-bold text-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all shadow-sm text-ellipsis overflow-hidden whitespace-nowrap"
+            >
+              {PROJECT_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       )}
-    </AnimatePresence>
+
+      <AnimatePresence mode="wait">
+        {selectedSlot ? (
+          <SlotDetailView
+            key="detail"
+            slot={selectedSlot}
+            onBack={() => setSelectedSlotId(null)}
+            onPay={() => handleMonthlyPayment(selectedSlot)}
+            isProcessing={isProcessing}
+          />
+        ) : (
+          <SlotTableView
+            key="table"
+            subscriptions={filteredSubscriptions}
+            otherPayments={filteredOtherPayments}
+            onView={(slot) => setSelectedSlotId(slot.id)}
+          />
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

@@ -50,7 +50,7 @@ const EXPENSE_CATEGORIES = [
   "Miscellaneous",
 ];
 
-interface FarmGroup { id: string; name: string; slug: string; coordinator_id: string; }
+interface FarmGroup { id: string; name: string; slug: string; coordinator_id: string; project_category: string; }
 
 
 const calcSetup = (r: FarmRecord) => 
@@ -90,7 +90,7 @@ const FarmAdmin = () => {
     setLoading(false);
   };
 
-  const enrichRecordsWithBatches = async (records: any[]) => {
+  const enrichRecordsWithBatches = async (records: any[], projectCategory: string) => {
     if (!records || records.length === 0) return [];
     const enrichedRecords = [...records] as FarmRecord[];
     const emails = [...new Set(enrichedRecords
@@ -105,12 +105,10 @@ const FarmAdmin = () => {
     
     if (authUsers && authUsers.length > 0) {
       const userIds = authUsers.map((u: any) => u.user_id);
-      const { data: payments } = await supabase
-        .from("other_payments")
-        .select("user_id, payment_type, created_at, slots, amount, months")
-        .in("user_id", userIds)
-        .eq("status", "success")
-        .order("created_at", { ascending: true });
+      const { data: payments } = await supabase.rpc("get_users_category_payments_batch", {
+        target_user_ids: userIds,
+        target_category: projectCategory
+      });
 
       if (payments) {
         return enrichedRecords.map(record => {
@@ -155,7 +153,8 @@ const FarmAdmin = () => {
 
     if (recRes.error) { showToast({ variant: "error", title: "Failed to load records", description: recRes.error.message }); }
     else { 
-      const enriched = await enrichRecordsWithBatches(recRes.data || []);
+      const farm = farms.find(f => f.id === farmId);
+      const enriched = await enrichRecordsWithBatches(recRes.data || [], farm?.project_category || "Gingertown");
       setRecords(enriched); 
     }
 
@@ -167,7 +166,11 @@ const FarmAdmin = () => {
     const farm = farms.find((f) => f.id === farmId) || null;
     setSelectedFarm(farm);
     if (farm) fetchRecords(farm.id);
-    setShowAddForm(false); setEditingId(null);
+    // Clear the Add Members Record form when farm changes
+    setShowAddForm(false); 
+    setEditingId(null);
+    setFormData({});
+    setAutoFilled(false);
   };
 
   const handleAdd = () => {
@@ -201,7 +204,17 @@ const FarmAdmin = () => {
       return;
     }
 
-    // 3. If no memberData but we have userId, get profile info (name, phone) from profiles table
+    // 3. Get accurate slots for this specific project category
+    let categorySlots = 0;
+    if (userId && selectedFarm) {
+      const { data: slotsData } = await supabase.rpc("get_user_category_slots", {
+        target_user_id: userId,
+        target_category: selectedFarm.project_category || "Gingertown"
+      });
+      categorySlots = Number(slotsData || 0);
+    }
+
+    // 4. If no memberData but we have userId, get profile info (name, phone) from profiles table
     let profileName = memberData?.full_name || "";
     let profilePhone = memberData?.phone || "";
 
@@ -215,13 +228,12 @@ const FarmAdmin = () => {
       profilePhone = profile?.phone || "";
     }
 
-    // 4. Get payment totals from other_payments
+    // 5. Get payment totals from other_payments
     if (userId) {
-      const { data: payments, error: payErr } = await supabase
-        .from("other_payments")
-        .select("amount, payment_type")
-        .eq("user_id", userId)
-        .eq("status", "success");
+      const { data: payments, error: payErr } = await supabase.rpc("get_user_category_payments", {
+        target_user_id: userId,
+        target_category: selectedFarm?.project_category || "Gingertown"
+      });
 
       console.log("[Lookup] userId:", userId);
       console.log("[Lookup] payments result:", payments, "error:", payErr);
@@ -229,8 +241,8 @@ const FarmAdmin = () => {
       const getTotalPaid = (type: string) => {
         if (!payments) return 0;
         return payments
-          .filter(p => p.payment_type?.toLowerCase() === type.toLowerCase())
-          .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+          .filter((p: any) => p.payment_type?.toLowerCase() === type.toLowerCase())
+          .reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
       };
 
       const setupAmt = getTotalPaid("farm_setup");
@@ -242,7 +254,7 @@ const FarmAdmin = () => {
         ...prev,
         name: profileName || prev.name || "",
         phone: profilePhone || prev.phone || "",
-        farm_slots: Math.max(Number(prev.farm_slots) || 0, slots),
+        farm_slots: Math.max(Number(prev.farm_slots) || 0, categorySlots),
         months_farm_setup: Math.max(Number(prev.months_farm_setup) || 0, setupAmt).toString(),
         months_farm_support: Math.max(Number(prev.months_farm_support) || 0, supportAmt).toString(),
         absentee_fine: Math.max(Number(prev.absentee_fine) || 0, fineAmt).toString(),
@@ -252,7 +264,7 @@ const FarmAdmin = () => {
         ...prev,
         name: profileName || prev.name || "",
         phone: profilePhone || prev.phone || "",
-        farm_slots: Math.max(Number(prev.farm_slots) || 0, slots),
+        farm_slots: Math.max(Number(prev.farm_slots) || 0, categorySlots),
       }));
     }
 
@@ -302,7 +314,8 @@ const FarmAdmin = () => {
       months_farm_setup: formData.months_farm_setup,
       months_farm_support: formData.months_farm_support,
       absentee_fine: formData.absentee_fine,
-      farm_id: selectedFarm.id
+      farm_id: selectedFarm.id,
+      project_category: selectedFarm.project_category || "Gingertown"
     };
     
     let error;
@@ -513,7 +526,9 @@ const FarmAdmin = () => {
           >
             <option value="" disabled>-- Choose a farm group --</option>
             {farms.map((farm) => (
-              <option key={farm.id} value={farm.id}>{farm.name}</option>
+              <option key={farm.id} value={farm.id}>
+                {farm.name} ({farm.project_category || "Gingertown"})
+              </option>
             ))}
           </select>
           {selectedFarm && (

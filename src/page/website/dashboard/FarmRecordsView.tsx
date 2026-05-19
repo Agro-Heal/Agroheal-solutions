@@ -8,6 +8,7 @@ import { showToast } from "@/components/ui/ToastComponent";
 import { Toaster } from "react-hot-toast";
 import { Plus, Edit, Trash2, Save, X, Printer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PROJECT_CATEGORIES, DEFAULT_CATEGORY } from "@/constant/projectCategories";
 
 
 interface FarmRecord {
@@ -19,7 +20,7 @@ interface FarmRecord {
   months_farm_setup: string;
   months_farm_support: string;
   absentee_fine: string;
-  farm_groups: { id: string; name: string; coordinator_id: string };
+  farm_groups: { id: string; name: string; coordinator_id: string; project_category: string };
   setup_paid?: number;
   support_paid?: number;
   fine_paid?: number;
@@ -69,10 +70,12 @@ const calcFine = (r: FarmRecord) =>
 const calcTotal = (r: FarmRecord) => calcSetup(r) + calcSupport(r) + calcSlotFee(r) + calcFine(r);
 
 const FarmRecordsView = () => {
-  const [farm, setFarm] = useState<{ id: string; name: string; coordinator_id: string } | null>(null);
+  const [farm, setFarm] = useState<{ id: string; name: string; coordinator_id: string; project_category: string } | null>(null);
+  const [allFarms, setAllFarms] = useState<{ id: string; name: string; coordinator_id: string; project_category: string }[]>([]);
   const [records, setRecords] = useState<FarmRecord[]>([]);
   const [expenses, setExpenses] = useState<FarmExpense[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORY);
   const [isCoordinator, setIsCoordinator] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showExpenseForm, setShowExpenseForm] = useState(false);
@@ -83,7 +86,7 @@ const FarmRecordsView = () => {
   const [emailLookupLoading, setEmailLookupLoading] = useState(false);
   const [autoFilled, setAutoFilled] = useState(false);
 
-  const enrichRecordsWithBatches = async (records: any[]) => {
+  const enrichRecordsWithBatches = async (records: any[], projectCategory: string) => {
     if (!records || records.length === 0) return [];
     const enrichedRecords = [...records] as FarmRecord[];
     const emails = [...new Set(enrichedRecords
@@ -98,12 +101,10 @@ const FarmRecordsView = () => {
     
     if (authUsers && authUsers.length > 0) {
       const userIds = authUsers.map((u: any) => u.user_id);
-      const { data: payments } = await supabase
-        .from("other_payments")
-        .select("user_id, payment_type, created_at, slots, amount, months")
-        .in("user_id", userIds)
-        .eq("status", "success")
-        .order("created_at", { ascending: true });
+      const { data: payments } = await supabase.rpc("get_users_category_payments_batch", {
+        target_user_ids: userIds,
+        target_category: projectCategory
+      });
 
       if (payments) {
         return enrichedRecords.map(record => {
@@ -139,72 +140,66 @@ const FarmRecordsView = () => {
     return enrichedRecords;
   };
 
-  const fetchRecords = async () => {
+  const fetchRecords = async (categoryInput?: string) => {
+    const categoryToUse = categoryInput || selectedCategory;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user?.email) { setLoading(false); return; }
 
-    // First: try to find farm via member record email match
-    const { data: recordData } = await supabase
-      .from("farm_records")
-      .select("*, farm_groups!inner(id, name, coordinator_id)")
-      .eq("email", user.email).limit(1).maybeSingle();
-
-    if (recordData) {
-      const farmData = recordData.farm_groups as any;
-      setFarm(farmData);
-      setIsCoordinator(farmData.coordinator_id === user.id);
-      
-      const [recRes, expRes] = await Promise.all([
-        supabase.from("farm_records").select("*").eq("farm_id", farmData.id).order("name"),
-        supabase.from("farm_expenses").select("*").eq("farm_id", farmData.id).order("created_at", { ascending: false })
-      ]);
-
-      if (expRes.error) {
-        console.error("Error fetching expenses:", expRes.error);
-      }
-
-      if (recRes.data) {
-        const enriched = await enrichRecordsWithBatches(recRes.data);
-        setRecords(enriched);
-      }
-      setExpenses(expRes.data || []);
-      setLoading(false);
-      return;
-    }
-
-    // Fallback: check if the user is a coordinator of any farm group
-    const { data: coordinatorFarm } = await supabase
+    // First: fetch all farm groups this user is associated with (as member or coordinator)
+    // 1. Groups where user is a coordinator
+    const { data: coordFarms } = await supabase
       .from("farm_groups")
-      .select("id, name, coordinator_id")
-      .eq("coordinator_id", user.id)
-      .limit(1).maybeSingle();
+      .select("*")
+      .eq("coordinator_id", user.id);
 
-    if (coordinatorFarm) {
-      setFarm(coordinatorFarm);
-      setIsCoordinator(true);
+    // 2. Groups where user is a member
+    const { data: memberRecords } = await supabase
+      .from("farm_records")
+      .select("farm_id, farm_groups!inner(*)")
+      .eq("email", user.email);
+
+    const memberFarms = memberRecords?.map(r => r.farm_groups as any) || [];
+    
+    // Combine and deduplicate
+    const combinedFarms = [...(coordFarms || []), ...memberFarms];
+    const uniqueFarms = Array.from(new Map(combinedFarms.map(f => [f.id, f])).values());
+    
+    setAllFarms(uniqueFarms);
+
+    // Filter by category
+    const activeFarm = uniqueFarms.find(f => (f.project_category || "Gingertown") === categoryToUse);
+
+    if (activeFarm) {
+      setFarm(activeFarm);
+      setIsCoordinator(activeFarm.coordinator_id === user.id);
       
       const [recRes, expRes] = await Promise.all([
-        supabase.from("farm_records").select("*").eq("farm_id", coordinatorFarm.id).order("name"),
-        supabase.from("farm_expenses").select("*").eq("farm_id", coordinatorFarm.id).order("created_at", { ascending: false })
+        supabase.from("farm_records").select("*").eq("farm_id", activeFarm.id).order("name"),
+        supabase.from("farm_expenses").select("*").eq("farm_id", activeFarm.id).order("created_at", { ascending: false })
       ]);
 
-      if (expRes.error) {
-        console.error("Error fetching expenses:", expRes.error);
-      }
-
       if (recRes.data) {
-        const enriched = await enrichRecordsWithBatches(recRes.data);
+        const enriched = await enrichRecordsWithBatches(recRes.data, activeFarm.project_category || "Gingertown");
         setRecords(enriched);
       }
       setExpenses(expRes.data || []);
-      setLoading(false);
-      return;
+    } else {
+      setFarm(null);
+      setRecords([]);
+      setExpenses([]);
     }
 
     setLoading(false);
   };
 
-  useEffect(() => { fetchRecords(); }, []);
+  useEffect(() => { 
+    fetchRecords(); 
+    // Clear the Add Members Record form when category changes
+    setShowAddForm(false);
+    setEditingId(null);
+    setFormData({});
+    setAutoFilled(false);
+  }, [selectedCategory]);
 
   const handleAdd = () => {
     setFormData({ name: "", email: "", phone: "", farm_slots: 0, months_farm_setup: "0", months_farm_support: "0", absentee_fine: "0" });
@@ -237,7 +232,17 @@ const FarmRecordsView = () => {
       return;
     }
 
-    // 3. If no memberData but we have userId, get profile info (name, phone) from profiles table
+    // 3. Get accurate slots for this specific project category
+    let categorySlots = 0;
+    if (userId && farm) {
+      const { data: slotsData } = await supabase.rpc("get_user_category_slots", {
+        target_user_id: userId,
+        target_category: farm.project_category || "Gingertown"
+      });
+      categorySlots = Number(slotsData || 0);
+    }
+
+    // 4. If no memberData but we have userId, get profile info (name, phone) from profiles table
     let profileName = memberData?.full_name || "";
     let profilePhone = memberData?.phone || "";
 
@@ -251,19 +256,18 @@ const FarmRecordsView = () => {
       profilePhone = profile?.phone || "";
     }
 
-    // 4. Get payment totals from other_payments
+    // 5. Get payment totals from other_payments
     if (userId) {
-      const { data: payments } = await supabase
-        .from("other_payments")
-        .select("amount, payment_type")
-        .eq("user_id", userId)
-        .eq("status", "success");
+      const { data: payments } = await supabase.rpc("get_user_category_payments", {
+        target_user_id: userId,
+        target_category: farm?.project_category || "Gingertown"
+      });
 
       const getTotalPaid = (type: string) => {
         if (!payments) return 0;
         return payments
-          .filter(p => p.payment_type?.toLowerCase() === type.toLowerCase())
-          .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+          .filter((p: any) => p.payment_type?.toLowerCase() === type.toLowerCase())
+          .reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
       };
 
       const setupAmt = getTotalPaid("farm_setup");
@@ -274,7 +278,7 @@ const FarmRecordsView = () => {
         ...prev,
         name: profileName || prev.name || "",
         phone: profilePhone || prev.phone || "",
-        farm_slots: Math.max(Number(prev.farm_slots) || 0, slots),
+        farm_slots: Math.max(Number(prev.farm_slots) || 0, categorySlots),
         months_farm_setup: Math.max(Number(prev.months_farm_setup) || 0, setupAmt).toString(),
         months_farm_support: Math.max(Number(prev.months_farm_support) || 0, supportAmt).toString(),
         absentee_fine: Math.max(Number(prev.absentee_fine) || 0, fineAmt).toString(),
@@ -284,7 +288,7 @@ const FarmRecordsView = () => {
         ...prev,
         name: profileName || prev.name || "",
         phone: profilePhone || prev.phone || "",
-        farm_slots: Math.max(Number(prev.farm_slots) || 0, slots),
+        farm_slots: Math.max(Number(prev.farm_slots) || 0, categorySlots),
       }));
     }
 
@@ -319,21 +323,26 @@ const FarmRecordsView = () => {
       return;
     }
 
-    // On new record only: validate email uniqueness
+    // On new record only: validate email uniqueness within the SAME CATEGORY
     if (!editingId && formData.email) {
       const { data: existingRecords } = await supabase
         .from("farm_records")
-        .select("farm_id")
+        .select("farm_id, farm_groups!inner(project_category)")
         .eq("email", formData.email);
 
       if (existingRecords && existingRecords.length > 0) {
-        const inSameFarm = existingRecords.some((r) => r.farm_id === farm.id);
-        if (inSameFarm) {
-          showToast({ variant: "error", title: "Email already exists", description: "This email is already in this farm group." });
-        } else {
-          showToast({ variant: "error", title: "Email already exists", description: "This email is already in another farm group." });
+        const inSameCategory = existingRecords.some((r: any) => 
+          (r.farm_groups?.project_category || "Gingertown") === farm.project_category
+        );
+        
+        if (inSameCategory) {
+          showToast({ 
+            variant: "error", 
+            title: "Member already exists", 
+            description: `This member is already registered in a farm group within the ${farm.project_category} category.` 
+          });
+          return;
         }
-        return;
       }
     }
 
@@ -345,7 +354,8 @@ const FarmRecordsView = () => {
       months_farm_setup: formData.months_farm_setup,
       months_farm_support: formData.months_farm_support,
       absentee_fine: formData.absentee_fine,
-      farm_id: farm.id
+      farm_id: farm.id,
+      project_category: farm.project_category || "Gingertown"
     };
 
     let error;
@@ -429,10 +439,29 @@ const FarmRecordsView = () => {
 
   if (!farm) return (
     <div className="p-4 md:p-6">
+      <div className="mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Farm Records</h2>
+            <p className="text-gray-600">Select a project category to view records</p>
+          </div>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="h-9 w-full max-w-[250px] sm:max-w-xs md:max-w-sm lg:max-w-md rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all no-print shadow-sm text-ellipsis overflow-hidden whitespace-nowrap"
+          >
+            {PROJECT_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
       <Card><CardContent className="pt-6">
         <div className="text-center py-8">
-          <p className="text-gray-600">You are not registered with any farm group yet.</p>
-          <p className="text-sm text-gray-600 mt-2">Contact your farm coordinator to be added.</p>
+          <p className="text-gray-600">No farm group found for {selectedCategory}.</p>
+          <p className="text-sm text-gray-600 mt-2">You are not registered under this category, contact your coordinator.</p>
           <p className="text-sm text-gray-500 mt-2">Want to be a farm coordinator? Contact the admin.</p>
         </div>
       </CardContent></Card>
@@ -510,9 +539,22 @@ const FarmRecordsView = () => {
       <div className="print-container">
       <Toaster />
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{farm.name} Records</h2>
-          <p className="text-gray-600">Farm bookkeeping and finance tracking</p>
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">{farm?.name || "No"} Records</h2>
+            <p className="text-gray-600">Farm bookkeeping and finance tracking</p>
+          </div>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="h-9 w-full max-w-[250px] sm:max-w-xs md:max-w-sm lg:max-w-md rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all no-print shadow-sm text-ellipsis overflow-hidden whitespace-nowrap"
+          >
+            {PROJECT_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
         </div>
         <Button 
           onClick={handleDownloadPDF} 

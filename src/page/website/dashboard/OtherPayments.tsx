@@ -17,12 +17,14 @@ import { FLUTTERWAVE_KEYS } from "@/config/Index";
 import * as Sentry from "@sentry/react";
 import { Toaster } from "react-hot-toast";
 import PaymentGuidancePopup from "@/components/webComponents/PaymentGuidancePopup";
+import { PROJECT_CATEGORIES, DEFAULT_CATEGORY } from "@/constant/projectCategories";
 
 const OtherPayments = () => {
   const [paymentType, setPaymentType] = useState<
     "farm_setup" | "farm_support" | "absentee_fine" | ""
   >("");
   const [months, setMonths] = useState(1);
+  const [category, setCategory] = useState("");
   const [totalSlots, setTotalSlots] = useState(0);
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string>("");
@@ -100,7 +102,28 @@ const OtherPayments = () => {
     }
   }, [paymentType]);
 
+  // Update total slots when category or subscription changes
+  useEffect(() => {
+    if (!selectedSubscriptionId) {
+      const filtered = subscriptions.filter(s => (s.project_category || "Gingertown") === category);
+      const slotsCount = filtered.reduce((total, item) => {
+        const slotValue = Number(item?.slots ?? 0);
+        return total + (Number.isNaN(slotValue) ? 0 : slotValue);
+      }, 0);
+      setTotalSlots(slotsCount);
+    }
+  }, [category, subscriptions, selectedSubscriptionId]);
+
   const handlePayment = async () => {
+    if (!category) {
+      showToast({
+        title: "Category Required",
+        description: "Please select a project category.",
+        variant: "error",
+      });
+      return;
+    }
+
     if (totalSlots <= 0) {
       showToast({
         title: "No Slots Found",
@@ -134,6 +157,7 @@ const OtherPayments = () => {
             subscription_id: selectedSubscriptionId || null,
             amount: totalPrice,
             status: "pending",
+            project_category: category,
           },
         ])
         .select()
@@ -158,6 +182,7 @@ const OtherPayments = () => {
           payment_id: paymentRecord.id,
           subscription_id: selectedSubscriptionId || null,
           type: paymentType,
+          project_category: category,
         },
         customizations: {
           title: `${paymentType.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())} Payment`,
@@ -250,6 +275,28 @@ const OtherPayments = () => {
               <div className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-gray-700">
+                    Project Category
+                  </label>
+                  <select
+                    value={category}
+                    onChange={(e) => {
+                      setCategory(e.target.value);
+                      setSelectedSubscriptionId(""); // Reset batch when category changes
+                    }}
+                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                    required
+                  >
+                    <option value="" disabled>Select Project Category</option>
+                    {PROJECT_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">
                     What are you paying for?
                   </label>
                   <select
@@ -277,8 +324,9 @@ const OtherPayments = () => {
                         const sub = subscriptions.find((s) => s.id === subId);
                         if (sub) setTotalSlots(Number(sub.slots));
                       } else {
-                        // All Slots selected, recalculate total
-                        const slotsCount = subscriptions.reduce((total, item) => {
+                        // Filtered Slots selected, recalculate total
+                        const filtered = subscriptions.filter(s => (s.project_category || "Gingertown") === category);
+                        const slotsCount = filtered.reduce((total, item) => {
                           const slotValue = Number(item?.slots ?? 0);
                           return total + (Number.isNaN(slotValue) ? 0 : slotValue);
                         }, 0);
@@ -287,12 +335,14 @@ const OtherPayments = () => {
                     }}
                     className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
                   >
-                    <option value="">All Slots (Total: {subscriptions.reduce((s, b) => s + Number(b.slots), 0)})</option>
-                    {subscriptions.map((sub, idx) => (
-                      <option key={sub.id} value={sub.id}>
-                        Batch #{subscriptions.length - idx} ({sub.slots} slots) - {new Date(sub.last_payment_date).toLocaleDateString()}
-                      </option>
-                    ))}
+                    <option value="">All Slots (Total: {subscriptions.filter(s => (s.project_category || "Gingertown") === category).reduce((s, b) => s + Number(b.slots), 0)})</option>
+                    {subscriptions
+                      .filter(s => (s.project_category || "Gingertown") === category)
+                      .map((sub, idx, arr) => (
+                        <option key={sub.id} value={sub.id}>
+                          Batch #{arr.length - idx} ({sub.slots} slots) - {new Date(sub.last_payment_date).toLocaleDateString()}
+                        </option>
+                      ))}
                   </select>
                 </div>
 

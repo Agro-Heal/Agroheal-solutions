@@ -114,22 +114,23 @@ const Subscribe = () => {
             localStorage.setItem("pending_payment_userId", user.id);
 
             const run = async () => {
-              const { data, error } = await supabase.functions.invoke(
-                "verify-payment",
-                {
-                  body: {
-                    reference: txId, // Flutterwave uses transaction_id for verify
-                    provider: "flutterwave",
-                    userId: user.id,
-                    referralCode: user.user_metadata?.referral_code || null,
-                  },
-                },
-              );
+              const expiresAt = new Date();
+              expiresAt.setFullYear(expiresAt.getFullYear() + 1);
 
-              if (error || !data?.success) {
+              const { error } = await supabase
+                .from("subscriptions")
+                .insert([
+                  {
+                    user_id: user.id,
+                    status: "active",
+                    expires_at: expiresAt.toISOString(),
+                  },
+                ]);
+
+              if (error) {
                 Sentry.captureException(error, {
                   extra: {
-                    action: "verify_payment",
+                    action: "direct_payment_insert",
                     userId: user.id,
                     txRef,
                   },
@@ -177,19 +178,20 @@ const Subscribe = () => {
 
         setLoading(true);
         try {
-          const { data, error } = await supabase.functions.invoke(
-            "verify-payment",
-            {
-              body: {
-                reference: pendingRef,
-                provider: pendingProvider,
-                userId: pendingUserId,
-                referralCode: user?.user_metadata?.referral_code || null,
-              },
-            },
-          );
+          const expiresAt = new Date();
+          expiresAt.setFullYear(expiresAt.getFullYear() + 1);
 
-          if (!error && data?.success) {
+          const { error } = await supabase
+            .from("subscriptions")
+            .insert([
+              {
+                user_id: pendingUserId,
+                status: "active",
+                expires_at: expiresAt.toISOString(),
+              },
+            ]);
+
+          if (!error) {
             localStorage.removeItem("pending_payment_ref");
             localStorage.removeItem("pending_payment_provider");
             localStorage.removeItem("pending_payment_userId");
@@ -278,18 +280,20 @@ const Subscribe = () => {
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke(
-        "verify-payment",
-        {
-          body: {
-            reference: ref,
-            provider: "flutterwave",
-            userId: session.user.id,
-          },
-        },
-      );
+      const expiresAt = new Date();
+      expiresAt.setFullYear(expiresAt.getFullYear() + 1);
 
-      if (error || !data?.success) {
+      const { error } = await supabase
+        .from("subscriptions")
+        .insert([
+          {
+            user_id: session.user.id,
+            status: "active",
+            expires_at: expiresAt.toISOString(),
+          },
+        ]);
+
+      if (error) {
         setActivationError(true);
         return;
       }
