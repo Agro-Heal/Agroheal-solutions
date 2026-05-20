@@ -17,7 +17,7 @@ import { FLUTTERWAVE_KEYS } from "@/config/Index";
 import * as Sentry from "@sentry/react";
 import { Toaster } from "react-hot-toast";
 import PaymentGuidancePopup from "@/components/webComponents/PaymentGuidancePopup";
-import { PROJECT_CATEGORIES, DEFAULT_CATEGORY } from "@/constant/projectCategories";
+import { PROJECT_CATEGORIES } from "@/constant/projectCategories";
 
 const OtherPayments = () => {
   const [paymentType, setPaymentType] = useState<

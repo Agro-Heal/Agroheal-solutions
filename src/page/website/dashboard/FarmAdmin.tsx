@@ -190,7 +190,6 @@ const FarmAdmin = () => {
       email_input: emailTrimmed,
     });
     const memberData = Array.isArray(rpcData) ? rpcData[0] : rpcData;
-    const slots = Number(memberData?.total_slots || 0);
 
     // 2. Get user_id from auth.users via RPC (works for ANY registered user)
     const { data: authData } = await supabase.rpc("get_user_ids_by_emails", {
@@ -287,21 +286,35 @@ const FarmAdmin = () => {
     if (!formData.farm_slots || formData.farm_slots <= 0) { showToast({ variant: "error", title: "Farm Slots required", description: "This member has no farm slots purchased." }); return; }
 
     if (formData.email) {
-      const { data: existing, error: checkError } = await supabase.from("farm_records").select("id, farm_id").eq("email", formData.email);
+      // Normalize email for comparison
+      const emailTrimmed = formData.email.trim().toLowerCase();
+
+      const { data: existing, error: checkError } = await supabase
+        .from("farm_records")
+        .select("id, farm_id, email")
+        .ilike("email", emailTrimmed);
+
       if (checkError) console.error("Email check error:", checkError);
-      
+
       if (existing && existing.length > 0) {
-        const duplicate = existing.find(r => r.id !== editingId);
+        // Find a true duplicate (same email, different record id)
+        const duplicate = existing.find(r => (r.email || "").toLowerCase() === emailTrimmed && r.id !== editingId);
         if (duplicate) {
           const inSameFarm = duplicate.farm_id === selectedFarm.id;
-          showToast({ 
-            variant: "error", 
-            title: "Email already exists", 
-            description: inSameFarm 
-              ? "This email is already in this farm group." 
-              : "This email is already in another farm group." 
+          // Only block if the email already exists in THIS farm
+          if (inSameFarm) {
+            showToast({
+              variant: "error",
+              title: "Email already exists",
+              description: "This email is already in this farm group.",
+            });
+            return;
+          }
+
+          showToast({
+            variant: "warning",
+            title: "Emails may already exist in other farms",
           });
-          return;
         }
       }
     }

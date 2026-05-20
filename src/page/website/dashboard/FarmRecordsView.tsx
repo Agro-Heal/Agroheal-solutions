@@ -71,7 +71,6 @@ const calcTotal = (r: FarmRecord) => calcSetup(r) + calcSupport(r) + calcSlotFee
 
 const FarmRecordsView = () => {
   const [farm, setFarm] = useState<{ id: string; name: string; coordinator_id: string; project_category: string } | null>(null);
-  const [allFarms, setAllFarms] = useState<{ id: string; name: string; coordinator_id: string; project_category: string }[]>([]);
   const [records, setRecords] = useState<FarmRecord[]>([]);
   const [expenses, setExpenses] = useState<FarmExpense[]>([]);
   const [loading, setLoading] = useState(true);
@@ -163,8 +162,6 @@ const FarmRecordsView = () => {
     // Combine and deduplicate
     const combinedFarms = [...(coordFarms || []), ...memberFarms];
     const uniqueFarms = Array.from(new Map(combinedFarms.map(f => [f.id, f])).values());
-    
-    setAllFarms(uniqueFarms);
 
     // Filter by category
     const activeFarm = uniqueFarms.find(f => (f.project_category || "Gingertown") === categoryToUse);
@@ -218,7 +215,6 @@ const FarmRecordsView = () => {
       email_input: emailTrimmed,
     });
     const memberData = Array.isArray(rpcData) ? rpcData[0] : rpcData;
-    const slots = Number(memberData?.total_slots || 0);
 
     // 2. Get user_id from auth.users via RPC (works for ANY registered user)
     const { data: authData } = await supabase.rpc("get_user_ids_by_emails", {

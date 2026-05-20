@@ -1,10 +1,10 @@
 interface ToastUIProps {
   title: string;
   description?: string;
-  variant: "success" | "error";
+  variant: "success" | "error" | "warning";
 }
 
-import { CheckCircle2, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
 
 export const ToastUI = ({ title, description, variant }: ToastUIProps) => {
   //   const isSuccess = variant === "success";
@@ -22,6 +22,13 @@ export const ToastUI = ({ title, description, variant }: ToastUIProps) => {
       innerRing: "bg-red-200",
       iconBg: "bg-red-600",
       Icon: XCircle,
+      titleColor: "text-gray-900",
+    },
+    warning: {
+      outerRing: "bg-yellow-100",
+      innerRing: "bg-yellow-200",
+      iconBg: "bg-yellow-600",
+      Icon: AlertTriangle,
       titleColor: "text-gray-900",
     },
   }[variant];

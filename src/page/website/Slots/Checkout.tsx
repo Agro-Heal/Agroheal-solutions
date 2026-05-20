@@ -15,7 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabaseClient";
 import * as Sentry from "@sentry/react";
-import { PROJECT_CATEGORIES, DEFAULT_CATEGORY } from "@/constant/projectCategories";
+import { PROJECT_CATEGORIES } from "@/constant/projectCategories";
 
 declare global {
   interface Window {
@@ -65,13 +65,6 @@ const Checkout = () => {
 
   const incrementSlot = () => setSlotQuantity((q) => Math.min(q + 1, 100));
   const decrementSlot = () => setSlotQuantity((q) => Math.max(q - 1, 1));
-
-  const isFormValid =
-    formData.firstName.trim() &&
-    formData.lastName.trim() &&
-    formData.email.trim() &&
-    formData.phone.trim() &&
-    category !== "";
 
   const createCheckout = async () => {
     const {

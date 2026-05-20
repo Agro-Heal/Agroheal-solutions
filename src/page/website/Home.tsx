@@ -2,34 +2,20 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
-  Leaf,
   Award,
-  Users,
   BookOpen,
   Sprout,
-  Shield,
-  TrendingUp,
-  Sparkles,
   ChevronDown,
   ArrowRight,
   Globe,
   Plus,
   Minus,
   CheckCircle2,
-  Play,
 } from "lucide-react";
 import { AgrohealImages } from "@/constant/Image";
 
 export default function Home() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
-
-  const stats = [
-    { value: "1,000,000+", label: "Hectares Target" },
-    { value: "36", label: "States Vision" },
-    { value: "15+", label: "Agro Projects" },
-    { value: "Thousands", label: "Future Participants" },
-    { value: "Food Security", label: "Focused" },
-  ];
 
   const advantages = [
     {
@@ -61,39 +47,6 @@ export default function Home() {
       badge: "GLOBAL COMMERCE",
       title: "Market Access & Export Opportunities",
       desc: "Sell into guaranteed local retail chains and international food markets through Agroheal’s network.",
-    },
-  ];
-
-  const steps = [
-    {
-      step: "01",
-      phase: "LEARN",
-      title: "Sustainable Methods",
-      desc: "Access practical training on modern agro-processing, soil preparation, and crop sciences.",
-    },
-    {
-      step: "02",
-      phase: "SECURE",
-      title: "Agro Slots",
-      desc: "Register and claim managed portions of high-yield farming centers inside our agricultural cities.",
-    },
-    {
-      step: "03",
-      phase: "CULTIVATE",
-      title: "Guided Production",
-      desc: "Produce top-grade organic crops with expert agronomists and coordinate substitutes on-site.",
-    },
-    {
-      step: "04",
-      phase: "PROCESS & BRAND",
-      title: "Value Addition",
-      desc: "Refine raw materials into beautiful, retail-ready organic products directly within our hubs.",
-    },
-    {
-      step: "05",
-      phase: "DISTRIBUTE",
-      title: "Market Capture",
-      desc: "Distribute your branded goods locally and harvest foreign exchange via our export channels.",
     },
   ];
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,6 @@ const CreateFarmGroup = () => {
   const [farmName, setFarmName] = useState("");
   const [category, setCategory] = useState(DEFAULT_CATEGORY);
   const [loading, setLoading] = useState(false);
-  const [checking, setChecking] = useState(false); // Changed to false by default as we check on submit or category change
 
   // Removed on-mount redirect as coordinators can have multiple groups now
 
@@ -103,13 +102,6 @@ const CreateFarmGroup = () => {
       ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
   };
-
-  if (checking)
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-green-200 border-t-green-800 rounded-full animate-spin" />
-      </div>
-    );
 
   return (
     <div className="max-w-md mx-auto p-6 mt-8">
