@@ -39,13 +39,29 @@ const OtherPayments = () => {
     absentee_fine: 500,
   };
 
+  const getFee = (type: "farm_setup" | "farm_support" | "absentee_fine" | "") => {
+    if (!type) return 0;
+    if (category === "Organic FoodNation (1 Million Hectares against Hunger)" && type === "farm_support") {
+      return 200;
+    }
+    return FEES[type];
+  };
+
   const MAX_MONTHS = {
     farm_setup: 5,
     farm_support: 12,
     absentee_fine: 12,
   };
 
-  const totalPrice = paymentType ? FEES[paymentType] * months * totalSlots : 0;
+  const getMaxMonths = (type: "farm_setup" | "farm_support" | "absentee_fine" | "") => {
+    if (!type) return 1;
+    if (category === "Organic FoodNation (1 Million Hectares against Hunger)" && type === "farm_setup") {
+      return 2;
+    }
+    return MAX_MONTHS[type];
+  };
+
+  const totalPrice = paymentType ? getFee(paymentType) * months * totalSlots : 0;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,16 +107,16 @@ const OtherPayments = () => {
 
   const incrementMonths = () => {
     if (!paymentType) return;
-    setMonths((m) => Math.min(m + 1, MAX_MONTHS[paymentType]));
+    setMonths((m) => Math.min(m + 1, getMaxMonths(paymentType)));
   };
   const decrementMonths = () => setMonths((m) => Math.max(m - 1, 1));
 
   // Reset months if they exceed max for new selection
   useEffect(() => {
-    if (paymentType && months > MAX_MONTHS[paymentType]) {
-      setMonths(MAX_MONTHS[paymentType]);
+    if (paymentType && months > getMaxMonths(paymentType)) {
+      setMonths(getMaxMonths(paymentType));
     }
-  }, [paymentType]);
+  }, [paymentType, category]);
 
   // Update total slots when category or subscription changes
   useEffect(() => {
@@ -280,8 +296,12 @@ const OtherPayments = () => {
                   <select
                     value={category}
                     onChange={(e) => {
-                      setCategory(e.target.value);
+                      const newCategory = e.target.value;
+                      setCategory(newCategory);
                       setSelectedSubscriptionId(""); // Reset batch when category changes
+                      if (newCategory === "Organic FoodNation (1 Million Hectares against Hunger)" && paymentType === "absentee_fine") {
+                        setPaymentType("");
+                      }
                     }}
                     className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
                     required
@@ -307,7 +327,9 @@ const OtherPayments = () => {
                     <option value="" disabled>Select payment type</option>
                     <option value="farm_setup">Farm Setup Fee</option>
                     <option value="farm_support">Farm Support Fee</option>
-                    <option value="absentee_fine">Absentee Fine</option>
+                    {category !== "Organic FoodNation (1 Million Hectares against Hunger)" && (
+                      <option value="absentee_fine">Absentee Fine</option>
+                    )}
                   </select>
                 </div>
 
@@ -385,7 +407,7 @@ const OtherPayments = () => {
                     <button
                       type="button"
                       onClick={incrementMonths}
-                      disabled={!paymentType || months >= MAX_MONTHS[paymentType]}
+                      disabled={!paymentType || months >= getMaxMonths(paymentType)}
                       className="w-12 h-12 rounded-xl border border-gray-200 bg-white flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-40"
                     >
                       <Plus className="w-5 h-5" />
@@ -393,11 +415,11 @@ const OtherPayments = () => {
                   </div>
                   <div className="space-y-2 text-center">
                     <p className="text-xs text-gray-400">
-                      Maximum allowed for this type: {paymentType ? MAX_MONTHS[paymentType] : "0"} months
+                      Maximum allowed for this type: {paymentType ? getMaxMonths(paymentType) : "0"} months
                     </p>
                     {paymentType && (
                       <div className="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-bold border border-green-100">
-                        {months} month{months > 1 ? "s" : ""} × {totalSlots} slot{totalSlots > 1 ? "s" : ""} × ₦{FEES[paymentType].toLocaleString()} = ₦{totalPrice.toLocaleString()}
+                        {months} month{months > 1 ? "s" : ""} × {totalSlots} slot{totalSlots > 1 ? "s" : ""} × ₦{getFee(paymentType).toLocaleString()} = ₦{totalPrice.toLocaleString()}
                       </div>
                     )}
                   </div>
@@ -447,7 +469,7 @@ const OtherPayments = () => {
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Rate (per slot/month)</span>
                   <span className="font-semibold text-gray-900">
-                    ₦{paymentType ? FEES[paymentType].toLocaleString() : "0"}
+                    ₦{paymentType ? getFee(paymentType).toLocaleString() : "0"}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
