@@ -35,7 +35,7 @@ async function callWithdrawals<T>(payload: unknown): Promise<T> {
   try {
     data = text ? JSON.parse(text) : null;
   } catch {
-    // ignore JSON parse errors
+    // ignore JSON parse errorsss
   }
 
   if (!res.ok) {
