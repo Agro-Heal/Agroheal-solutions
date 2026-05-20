@@ -69,6 +69,9 @@ const calcTotal = (r: FarmRecord) => calcSetup(r) + calcSupport(r) + calcSlotFee
 const FarmAdmin = () => {
   const [farms, setFarms] = useState<FarmGroup[]>([]);
   const [selectedFarm, setSelectedFarm] = useState<FarmGroup | null>(null);
+  const isOrganicFoodNation = selectedFarm?.project_category === "Organic FoodNation (1 Million Hectares against Hunger)";
+  const getRecordTotal = (r: FarmRecord) => 
+    calcSetup(r) + calcSupport(r) + calcSlotFee(r) + (isOrganicFoodNation ? 0 : calcFine(r));
   const [records, setRecords] = useState<FarmRecord[]>([]);
   const [expenses, setExpenses] = useState<FarmExpense[]>([]);
   const [loading, setLoading] = useState(true);
@@ -326,7 +329,7 @@ const FarmAdmin = () => {
       farm_slots: formData.farm_slots,
       months_farm_setup: formData.months_farm_setup,
       months_farm_support: formData.months_farm_support,
-      absentee_fine: formData.absentee_fine,
+      absentee_fine: isOrganicFoodNation ? "0" : formData.absentee_fine,
       farm_id: selectedFarm.id,
       project_category: selectedFarm.project_category || "Gingertown"
     };
@@ -459,9 +462,9 @@ const FarmAdmin = () => {
   const totalAbsenteeFine = records.reduce((s, r) => s + calcFine(r), 0);
   const totalExpensesValue = expenses.reduce((sum, exp) => sum + exp.amount, 0);
 
-  const totalFarmIncome = records.reduce((s, r) => s + calcTotal(r), 0);
+  const totalFarmIncome = records.reduce((s, r) => s + getRecordTotal(r), 0);
   const agrohealBalance = (totalFarmSlots * 2000) + totalFarmSupport;
-  const grossBalance = totalFarmSetup + totalAbsenteeFine;
+  const grossBalance = totalFarmSetup + (isOrganicFoodNation ? 0 : totalAbsenteeFine);
   const netBalance = grossBalance - totalExpensesValue;
 
   return (
@@ -642,15 +645,17 @@ const FarmAdmin = () => {
                               placeholder="Auto-filled or enter amount"
                             />
                           </div>
-                          <div>
-                            <Label>Total Absentee Fine Paid (₦)</Label>
-                            <Input
-                              type="number"
-                              value={formData.absentee_fine ?? "0"}
-                              onChange={(e) => setFormData(prev => ({ ...prev, absentee_fine: e.target.value }))}
-                              placeholder="Auto-filled or enter amount"
-                            />
-                          </div>
+                          {!isOrganicFoodNation && (
+                            <div>
+                              <Label>Total Absentee Fine Paid (₦)</Label>
+                              <Input
+                                type="number"
+                                value={formData.absentee_fine ?? "0"}
+                                onChange={(e) => setFormData(prev => ({ ...prev, absentee_fine: e.target.value }))}
+                                placeholder="Auto-filled or enter amount"
+                              />
+                            </div>
+                          )}
                         </div>
                         <div className="flex gap-2">
                           <Button onClick={handleSave} className="bg-green-800 hover:bg-green-700"><Save className="w-4 h-4 mr-2" />Save</Button>
@@ -711,7 +716,7 @@ const FarmAdmin = () => {
                               <th className="text-left p-2">Slot Fee</th>
                               <th className="text-left p-2">Farm Setup</th>
                               <th className="text-left p-2">Farm Support</th>
-                              <th className="text-left p-2">Absentee Fine</th>
+                              {!isOrganicFoodNation && <th className="text-left p-2">Absentee Fine</th>}
                               <th className="text-left p-2">Total</th>
                               <th className="text-left p-2">Email</th>
                               <th className="text-left p-2">Phone</th>
@@ -730,19 +735,16 @@ const FarmAdmin = () => {
                                     <div className="text-[10px] text-gray-400 leading-tight">Months: {(record as any).setup_batches}</div>
                                   )}
                                 </td>
-                                <td className="p-2">
-                                  <div className="font-semibold text-blue-900">₦{calcSupport(record).toLocaleString()}</div>
-                                  {(record as any).support_batches && (
-                                    <div className="text-[10px] text-gray-400 leading-tight">Months: {(record as any).support_batches}</div>
-                                  )}
-                                </td>
-                                <td className="p-2">
-                                  <div className="font-semibold text-orange-900">₦{calcFine(record).toLocaleString()}</div>
-                                  {(record as any).fine_batches && (
-                                    <div className="text-[10px] text-gray-400 leading-tight">Months: {(record as any).fine_batches}</div>
-                                  )}
-                                </td>
-                                <td className="p-2 font-semibold text-green-800">₦{calcTotal(record).toLocaleString()}</td>
+                                <td className="p-2 font-semibold text-blue-900">₦{calcSupport(record).toLocaleString()}</td>
+                                {!isOrganicFoodNation && (
+                                  <td className="p-2">
+                                    <div className="font-semibold text-orange-900">₦{calcFine(record).toLocaleString()}</div>
+                                    {(record as any).fine_batches && (
+                                      <div className="text-[10px] text-gray-400 leading-tight">Months: {(record as any).fine_batches}</div>
+                                    )}
+                                  </td>
+                                )}
+                                <td className="p-2 font-semibold text-green-800">₦{getRecordTotal(record).toLocaleString()}</td>
                                 <td className="p-2 text-gray-600">{record.email}</td>
                                 <td className="p-2 text-gray-600">{record.phone}</td>
                                 <td className="p-2 no-print">
@@ -761,8 +763,10 @@ const FarmAdmin = () => {
                               <td className="p-2">₦{records.reduce((s, r) => s + calcSlotFee(r), 0).toLocaleString()}</td>
                               <td className="p-2">₦{records.reduce((s, r) => s + calcSetup(r), 0).toLocaleString()}</td>
                               <td className="p-2">₦{records.reduce((s, r) => s + calcSupport(r), 0).toLocaleString()}</td>
-                              <td className="p-2">₦{records.reduce((s, r) => s + calcFine(r), 0).toLocaleString()}</td>
-                              <td className="p-2 font-bold text-green-800">₦{records.reduce((s, r) => s + calcTotal(r), 0).toLocaleString()}</td>
+                              {!isOrganicFoodNation && (
+                                <td className="p-2">₦{records.reduce((s, r) => s + calcFine(r), 0).toLocaleString()}</td>
+                              )}
+                              <td className="p-2 font-bold text-green-800">₦{records.reduce((s, r) => s + getRecordTotal(r), 0).toLocaleString()}</td>
                               <td className="p-2" /><td className="p-2" />
                               <td className="p-2 no-print" />
                             </tr>
@@ -853,7 +857,9 @@ const FarmAdmin = () => {
                         <div className="p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                           <div>
                             <h4 className="font-semibold text-gray-900">{selectedFarm.name} Gross Balance</h4>
-                            <p className="text-xs text-gray-500">(Farm Setup + Total Absentee Fine)</p>
+                            <p className="text-xs text-gray-500">
+                              {isOrganicFoodNation ? "((Total Farm Setup)" : "(Farm Setup + Total Absentee Fine)"}
+                            </p>
                           </div>
                           <span className="text-xl font-bold text-green-800">₦{grossBalance.toLocaleString()}</span>
                         </div>

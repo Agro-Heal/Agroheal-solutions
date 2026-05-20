@@ -75,6 +75,9 @@ const FarmRecordsView = () => {
   const [expenses, setExpenses] = useState<FarmExpense[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORY);
+  const isOrganicFoodNation = selectedCategory === "Organic FoodNation (1 Million Hectares against Hunger)";
+  const getRecordTotal = (r: FarmRecord) => 
+    calcSetup(r) + calcSupport(r) + calcSlotFee(r) + (isOrganicFoodNation ? 0 : calcFine(r));
   const [isCoordinator, setIsCoordinator] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showExpenseForm, setShowExpenseForm] = useState(false);
@@ -349,7 +352,7 @@ const FarmRecordsView = () => {
       farm_slots: formData.farm_slots,
       months_farm_setup: formData.months_farm_setup,
       months_farm_support: formData.months_farm_support,
-      absentee_fine: formData.absentee_fine,
+      absentee_fine: isOrganicFoodNation ? "0" : formData.absentee_fine,
       farm_id: farm.id,
       project_category: farm.project_category || "Gingertown"
     };
@@ -471,9 +474,9 @@ const FarmRecordsView = () => {
   const totalAbsenteeFine = records.reduce((s, r) => s + calcFine(r), 0);
   const totalExpensesValue = expenses.reduce((sum, exp) => sum + exp.amount, 0);
 
-  const totalFarmIncome = records.reduce((s, r) => s + calcTotal(r), 0);
+  const totalFarmIncome = records.reduce((s, r) => s + getRecordTotal(r), 0);
   const agrohealBalance = (totalFarmSlots * 2000) + totalFarmSupport;
-  const grossBalance = totalFarmSetup + totalAbsenteeFine;
+  const grossBalance = totalFarmSetup + (isOrganicFoodNation ? 0 : totalAbsenteeFine);
   const netBalance = grossBalance - totalExpensesValue;
 
   const handleDownloadPDF = () => {
@@ -654,15 +657,17 @@ const FarmRecordsView = () => {
                     placeholder="Auto-filled or enter amount"
                   />
                 </div>
-                <div>
-                  <Label>Total Absentee Fine Paid (₦)</Label>
-                  <Input
-                    type="number"
-                    value={formData.absentee_fine ?? "0"}
-                    onChange={(e) => setFormData(prev => ({ ...prev, absentee_fine: e.target.value }))}
-                    placeholder="Auto-filled or enter amount"
-                  />
-                </div>
+                {!isOrganicFoodNation && (
+                  <div>
+                    <Label>Total Absentee Fine Paid (₦)</Label>
+                    <Input
+                      type="number"
+                      value={formData.absentee_fine ?? "0"}
+                      onChange={(e) => setFormData(prev => ({ ...prev, absentee_fine: e.target.value }))}
+                      placeholder="Auto-filled or enter amount"
+                    />
+                  </div>
+                )}
               </div>
               <div className="flex gap-2">
                 <Button onClick={handleSave} className="bg-green-800 hover:bg-green-700"><Save className="w-4 h-4 mr-2" />Save</Button>
@@ -734,7 +739,7 @@ const FarmRecordsView = () => {
                       <th className="text-left p-2">Slot Fee</th>
                       <th className="text-left p-2">Farm Setup</th>
                       <th className="text-left p-2">Farm Support</th>
-                      <th className="text-left p-2">Absentee Fine</th>
+                      {!isOrganicFoodNation && <th className="text-left p-2">Absentee Fine</th>}
                       <th className="text-left p-2">Total</th>
                       <th className="text-left p-2">Email</th>
                       {isCoordinator && <th className="text-left p-2">Phone</th>}
@@ -753,19 +758,16 @@ const FarmRecordsView = () => {
                             <div className="text-[10px] text-gray-400 leading-tight">Months: {record.setup_batches}</div>
                           )}
                         </td>
-                        <td className="p-2">
-                          <div className="font-semibold text-blue-900">₦{calcSupport(record).toLocaleString()}</div>
-                          {record.support_batches && (
-                            <div className="text-[10px] text-gray-400 leading-tight">Months: {record.support_batches}</div>
-                          )}
-                        </td>
-                        <td className="p-2">
-                          <div className="font-semibold text-orange-900">₦{calcFine(record).toLocaleString()}</div>
-                          {record.fine_batches && (
-                            <div className="text-[10px] text-gray-400 leading-tight">Months: {record.fine_batches}</div>
-                          )}
-                        </td>
-                        <td className="p-2 font-semibold text-green-800">₦{calcTotal(record).toLocaleString()}</td>
+                        <td className="p-2 font-semibold text-blue-900">₦{calcSupport(record).toLocaleString()}</td>
+                        {!isOrganicFoodNation && (
+                          <td className="p-2">
+                            <div className="font-semibold text-orange-900">₦{calcFine(record).toLocaleString()}</div>
+                            {record.fine_batches && (
+                              <div className="text-[10px] text-gray-400 leading-tight">Months: {record.fine_batches}</div>
+                            )}
+                          </td>
+                        )}
+                        <td className="p-2 font-semibold text-green-800">₦{getRecordTotal(record).toLocaleString()}</td>
                         <td className="p-2 text-gray-600">{record.email}</td>
                         {isCoordinator && <td className="p-2 text-gray-600">{record.phone}</td>}
                         {isCoordinator && (
@@ -786,8 +788,10 @@ const FarmRecordsView = () => {
                       <td className="p-2">₦{records.reduce((s, r) => s + calcSlotFee(r), 0).toLocaleString()}</td>
                       <td className="p-2">₦{records.reduce((s, r) => s + calcSetup(r), 0).toLocaleString()}</td>
                       <td className="p-2">₦{records.reduce((s, r) => s + calcSupport(r), 0).toLocaleString()}</td>
-                      <td className="p-2">₦{records.reduce((s, r) => s + calcFine(r), 0).toLocaleString()}</td>
-                      <td className="p-2 font-bold text-green-800">₦{records.reduce((s, r) => s + calcTotal(r), 0).toLocaleString()}</td>
+                      {!isOrganicFoodNation && (
+                        <td className="p-2">₦{records.reduce((s, r) => s + calcFine(r), 0).toLocaleString()}</td>
+                      )}
+                      <td className="p-2 font-bold text-green-800">₦{records.reduce((s, r) => s + getRecordTotal(r), 0).toLocaleString()}</td>
                       <td className="p-2" />
                       {isCoordinator && <td className="p-2" />}
                       {isCoordinator && <td className="p-2" />}
@@ -882,7 +886,9 @@ const FarmRecordsView = () => {
               <div className="p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                 <div>
                   <h4 className="font-semibold text-gray-900">{farm.name} Gross Balance</h4>
-                  <p className="text-xs text-gray-500">(Farm Setup + Total Absentee Fine)</p>
+                  <p className="text-xs text-gray-500">
+                    {isOrganicFoodNation ? "((Total Farm Setup)" : "(Farm Setup + Total Absentee Fine)"}
+                  </p>
                 </div>
                 <span className="text-xl font-bold text-green-800">₦{grossBalance.toLocaleString()}</span>
               </div>
