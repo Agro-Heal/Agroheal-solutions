@@ -5,7 +5,7 @@ import { ToastUI } from "./ToastUI";
 interface ShowToastOptions {
   title: string;
   description?: string;
-  variant: "success" | "error";
+  variant: "success" | "error" | "warning";
   duration?: number;
 }
 

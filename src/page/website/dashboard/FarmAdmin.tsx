@@ -50,7 +50,7 @@ const EXPENSE_CATEGORIES = [
   "Miscellaneous",
 ];
 
-interface FarmGroup { id: string; name: string; slug: string; coordinator_id: string; }
+interface FarmGroup { id: string; name: string; slug: string; coordinator_id: string; project_category: string; }
 
 
 const calcSetup = (r: FarmRecord) => 
@@ -69,6 +69,9 @@ const calcTotal = (r: FarmRecord) => calcSetup(r) + calcSupport(r) + calcSlotFee
 const FarmAdmin = () => {
   const [farms, setFarms] = useState<FarmGroup[]>([]);
   const [selectedFarm, setSelectedFarm] = useState<FarmGroup | null>(null);
+  const isOrganicFoodNation = selectedFarm?.project_category === "Organic FoodNation (1 Million Hectares against Hunger)";
+  const getRecordTotal = (r: FarmRecord) => 
+    calcSetup(r) + calcSupport(r) + calcSlotFee(r) + (isOrganicFoodNation ? 0 : calcFine(r));
   const [records, setRecords] = useState<FarmRecord[]>([]);
   const [expenses, setExpenses] = useState<FarmExpense[]>([]);
   const [loading, setLoading] = useState(true);
@@ -90,7 +93,7 @@ const FarmAdmin = () => {
     setLoading(false);
   };
 
-  const enrichRecordsWithBatches = async (records: any[]) => {
+  const enrichRecordsWithBatches = async (records: any[], projectCategory: string) => {
     if (!records || records.length === 0) return [];
     const enrichedRecords = [...records] as FarmRecord[];
     const emails = [...new Set(enrichedRecords
@@ -105,12 +108,10 @@ const FarmAdmin = () => {
     
     if (authUsers && authUsers.length > 0) {
       const userIds = authUsers.map((u: any) => u.user_id);
-      const { data: payments } = await supabase
-        .from("other_payments")
-        .select("user_id, payment_type, created_at, slots, amount, months")
-        .in("user_id", userIds)
-        .eq("status", "success")
-        .order("created_at", { ascending: true });
+      const { data: payments } = await supabase.rpc("get_users_category_payments_batch", {
+        target_user_ids: userIds,
+        target_category: projectCategory
+      });
 
       if (payments) {
         return enrichedRecords.map(record => {
@@ -155,7 +156,8 @@ const FarmAdmin = () => {
 
     if (recRes.error) { showToast({ variant: "error", title: "Failed to load records", description: recRes.error.message }); }
     else { 
-      const enriched = await enrichRecordsWithBatches(recRes.data || []);
+      const farm = farms.find(f => f.id === farmId);
+      const enriched = await enrichRecordsWithBatches(recRes.data || [], farm?.project_category || "Gingertown");
       setRecords(enriched); 
     }
 
@@ -167,7 +169,11 @@ const FarmAdmin = () => {
     const farm = farms.find((f) => f.id === farmId) || null;
     setSelectedFarm(farm);
     if (farm) fetchRecords(farm.id);
-    setShowAddForm(false); setEditingId(null);
+    // Clear the Add Members Record form when farm changes
+    setShowAddForm(false); 
+    setEditingId(null);
+    setFormData({});
+    setAutoFilled(false);
   };
 
   const handleAdd = () => {
@@ -187,7 +193,6 @@ const FarmAdmin = () => {
       email_input: emailTrimmed,
     });
     const memberData = Array.isArray(rpcData) ? rpcData[0] : rpcData;
-    const slots = Number(memberData?.total_slots || 0);
 
     // 2. Get user_id from auth.users via RPC (works for ANY registered user)
     const { data: authData } = await supabase.rpc("get_user_ids_by_emails", {
@@ -201,7 +206,17 @@ const FarmAdmin = () => {
       return;
     }
 
-    // 3. If no memberData but we have userId, get profile info (name, phone) from profiles table
+    // 3. Get accurate slots for this specific project category
+    let categorySlots = 0;
+    if (userId && selectedFarm) {
+      const { data: slotsData } = await supabase.rpc("get_user_category_slots", {
+        target_user_id: userId,
+        target_category: selectedFarm.project_category || "Gingertown"
+      });
+      categorySlots = Number(slotsData || 0);
+    }
+
+    // 4. If no memberData but we have userId, get profile info (name, phone) from profiles table
     let profileName = memberData?.full_name || "";
     let profilePhone = memberData?.phone || "";
 
@@ -215,13 +230,12 @@ const FarmAdmin = () => {
       profilePhone = profile?.phone || "";
     }
 
-    // 4. Get payment totals from other_payments
+    // 5. Get payment totals from other_payments
     if (userId) {
-      const { data: payments, error: payErr } = await supabase
-        .from("other_payments")
-        .select("amount, payment_type")
-        .eq("user_id", userId)
-        .eq("status", "success");
+      const { data: payments, error: payErr } = await supabase.rpc("get_user_category_payments", {
+        target_user_id: userId,
+        target_category: selectedFarm?.project_category || "Gingertown"
+      });
 
       console.log("[Lookup] userId:", userId);
       console.log("[Lookup] payments result:", payments, "error:", payErr);
@@ -229,8 +243,8 @@ const FarmAdmin = () => {
       const getTotalPaid = (type: string) => {
         if (!payments) return 0;
         return payments
-          .filter(p => p.payment_type?.toLowerCase() === type.toLowerCase())
-          .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+          .filter((p: any) => p.payment_type?.toLowerCase() === type.toLowerCase())
+          .reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
       };
 
       const setupAmt = getTotalPaid("farm_setup");
@@ -242,7 +256,7 @@ const FarmAdmin = () => {
         ...prev,
         name: profileName || prev.name || "",
         phone: profilePhone || prev.phone || "",
-        farm_slots: Math.max(Number(prev.farm_slots) || 0, slots),
+        farm_slots: Math.max(Number(prev.farm_slots) || 0, categorySlots),
         months_farm_setup: Math.max(Number(prev.months_farm_setup) || 0, setupAmt).toString(),
         months_farm_support: Math.max(Number(prev.months_farm_support) || 0, supportAmt).toString(),
         absentee_fine: Math.max(Number(prev.absentee_fine) || 0, fineAmt).toString(),
@@ -252,7 +266,7 @@ const FarmAdmin = () => {
         ...prev,
         name: profileName || prev.name || "",
         phone: profilePhone || prev.phone || "",
-        farm_slots: Math.max(Number(prev.farm_slots) || 0, slots),
+        farm_slots: Math.max(Number(prev.farm_slots) || 0, categorySlots),
       }));
     }
 
@@ -275,21 +289,35 @@ const FarmAdmin = () => {
     if (!formData.farm_slots || formData.farm_slots <= 0) { showToast({ variant: "error", title: "Farm Slots required", description: "This member has no farm slots purchased." }); return; }
 
     if (formData.email) {
-      const { data: existing, error: checkError } = await supabase.from("farm_records").select("id, farm_id").eq("email", formData.email);
+      // Normalize email for comparison
+      const emailTrimmed = formData.email.trim().toLowerCase();
+
+      const { data: existing, error: checkError } = await supabase
+        .from("farm_records")
+        .select("id, farm_id, email")
+        .ilike("email", emailTrimmed);
+
       if (checkError) console.error("Email check error:", checkError);
-      
+
       if (existing && existing.length > 0) {
-        const duplicate = existing.find(r => r.id !== editingId);
+        // Find a true duplicate (same email, different record id)
+        const duplicate = existing.find(r => (r.email || "").toLowerCase() === emailTrimmed && r.id !== editingId);
         if (duplicate) {
           const inSameFarm = duplicate.farm_id === selectedFarm.id;
-          showToast({ 
-            variant: "error", 
-            title: "Email already exists", 
-            description: inSameFarm 
-              ? "This email is already in this farm group." 
-              : "This email is already in another farm group." 
+          // Only block if the email already exists in THIS farm
+          if (inSameFarm) {
+            showToast({
+              variant: "error",
+              title: "Email already exists",
+              description: "This email is already in this farm group.",
+            });
+            return;
+          }
+
+          showToast({
+            variant: "warning",
+            title: "Emails may already exist in other farms",
           });
-          return;
         }
       }
     }
@@ -301,8 +329,9 @@ const FarmAdmin = () => {
       farm_slots: formData.farm_slots,
       months_farm_setup: formData.months_farm_setup,
       months_farm_support: formData.months_farm_support,
-      absentee_fine: formData.absentee_fine,
-      farm_id: selectedFarm.id
+      absentee_fine: isOrganicFoodNation ? "0" : formData.absentee_fine,
+      farm_id: selectedFarm.id,
+      project_category: selectedFarm.project_category || "Gingertown"
     };
     
     let error;
@@ -433,9 +462,9 @@ const FarmAdmin = () => {
   const totalAbsenteeFine = records.reduce((s, r) => s + calcFine(r), 0);
   const totalExpensesValue = expenses.reduce((sum, exp) => sum + exp.amount, 0);
 
-  const totalFarmIncome = records.reduce((s, r) => s + calcTotal(r), 0);
+  const totalFarmIncome = records.reduce((s, r) => s + getRecordTotal(r), 0);
   const agrohealBalance = (totalFarmSlots * 2000) + totalFarmSupport;
-  const grossBalance = totalFarmSetup + totalAbsenteeFine;
+  const grossBalance = totalFarmSetup + (isOrganicFoodNation ? 0 : totalAbsenteeFine);
   const netBalance = grossBalance - totalExpensesValue;
 
   return (
@@ -513,7 +542,9 @@ const FarmAdmin = () => {
           >
             <option value="" disabled>-- Choose a farm group --</option>
             {farms.map((farm) => (
-              <option key={farm.id} value={farm.id}>{farm.name}</option>
+              <option key={farm.id} value={farm.id}>
+                {farm.name} ({farm.project_category || "Gingertown"})
+              </option>
             ))}
           </select>
           {selectedFarm && (
@@ -614,15 +645,17 @@ const FarmAdmin = () => {
                               placeholder="Auto-filled or enter amount"
                             />
                           </div>
-                          <div>
-                            <Label>Total Absentee Fine Paid (₦)</Label>
-                            <Input
-                              type="number"
-                              value={formData.absentee_fine ?? "0"}
-                              onChange={(e) => setFormData(prev => ({ ...prev, absentee_fine: e.target.value }))}
-                              placeholder="Auto-filled or enter amount"
-                            />
-                          </div>
+                          {!isOrganicFoodNation && (
+                            <div>
+                              <Label>Total Absentee Fine Paid (₦)</Label>
+                              <Input
+                                type="number"
+                                value={formData.absentee_fine ?? "0"}
+                                onChange={(e) => setFormData(prev => ({ ...prev, absentee_fine: e.target.value }))}
+                                placeholder="Auto-filled or enter amount"
+                              />
+                            </div>
+                          )}
                         </div>
                         <div className="flex gap-2">
                           <Button onClick={handleSave} className="bg-green-800 hover:bg-green-700"><Save className="w-4 h-4 mr-2" />Save</Button>
@@ -683,7 +716,7 @@ const FarmAdmin = () => {
                               <th className="text-left p-2">Slot Fee</th>
                               <th className="text-left p-2">Farm Setup</th>
                               <th className="text-left p-2">Farm Support</th>
-                              <th className="text-left p-2">Absentee Fine</th>
+                              {!isOrganicFoodNation && <th className="text-left p-2">Absentee Fine</th>}
                               <th className="text-left p-2">Total</th>
                               <th className="text-left p-2">Email</th>
                               <th className="text-left p-2">Phone</th>
@@ -702,19 +735,16 @@ const FarmAdmin = () => {
                                     <div className="text-[10px] text-gray-400 leading-tight">Months: {(record as any).setup_batches}</div>
                                   )}
                                 </td>
-                                <td className="p-2">
-                                  <div className="font-semibold text-blue-900">₦{calcSupport(record).toLocaleString()}</div>
-                                  {(record as any).support_batches && (
-                                    <div className="text-[10px] text-gray-400 leading-tight">Months: {(record as any).support_batches}</div>
-                                  )}
-                                </td>
-                                <td className="p-2">
-                                  <div className="font-semibold text-orange-900">₦{calcFine(record).toLocaleString()}</div>
-                                  {(record as any).fine_batches && (
-                                    <div className="text-[10px] text-gray-400 leading-tight">Months: {(record as any).fine_batches}</div>
-                                  )}
-                                </td>
-                                <td className="p-2 font-semibold text-green-800">₦{calcTotal(record).toLocaleString()}</td>
+                                <td className="p-2 font-semibold text-blue-900">₦{calcSupport(record).toLocaleString()}</td>
+                                {!isOrganicFoodNation && (
+                                  <td className="p-2">
+                                    <div className="font-semibold text-orange-900">₦{calcFine(record).toLocaleString()}</div>
+                                    {(record as any).fine_batches && (
+                                      <div className="text-[10px] text-gray-400 leading-tight">Months: {(record as any).fine_batches}</div>
+                                    )}
+                                  </td>
+                                )}
+                                <td className="p-2 font-semibold text-green-800">₦{getRecordTotal(record).toLocaleString()}</td>
                                 <td className="p-2 text-gray-600">{record.email}</td>
                                 <td className="p-2 text-gray-600">{record.phone}</td>
                                 <td className="p-2 no-print">
@@ -733,8 +763,10 @@ const FarmAdmin = () => {
                               <td className="p-2">₦{records.reduce((s, r) => s + calcSlotFee(r), 0).toLocaleString()}</td>
                               <td className="p-2">₦{records.reduce((s, r) => s + calcSetup(r), 0).toLocaleString()}</td>
                               <td className="p-2">₦{records.reduce((s, r) => s + calcSupport(r), 0).toLocaleString()}</td>
-                              <td className="p-2">₦{records.reduce((s, r) => s + calcFine(r), 0).toLocaleString()}</td>
-                              <td className="p-2 font-bold text-green-800">₦{records.reduce((s, r) => s + calcTotal(r), 0).toLocaleString()}</td>
+                              {!isOrganicFoodNation && (
+                                <td className="p-2">₦{records.reduce((s, r) => s + calcFine(r), 0).toLocaleString()}</td>
+                              )}
+                              <td className="p-2 font-bold text-green-800">₦{records.reduce((s, r) => s + getRecordTotal(r), 0).toLocaleString()}</td>
                               <td className="p-2" /><td className="p-2" />
                               <td className="p-2 no-print" />
                             </tr>
@@ -825,7 +857,9 @@ const FarmAdmin = () => {
                         <div className="p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                           <div>
                             <h4 className="font-semibold text-gray-900">{selectedFarm.name} Gross Balance</h4>
-                            <p className="text-xs text-gray-500">(Farm Setup + Total Absentee Fine)</p>
+                            <p className="text-xs text-gray-500">
+                              {isOrganicFoodNation ? "((Total Farm Setup)" : "(Farm Setup + Total Absentee Fine)"}
+                            </p>
                           </div>
                           <span className="text-xl font-bold text-green-800">₦{grossBalance.toLocaleString()}</span>
                         </div>

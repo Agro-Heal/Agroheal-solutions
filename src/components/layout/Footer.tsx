@@ -21,42 +21,45 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="bg-card border-t border-border">
-      <div className="container mx-auto px-4 py-16">
+    <footer className="bg-[#031d0f] border-t border-green-950 text-white relative z-10">
+      <div className="container mx-auto px-6 py-16 max-w-7xl">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-full bg-green-800 flex items-center justify-center">
-                <Leaf className="w-5 h-5 text-white" />
+            <Link to="/" className="flex items-center gap-2 mb-6 group">
+              <div className="w-10 h-10 rounded-full bg-[#041a0d] border border-green-800/40 flex items-center justify-center transition-all duration-300 group-hover:border-[#d1ef75]/40">
+                <Leaf className="w-5 h-5 text-[#d1ef75]" />
               </div>
-              <span className=" text-xl font-semibold text-foreground">
+              <span className="text-xl font-black text-white tracking-tight">
                 Agroheal
               </span>
             </Link>
-            <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+            <p className="text-gray-400 text-sm leading-relaxed mb-6 font-light font-sans">
               Empowering a generation of organic farmers through education,
               practice, and community.
             </p>
-            <div className="space-y-3 text-sm text-muted-foreground">
+            <div className="space-y-3 text-sm text-gray-400 font-light font-sans">
               <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4" />
+                <Mail className="w-4 h-4 text-green-700 shrink-0" />
                 <a
                   href="mailto:admin@agroheal.solutions"
-                  className="cursor-pointer"
+                  className="hover:text-[#d1ef75] transition-colors"
                 >
                   <span>admin@agroheal.solutions</span>
                 </a>
               </div>
               <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4" />
-                <a href="tel:+2349168055000" className="cursor-pointer">
+                <Phone className="w-4 h-4 text-green-700 shrink-0" />
+                <a href="tel:+2349168055000" className="hover:text-[#d1ef75] transition-colors">
                   <span>+234 916 8055 000</span>
                 </a>
               </div>
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4" />
-                <a href="https://www.google.com/maps/place/Olowe+Farm/@6.8138766,3.9178944,17z/data=!3m1!4b1!4m6!3m5!1s0x103969e8661c18e5:0x7906309f84337a84!8m2!3d6.8138713!4d3.9204693!16s%2Fg%2F11jjm31nr8!5m1!1e1?entry=ttu&g_ep=EgoyMDI2MDIwMS4wIKXMDSoASAFQAw%3D%3D">
+                <MapPin className="w-4 h-4 text-green-700 shrink-0" />
+                <a 
+                  href="https://www.google.com/maps/place/Olowe+Farm/@6.8138766,3.9178944,17z/data=!3m1!4b1!4m6!3m5!1s0x103969e8661c18e5:0x7906309f84337a84!8m2!3d6.8138713!4d3.9204693!16s%2Fg%2F11jjm31nr8!5m1!1e1?entry=ttu&g_ep=EgoyMDI2MDIwMS4wIKXMDSoASAFQAw%3D%3D"
+                  className="hover:text-[#d1ef75] transition-colors"
+                >
                   <span>
                     1 Olowu Street, Owu, Ijebu-Ode, Ogun State, Nigeria
                   </span>
@@ -67,13 +70,13 @@ export default function Footer() {
 
           {/* Platform Links */}
           <div>
-            <h4 className=" font-semibold text-foreground mb-4">Platform</h4>
+            <h4 className="font-bold text-xs tracking-wider uppercase text-white mb-6">Platform</h4>
             <ul className="space-y-3">
               {footerLinks.platform.map((link) => (
                 <li key={link.name}>
                   <Link
                     to={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+                    className="text-gray-400 hover:text-[#d1ef75] transition-colors text-sm font-light font-sans"
                   >
                     {link.name}
                   </Link>
@@ -84,13 +87,13 @@ export default function Footer() {
 
           {/* Company Links */}
           <div>
-            <h4 className=" font-semibold text-foreground mb-4">Company</h4>
+            <h4 className="font-bold text-xs tracking-wider uppercase text-white mb-6">Company</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
                   <Link
                     to={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+                    className="text-gray-400 hover:text-[#d1ef75] transition-colors text-sm font-light font-sans"
                   >
                     {link.name}
                   </Link>
@@ -101,13 +104,13 @@ export default function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h4 className=" font-semibold text-foreground mb-4">Legal</h4>
+            <h4 className="font-bold text-xs tracking-wider uppercase text-white mb-6">Legal</h4>
             <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
                   <Link
                     to={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+                    className="text-gray-400 hover:text-[#d1ef75] transition-colors text-sm font-light font-sans"
                   >
                     {link.name}
                   </Link>
@@ -117,28 +120,28 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-muted-foreground text-sm">
+        <div className="border-t border-green-950 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-gray-500 text-xs md:text-sm font-light font-sans">
             © {new Date().getFullYear()} AgroHeal Solutions Ltd., duly
             incorporated with Nigeria’s Corporate Affairs Commission (RC
             8231879).
           </p>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 text-sm">
             <a
               href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+              className="text-gray-400 hover:text-[#d1ef75] transition-colors"
             >
               Twitter
             </a>
             <a
               href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+              className="text-gray-400 hover:text-[#d1ef75] transition-colors"
             >
               Instagram
             </a>
             <a
               href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+              className="text-gray-400 hover:text-[#d1ef75] transition-colors"
             >
               LinkedIn
             </a>

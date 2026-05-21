@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,39 +7,15 @@ import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 import { showToast } from "@/components/ui/ToastComponent";
 import { Toaster } from "react-hot-toast";
+import { PROJECT_CATEGORIES, DEFAULT_CATEGORY } from "@/constant/projectCategories";
 
 const CreateFarmGroup = () => {
   const navigate = useNavigate();
   const [farmName, setFarmName] = useState("");
+  const [category, setCategory] = useState(DEFAULT_CATEGORY);
   const [loading, setLoading] = useState(false);
-  const [checking, setChecking] = useState(true);
 
-  // On mount, check if this user already has a farm group
-  useEffect(() => {
-    const checkExisting = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        setChecking(false);
-        return;
-      }
-
-      const { data: existing } = await supabase
-        .from("farm_groups")
-        .select("id")
-        .eq("coordinator_id", user.id)
-        .maybeSingle();
-
-      if (existing) {
-        // Already has a farm — redirect straight to farm records
-        navigate("/dashboard/group-farm-accounts", { replace: true });
-      } else {
-        setChecking(false);
-      }
-    };
-    checkExisting();
-  }, []);
+  // Removed on-mount redirect as coordinators can have multiple groups now
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +37,25 @@ const CreateFarmGroup = () => {
 
     const slug = farmName.trim().toLowerCase().replace(/\s+/g, "-");
 
-    // Check if slug already exists
+    // Check if coordinator already has a farm in this category
+    const { data: existingInCategory } = await supabase
+      .from("farm_groups")
+      .select("id")
+      .eq("coordinator_id", user.id)
+      .eq("project_category", category)
+      .maybeSingle();
+
+    if (existingInCategory) {
+      showToast({
+        variant: "error",
+        title: "Category already exists",
+        description: `You already have a farm group in the ${category} category.`,
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Check if slug already exists globally
     const { data: slugExists } = await supabase
       .from("farm_groups")
       .select("id")
@@ -82,6 +76,7 @@ const CreateFarmGroup = () => {
       name: farmName.trim(),
       slug,
       coordinator_id: user.id,
+      project_category: category,
     });
 
     setLoading(false);
@@ -108,13 +103,6 @@ const CreateFarmGroup = () => {
     },
   };
 
-  if (checking)
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-green-200 border-t-green-800 rounded-full animate-spin" />
-      </div>
-    );
-
   return (
     <div className="max-w-md mx-auto p-6 mt-8">
       <Toaster />
@@ -128,6 +116,28 @@ const CreateFarmGroup = () => {
       </motion.div>
 
       <motion.form {...fadeUp} onSubmit={handleCreate} className="space-y-6">
+        <div className="space-y-2">
+          <Label
+            htmlFor="category"
+            className="text-sm font-semibold text-gray-700"
+          >
+            Project Category
+          </Label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full h-11 rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            required
+          >
+            {PROJECT_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="space-y-2">
           <Label
             htmlFor="farmName"
