@@ -3,11 +3,11 @@
   "buildCommand": "yarn build",
   "outputDirectory": "dist",
   "env": {
-    "VITE_SUPABASE_URL": "@vite_supabase_url",
-    "VITE_SUPABASE_ANON_KEY": "@vite_supabase_anon_key",
-    "VITE_FLUTTERWAVE_PUBLIC_KEY": "@vite_flutterwave_public_key",
-    "VITE_PAYSTACK_KEYS": "@vite_paystack_keys",
-    "VITE_WHATSAPP_REDIRECT": "@vite_whatsapp_redirect"
+    "VITE_SUPABASE_URL": "@VITE_SUPABASE_URL",
+    "VITE_SUPABASE_ANON_KEY": "@VITE_SUPABASE_ANON_KEY",
+    "VITE_FLUTTERWAVE_PUBLIC_KEY": "@VITE_FLUTTERWAVE_PUBLIC_KEY",
+    "VITE_PAYSTACK_KEYS": "@VITE_PAYSTACK_KEYS",
+    "VITE_WHATSAPP_REDIRECT": "@VITE_WHATSAPP_REDIRECT"
   },
   "rewrites": [
     {
