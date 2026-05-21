@@ -1,18 +1,18 @@
 {
   "version": 2,
-  "buildCommand": "yarn build",
-  "outputDirectory": "dist",
-  "env": {
-    "VITE_SUPABASE_URL": "@VITE_SUPABASE_URL",
-    "VITE_SUPABASE_ANON_KEY": "@VITE_SUPABASE_ANON_KEY",
-    "VITE_FLUTTERWAVE_PUBLIC_KEY": "@VITE_FLUTTERWAVE_PUBLIC_KEY",
-    "VITE_PAYSTACK_KEYS": "@VITE_PAYSTACK_KEYS",
-    "VITE_WHATSAPP_REDIRECT": "@VITE_WHATSAPP_REDIRECT"
-  },
-  "rewrites": [
+  "builds": [
     {
-      "source": "/:path((?!.*\\.).*)",
-      "destination": "/index.html"
+      "src": "package.json",
+      "use": "@vercel/static-build"
+    }
+  ],
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/.*",
+      "dest": "/index.html"
     }
   ]
 }
