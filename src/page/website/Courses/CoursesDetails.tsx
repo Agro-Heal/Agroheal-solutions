@@ -77,7 +77,7 @@ const CourseDetail = () => {
     <div className="min-h-screen bg-background">
       <main className="pt-0">
         {/* Mobile Header */}
-        <div className="lg:hidden sticky top-16 z-40 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-3">
+        <div className="lg:hidden relative z-10 bg-background/95 border-b border-border px-4 py-3">
           <div className="flex items-center justify-between">
             <Link
               to="/dashboard/courses"

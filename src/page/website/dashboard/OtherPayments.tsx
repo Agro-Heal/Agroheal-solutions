@@ -27,7 +27,8 @@ const OtherPayments = () => {
   const [category, setCategory] = useState("");
   const [totalSlots, setTotalSlots] = useState(0);
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
-  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string>("");
+  const [selectedSubscriptionId, setSelectedSubscriptionId] =
+    useState<string>("");
   const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -39,10 +40,17 @@ const OtherPayments = () => {
     absentee_fine: 500,
   };
 
-  const getFee = (type: "farm_setup" | "farm_support" | "absentee_fine" | "") => {
+  const getFee = (
+    type: "farm_setup" | "farm_support" | "absentee_fine" | "",
+  ) => {
     if (!type) return 0;
-    if (category === "Organic FoodNation (1 Million Hectares against Hunger)" && type === "farm_support") {
-      return 200;
+    if (category === "Organic FoodNation (1 Million Hectares against Hunger)") {
+      if (type === "farm_setup") {
+        return 10000;
+      }
+      if (type === "farm_support") {
+        return 200;
+      }
     }
     return FEES[type];
   };
@@ -53,15 +61,22 @@ const OtherPayments = () => {
     absentee_fine: 12,
   };
 
-  const getMaxMonths = (type: "farm_setup" | "farm_support" | "absentee_fine" | "") => {
+  const getMaxMonths = (
+    type: "farm_setup" | "farm_support" | "absentee_fine" | "",
+  ) => {
     if (!type) return 1;
-    if (category === "Organic FoodNation (1 Million Hectares against Hunger)" && type === "farm_setup") {
-      return 2;
+    if (
+      category === "Organic FoodNation (1 Million Hectares against Hunger)" &&
+      type === "farm_setup"
+    ) {
+      return 1;
     }
     return MAX_MONTHS[type];
   };
 
-  const totalPrice = paymentType ? getFee(paymentType) * months * totalSlots : 0;
+  const totalPrice = paymentType
+    ? getFee(paymentType) * months * totalSlots
+    : 0;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -121,7 +136,9 @@ const OtherPayments = () => {
   // Update total slots when category or subscription changes
   useEffect(() => {
     if (!selectedSubscriptionId) {
-      const filtered = subscriptions.filter(s => (s.project_category || "Gingertown") === category);
+      const filtered = subscriptions.filter(
+        (s) => (s.project_category || "Gingertown") === category,
+      );
       const slotsCount = filtered.reduce((total, item) => {
         const slotValue = Number(item?.slots ?? 0);
         return total + (Number.isNaN(slotValue) ? 0 : slotValue);
@@ -299,14 +316,20 @@ const OtherPayments = () => {
                       const newCategory = e.target.value;
                       setCategory(newCategory);
                       setSelectedSubscriptionId(""); // Reset batch when category changes
-                      if (newCategory === "Organic FoodNation (1 Million Hectares against Hunger)" && paymentType === "absentee_fine") {
+                      if (
+                        newCategory ===
+                          "Organic FoodNation (1 Million Hectares against Hunger)" &&
+                        paymentType === "absentee_fine"
+                      ) {
                         setPaymentType("");
                       }
                     }}
                     className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
                     required
                   >
-                    <option value="" disabled>Select Project Category</option>
+                    <option value="" disabled>
+                      Select Project Category
+                    </option>
                     {PROJECT_CATEGORIES.map((cat) => (
                       <option key={cat} value={cat}>
                         {cat}
@@ -324,10 +347,13 @@ const OtherPayments = () => {
                     onChange={(e) => setPaymentType(e.target.value as any)}
                     className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
                   >
-                    <option value="" disabled>Select payment type</option>
+                    <option value="" disabled>
+                      Select payment type
+                    </option>
                     <option value="farm_setup">Farm Setup Fee</option>
                     <option value="farm_support">Farm Support Fee</option>
-                    {category !== "Organic FoodNation (1 Million Hectares against Hunger)" && (
+                    {category !==
+                      "Organic FoodNation (1 Million Hectares against Hunger)" && (
                       <option value="absentee_fine">Absentee Fine</option>
                     )}
                   </select>
@@ -347,22 +373,40 @@ const OtherPayments = () => {
                         if (sub) setTotalSlots(Number(sub.slots));
                       } else {
                         // Filtered Slots selected, recalculate total
-                        const filtered = subscriptions.filter(s => (s.project_category || "Gingertown") === category);
+                        const filtered = subscriptions.filter(
+                          (s) =>
+                            (s.project_category || "Gingertown") === category,
+                        );
                         const slotsCount = filtered.reduce((total, item) => {
                           const slotValue = Number(item?.slots ?? 0);
-                          return total + (Number.isNaN(slotValue) ? 0 : slotValue);
+                          return (
+                            total + (Number.isNaN(slotValue) ? 0 : slotValue)
+                          );
                         }, 0);
                         setTotalSlots(slotsCount);
                       }
                     }}
                     className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
                   >
-                    <option value="">All Slots (Total: {subscriptions.filter(s => (s.project_category || "Gingertown") === category).reduce((s, b) => s + Number(b.slots), 0)})</option>
+                    <option value="">
+                      All Slots (Total:{" "}
+                      {subscriptions
+                        .filter(
+                          (s) =>
+                            (s.project_category || "Gingertown") === category,
+                        )
+                        .reduce((s, b) => s + Number(b.slots), 0)}
+                      )
+                    </option>
                     {subscriptions
-                      .filter(s => (s.project_category || "Gingertown") === category)
+                      .filter(
+                        (s) =>
+                          (s.project_category || "Gingertown") === category,
+                      )
                       .map((sub, idx, arr) => (
                         <option key={sub.id} value={sub.id}>
-                          Batch #{arr.length - idx} ({sub.slots} slots) - {new Date(sub.last_payment_date).toLocaleDateString()}
+                          Batch #{arr.length - idx} ({sub.slots} slots) -{" "}
+                          {new Date(sub.last_payment_date).toLocaleDateString()}
                         </option>
                       ))}
                   </select>
@@ -373,11 +417,17 @@ const OtherPayments = () => {
                     Number of Slots to pay for
                   </label>
                   <div className="w-full h-12 rounded-xl border border-gray-200 bg-gray-100 px-4 text-sm flex items-center justify-between">
-                    <span className="font-bold text-gray-900">{totalSlots}</span>
-                    <span className="text-xs font-bold text-green-700 uppercase">Slots</span>
+                    <span className="font-bold text-gray-900">
+                      {totalSlots}
+                    </span>
+                    <span className="text-xs font-bold text-green-700 uppercase">
+                      Slots
+                    </span>
                   </div>
                   <p className="text-[10px] text-gray-400 italic">
-                    {selectedSubscriptionId ? "Calculated based on selected batch." : "Calculated based on total active slots."}
+                    {selectedSubscriptionId
+                      ? "Calculated based on selected batch."
+                      : "Calculated based on total active slots."}
                   </p>
                 </div>
 
@@ -407,7 +457,9 @@ const OtherPayments = () => {
                     <button
                       type="button"
                       onClick={incrementMonths}
-                      disabled={!paymentType || months >= getMaxMonths(paymentType)}
+                      disabled={
+                        !paymentType || months >= getMaxMonths(paymentType)
+                      }
                       className="w-12 h-12 rounded-xl border border-gray-200 bg-white flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-40"
                     >
                       <Plus className="w-5 h-5" />
@@ -415,11 +467,15 @@ const OtherPayments = () => {
                   </div>
                   <div className="space-y-2 text-center">
                     <p className="text-xs text-gray-400">
-                      Maximum allowed for this type: {paymentType ? getMaxMonths(paymentType) : "0"} months
+                      Maximum allowed for this type:{" "}
+                      {paymentType ? getMaxMonths(paymentType) : "0"} months
                     </p>
                     {paymentType && (
                       <div className="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-bold border border-green-100">
-                        {months} month{months > 1 ? "s" : ""} × {totalSlots} slot{totalSlots > 1 ? "s" : ""} × ₦{getFee(paymentType).toLocaleString()} = ₦{totalPrice.toLocaleString()}
+                        {months} month{months > 1 ? "s" : ""} × {totalSlots}{" "}
+                        slot{totalSlots > 1 ? "s" : ""} × ₦
+                        {getFee(paymentType).toLocaleString()} = ₦
+                        {totalPrice.toLocaleString()}
                       </div>
                     )}
                   </div>
@@ -463,7 +519,9 @@ const OtherPayments = () => {
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Service</span>
                   <span className="font-semibold text-gray-900 capitalize">
-                    {paymentType ? paymentType.replace("_", " ") : "Not selected"}
+                    {paymentType
+                      ? paymentType.replace("_", " ")
+                      : "Not selected"}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
