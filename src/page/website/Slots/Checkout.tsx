@@ -30,6 +30,12 @@ const Checkout = () => {
   const [category, setCategory] = useState("");
   const slotPrice = 2000;
   const totalPrice = slotPrice * slotQuantity;
+  const isOrganicFoodNation =
+    category === "Organic FoodNation (1 Million Hectares against Hunger)";
+  const farmSetupFee = isOrganicFoodNation ? 10000 : 5000 * slotQuantity;
+  const farmSupportFee = isOrganicFoodNation
+    ? 200 * slotQuantity
+    : 500 * slotQuantity;
   const [isProcessing, setIsProcessing] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [formData, setFormData] = useState({
@@ -113,7 +119,8 @@ const Checkout = () => {
 
   const handleFlutterwave = async () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
+    if (!formData.firstName.trim())
+      newErrors.firstName = "First name is required";
     if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
     if (!formData.email.trim()) newErrors.email = "Email address is required";
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
@@ -203,7 +210,8 @@ const Checkout = () => {
             localStorage.setItem("pending_payment_provider", "flutterwave");
             localStorage.setItem("pending_payment_userId", user.id);
 
-            const flwTransactionId = response.transaction_id || response.id || response.flw_ref;
+            const flwTransactionId =
+              response.transaction_id || response.id || response.flw_ref;
             console.log("Payment successful. Activating slot directly...");
 
             const activateSlot = async () => {
@@ -211,9 +219,9 @@ const Checkout = () => {
                 // 1. Update checkout status
                 const { error: checkoutErr } = await supabase
                   .from("checkout")
-                  .update({ 
-                    status: "paid", 
-                    transaction_ref: String(flwTransactionId) 
+                  .update({
+                    status: "paid",
+                    transaction_ref: String(flwTransactionId),
                   })
                   .eq("id", order.id);
 
@@ -236,7 +244,7 @@ const Checkout = () => {
                       last_payment_date: new Date().toISOString(),
                       next_payment_date: nextPaymentDate.toISOString(),
                       project_category: category,
-                    },    
+                    },
                   ]);
 
                 if (subErr) throw subErr;
@@ -251,7 +259,8 @@ const Checkout = () => {
                 console.error("Direct activation failed:", err);
                 toast({
                   title: "Activation Error",
-                  description: "Payment received but failed to update record. Please contact support.",
+                  description:
+                    "Payment received but failed to update record. Please contact support.",
                   variant: "destructive",
                 });
               } finally {
@@ -329,11 +338,16 @@ const Checkout = () => {
                         value={formData.firstName}
                         onChange={(e) => {
                           handleInputChange(e);
-                          if (errors.firstName) setErrors(prev => ({ ...prev, firstName: "" }));
+                          if (errors.firstName)
+                            setErrors((prev) => ({ ...prev, firstName: "" }));
                         }}
                         className={errors.firstName ? "border-red-500" : ""}
                       />
-                      {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>}
+                      {errors.firstName && (
+                        <p className="text-xs text-red-500 mt-1">
+                          {errors.firstName}
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">Last Name</Label>
@@ -344,11 +358,16 @@ const Checkout = () => {
                         value={formData.lastName}
                         onChange={(e) => {
                           handleInputChange(e);
-                          if (errors.lastName) setErrors(prev => ({ ...prev, lastName: "" }));
+                          if (errors.lastName)
+                            setErrors((prev) => ({ ...prev, lastName: "" }));
                         }}
                         className={errors.lastName ? "border-red-500" : ""}
                       />
-                      {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>}
+                      {errors.lastName && (
+                        <p className="text-xs text-red-500 mt-1">
+                          {errors.lastName}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -361,11 +380,16 @@ const Checkout = () => {
                       value={formData.email}
                       onChange={(e) => {
                         handleInputChange(e);
-                        if (errors.email) setErrors(prev => ({ ...prev, email: "" }));
+                        if (errors.email)
+                          setErrors((prev) => ({ ...prev, email: "" }));
                       }}
                       className={errors.email ? "border-red-500" : ""}
                     />
-                    {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+                    {errors.email && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
@@ -377,11 +401,16 @@ const Checkout = () => {
                       value={formData.phone}
                       onChange={(e) => {
                         handleInputChange(e);
-                        if (errors.phone) setErrors(prev => ({ ...prev, phone: "" }));
+                        if (errors.phone)
+                          setErrors((prev) => ({ ...prev, phone: "" }));
                       }}
                       className={errors.phone ? "border-red-500" : ""}
                     />
-                    {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
+                    {errors.phone && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {errors.phone}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="category">Project Category</Label>
@@ -390,19 +419,26 @@ const Checkout = () => {
                       value={category}
                       onChange={(e) => {
                         setCategory(e.target.value);
-                        if (errors.category) setErrors(prev => ({ ...prev, category: "" }));
+                        if (errors.category)
+                          setErrors((prev) => ({ ...prev, category: "" }));
                       }}
                       className={`w-full h-10 px-3 rounded-md border bg-background text-sm mb-4 ${errors.category ? "border-red-500" : "border-input"}`}
                       required
                     >
-                      <option value="" disabled>Select Project Category</option>
+                      <option value="" disabled>
+                        Select Project Category
+                      </option>
                       {PROJECT_CATEGORIES.map((cat) => (
                         <option key={cat} value={cat}>
                           {cat}
                         </option>
                       ))}
                     </select>
-                    {errors.category && <p className="text-xs text-red-500 mt-0.5 mb-4">{errors.category}</p>}
+                    {errors.category && (
+                      <p className="text-xs text-red-500 mt-0.5 mb-4">
+                        {errors.category}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -454,30 +490,42 @@ const Checkout = () => {
                         <h4 className="text-sm font-semibold text-foreground flex items-stretch gap-2 leading-tight text-justify">
                           <div className="w-1 bg-primary rounded-full shrink-0" />
                           <span>
-                            After paying for farm slot, below are the fees you need to pay for, to keep your farm going.
+                            After paying for farm slot, below are the fees you
+                            need to pay for, to keep your farm going.
                           </span>
                         </h4>
-                        
+
                         <div className="space-y-4">
                           <div className="flex justify-between items-center text-sm">
-                            <span className="text-muted-foreground">Farm Setup Fee/month</span>
+                            <span className="text-muted-foreground">
+                              {isOrganicFoodNation
+                                ? "Farm Setup Fee/year"
+                                : "Farm Setup Fee/month"}
+                            </span>
                             <span className="text-foreground font-bold text-lg">
-                              ₦{(5000 * slotQuantity).toLocaleString()}
+                              ₦{farmSetupFee.toLocaleString()}
                             </span>
                           </div>
                           <div className="flex justify-between items-center text-sm">
-                            <span className="text-muted-foreground">Farm Support Fee/month</span>
+                            <span className="text-muted-foreground">
+                              Farm Support Fee/month
+                            </span>
                             <span className="text-foreground font-bold text-lg">
-                              ₦{(500 * slotQuantity).toLocaleString()}
+                              ₦{farmSupportFee.toLocaleString()}
                             </span>
                           </div>
                         </div>
 
-                        <div className="bg-amber-50 border border-amber-100 rounded-lg p-4">
-                          <p className="text-amber-800 leading-tight">
-                            <span className="text-base font-bold">Absentee Fine = ₦{(500 * slotQuantity).toLocaleString()}/month</span>
-                          </p>
-                        </div>
+                        {!isOrganicFoodNation && (
+                          <div className="bg-amber-50 border border-amber-100 rounded-lg p-4">
+                            <p className="text-amber-800 leading-tight">
+                              <span className="text-base font-bold">
+                                Absentee Fine = ₦
+                                {(500 * slotQuantity).toLocaleString()}/month
+                              </span>
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </motion.div>
                   </div>
@@ -543,8 +591,6 @@ const Checkout = () => {
                       </span>
                     </div>
                   </div>
-
-
 
                   <ul className="text-sm text-muted-foreground space-y-2 pt-4 border-t border-border">
                     <li className="flex items-center gap-2">
