@@ -64,6 +64,10 @@ export default function Home() {
 
   const projectHubs = [
     {
+      name: "Gingertown",
+      desc: "No. 1 ginger production, processing & export powerhouse.",
+    },
+    {
       name: "Mushroom Village",
       desc: "Local & export-focused mushroom ecosystem for medicinal mushrooms and affordable plant protein. Why it matters: affordable & healthy alternative to animal protein, short production cycle, high profitability, export potential, urban and rural production friendly.",
     },
