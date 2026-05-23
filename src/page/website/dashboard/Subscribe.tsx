@@ -75,6 +75,10 @@ const Subscribe = () => {
     localStorage.setItem("pending_payment_ref", reference);
     localStorage.setItem("pending_payment_provider", "flutterwave");
     localStorage.setItem("pending_payment_userId", user.id);
+    localStorage.setItem(
+      "pending_payment_referral_code",
+      user.user_metadata?.referral_code || "",
+    );
 
     try {
       window.FlutterwaveCheckout({
@@ -114,30 +118,67 @@ const Subscribe = () => {
             localStorage.setItem("pending_payment_userId", user.id);
 
             const run = async () => {
+              const now = new Date();
               const expiresAt = new Date();
               expiresAt.setFullYear(expiresAt.getFullYear() + 1);
 
-              const { error } = await supabase
+              const { error: subError } = await supabase
                 .from("subscriptions")
-                .insert([
-                  {
-                    user_id: user.id,
-                    status: "active",
-                    expires_at: expiresAt.toISOString(),
-                  },
-                ]);
+                .upsert(
+                  [
+                    {
+                      user_id: user.id,
+                      status: "active",
+                      started_at: now.toISOString(),
+                      expires_at: expiresAt.toISOString(),
+                    },
+                  ],
+                  { onConflict: "user_id" },
+                );
 
-              if (error) {
-                Sentry.captureException(error, {
+              if (subError) {
+                Sentry.captureException(subError, {
                   extra: {
-                    action: "direct_payment_insert",
+                    action: "direct_payment_upsert",
                     userId: user.id,
                     txRef,
                   },
                 });
-                setActivationError(true);
-                return;
+                throw subError;
               }
+
+              const { data, error: verifyError } =
+                await supabase.functions.invoke("verify-payment", {
+                  body: {
+                    reference: txId || txRef,
+                    provider: "flutterwave",
+                    userId: user.id,
+                    referralCode:
+                      user.user_metadata?.referral_code || undefined,
+                  },
+                });
+
+              if (verifyError || !data?.success) {
+                Sentry.captureException(
+                  verifyError || new Error("verify-payment failed"),
+                  {
+                    extra: {
+                      action: "edge_verify_payment",
+                      userId: user.id,
+                      txRef,
+                    },
+                  },
+                );
+                throw (
+                  verifyError ||
+                  new Error(data?.message || "verify-payment failed")
+                );
+              }
+
+              localStorage.removeItem("pending_payment_ref");
+              localStorage.removeItem("pending_payment_provider");
+              localStorage.removeItem("pending_payment_userId");
+              localStorage.removeItem("pending_payment_referral_code");
 
               await supabase.auth.refreshSession();
               setShowSuccess(true);
@@ -178,23 +219,50 @@ const Subscribe = () => {
 
         setLoading(true);
         try {
+          const pendingReferralCode =
+            localStorage.getItem("pending_payment_referral_code") || undefined;
+          const now = new Date();
           const expiresAt = new Date();
           expiresAt.setFullYear(expiresAt.getFullYear() + 1);
 
-          const { error } = await supabase
+          const { error: subError } = await supabase
             .from("subscriptions")
-            .insert([
-              {
-                user_id: pendingUserId,
-                status: "active",
-                expires_at: expiresAt.toISOString(),
-              },
-            ]);
+            .upsert(
+              [
+                {
+                  user_id: pendingUserId,
+                  status: "active",
+                  started_at: now.toISOString(),
+                  expires_at: expiresAt.toISOString(),
+                },
+              ],
+              { onConflict: "user_id" },
+            );
 
-          if (!error) {
+          if (subError) {
+            console.error(
+              "Subscription upsert failed on visibility return",
+              subError,
+            );
+          }
+
+          const { data, error } = await supabase.functions.invoke(
+            "verify-payment",
+            {
+              body: {
+                reference: pendingRef,
+                provider: pendingProvider,
+                userId: pendingUserId,
+                referralCode: pendingReferralCode,
+              },
+            },
+          );
+
+          if (!error && data?.success) {
             localStorage.removeItem("pending_payment_ref");
             localStorage.removeItem("pending_payment_provider");
             localStorage.removeItem("pending_payment_userId");
+            localStorage.removeItem("pending_payment_referral_code");
             await supabase.auth.refreshSession();
             setShowSuccess(true);
           }
@@ -280,20 +348,55 @@ const Subscribe = () => {
         return;
       }
 
+      const referralCode =
+        localStorage.getItem("pending_payment_referral_code") || undefined;
+      const now = new Date();
       const expiresAt = new Date();
       expiresAt.setFullYear(expiresAt.getFullYear() + 1);
 
-      const { error } = await supabase
-        .from("subscriptions")
-        .insert([
+      const { error: subError } = await supabase.from("subscriptions").upsert(
+        [
           {
             user_id: session.user.id,
             status: "active",
+            started_at: now.toISOString(),
             expires_at: expiresAt.toISOString(),
           },
-        ]);
+        ],
+        { onConflict: "user_id" },
+      );
 
-      if (error) {
+      if (subError) {
+        Sentry.captureException(subError, {
+          extra: {
+            action: "retry_direct_payment_upsert",
+            userId: session.user.id,
+          },
+        });
+      }
+
+      const { data, error: verifyError } = await supabase.functions.invoke(
+        "verify-payment",
+        {
+          body: {
+            reference: ref,
+            provider: "flutterwave",
+            userId: session.user.id,
+            referralCode,
+          },
+        },
+      );
+
+      if (verifyError || !data?.success) {
+        Sentry.captureException(
+          verifyError || new Error("verify-payment failed"),
+          {
+            extra: {
+              action: "retry_edge_verify_payment",
+              userId: session.user.id,
+            },
+          },
+        );
         setActivationError(true);
         return;
       }
@@ -301,6 +404,7 @@ const Subscribe = () => {
       localStorage.removeItem("pending_payment_ref");
       localStorage.removeItem("pending_payment_provider");
       localStorage.removeItem("pending_payment_userId");
+      localStorage.removeItem("pending_payment_referral_code");
       await supabase.auth.refreshSession();
       setShowSuccess(true);
     } catch (err) {
