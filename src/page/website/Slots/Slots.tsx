@@ -80,7 +80,7 @@ const Slots = () => {
               {/* Features */}
               <div className="px-6 py-5 space-y-3">
                 {[
-                  "Shared access to a one-hectare farm",
+                  "Shared access to a group farm",
                   "Expert guidance throughout the season",
                   "Onsite production of organic inputs",
                   "WhatsApp group coordination",

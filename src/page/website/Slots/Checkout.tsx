@@ -595,7 +595,7 @@ const Checkout = () => {
                   <ul className="text-sm text-muted-foreground space-y-2 pt-4 border-t border-border">
                     <li className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      Practice slot on an hectare farm
+                      Practice slot in a group farm
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary" />
