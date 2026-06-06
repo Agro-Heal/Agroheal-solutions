@@ -80,13 +80,8 @@ const calcSetup = (r: FarmRecord) =>
 const calcSupport = (r: FarmRecord) =>
   Math.max(r.support_paid || 0, Number(r.months_farm_support) || 0);
 
-const calcSlotFee = (r: Pick<FarmRecord, "farm_slots">) => r.farm_slots * 2000;
-
 const calcFine = (r: FarmRecord) =>
   Math.max(r.fine_paid || 0, Number(r.absentee_fine) || 0);
-
-const calcTotal = (r: FarmRecord) =>
-  calcSetup(r) + calcSupport(r) + calcSlotFee(r) + calcFine(r);
 
 const FarmRecordsView = () => {
   const [farm, setFarm] = useState<{
@@ -102,6 +97,16 @@ const FarmRecordsView = () => {
   const isOrganicFoodNation =
     selectedCategory ===
     "Organic FoodNation (1 Million Hectares against Hunger)";
+
+  const calcSlotFee = (r: Pick<FarmRecord, "farm_slots">) => {
+    const slotFeeRate =
+      farm?.project_category === "Mushroom Village" ? 1000 : 2000;
+    return r.farm_slots * slotFeeRate;
+  };
+
+  const calcTotal = (r: FarmRecord) =>
+    calcSetup(r) + calcSupport(r) + calcSlotFee(r) + calcFine(r);
+
   const getRecordTotal = (r: FarmRecord) =>
     calcSetup(r) +
     calcSupport(r) +
@@ -677,7 +682,8 @@ const FarmRecordsView = () => {
   const totalExpensesValue = expenses.reduce((sum, exp) => sum + exp.amount, 0);
 
   const totalFarmIncome = records.reduce((s, r) => s + getRecordTotal(r), 0);
-  const agrohealBalance = totalFarmSlots * 2000 + totalFarmSupport;
+  const slotFeeRate = selectedCategory === "Mushroom Village" ? 1000 : 2000;
+  const agrohealBalance = totalFarmSlots * slotFeeRate + totalFarmSupport;
   const grossBalance =
     totalFarmSetup + (isOrganicFoodNation ? 0 : totalAbsenteeFine);
   const netBalance = grossBalance - totalExpensesValue;
