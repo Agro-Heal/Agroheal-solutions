@@ -19,6 +19,7 @@ import { Toaster, toast } from "react-hot-toast";
 import FarmingInitiativePopup from "./TelegramPopup";
 import ShareReferralModal from "@/components/webComponents/shareModal";
 import PhoneModal from "./PhoneModal";
+import KinModal from "./KinModal";
 
 interface ReferralProps {
   id: string;
@@ -43,15 +44,17 @@ const Dashboard = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [profileError, setProfileError] = useState(false);
   const [showPhoneModal, setShowPhoneModal] = useState<boolean>(false);
+  const [showKinModal, setShowKinModal] = useState<boolean>(false);
+  const [kinDetails, setKinDetails] = useState<any>(null);
   const [referralNumber, setReferralNumber] = useState("");
   const [otherSubscriptions, setOtherSubscriptions] = useState<{
-    setup: { status: 'active' | 'inactive'; expiryDate?: Date };
-    support: { status: 'active' | 'inactive'; expiryDate?: Date };
-    platform: { status: 'active' | 'inactive'; expiryDate?: Date };
+    setup: { status: "active" | "inactive"; expiryDate?: Date };
+    support: { status: "active" | "inactive"; expiryDate?: Date };
+    platform: { status: "active" | "inactive"; expiryDate?: Date };
   }>({
-    setup: { status: 'inactive' },
-    support: { status: 'inactive' },
-    platform: { status: 'active' }, // Default to active for initial UI
+    setup: { status: "inactive" },
+    support: { status: "inactive" },
+    platform: { status: "active" }, // Default to active for initial UI
   });
   const [showSubscriptionPopup, setShowSubscriptionPopup] = useState(false);
 
@@ -75,6 +78,32 @@ const Dashboard = () => {
 
       if (!profileData.phone) {
         setShowPhoneModal(true);
+      }
+
+      const { data: kinData, error: kinError } = await supabase
+        .from("kin_details")
+        .select("kin_name, kin_address, kin_number")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!kinError) {
+        setKinDetails(
+          kinData || {
+            kin_name: "",
+            kin_address: "",
+            kin_number: "",
+          },
+        );
+
+        // Only show Kin modal if kin details are missing AND user has a phone number
+        if (
+          (!kinData?.kin_name ||
+            !kinData?.kin_address ||
+            !kinData?.kin_number) &&
+          profileData.phone
+        ) {
+          setShowKinModal(true);
+        }
       }
 
       const pendingReferral = user.user_metadata?.referral_code;
@@ -136,23 +165,23 @@ const Dashboard = () => {
 
       if (otherPayments) {
         const calculateStatus = (type: string) => {
-          const latest = otherPayments.find(p => p.payment_type === type);
-          if (!latest) return { status: 'inactive' as const };
-          
+          const latest = otherPayments.find((p) => p.payment_type === type);
+          if (!latest) return { status: "inactive" as const };
+
           const paymentDate = new Date(latest.created_at);
           const monthsPaid = Number(latest.months || 0);
           const expiryDate = new Date(paymentDate);
           expiryDate.setMonth(expiryDate.getMonth() + monthsPaid);
-          
+
           const isActive = new Date() < expiryDate;
           return {
-            status: (isActive ? 'active' : 'inactive') as 'active' | 'inactive',
-            expiryDate
+            status: (isActive ? "active" : "inactive") as "active" | "inactive",
+            expiryDate,
           };
         };
 
-        const setupStatus = calculateStatus('farm_setup');
-        const supportStatus = calculateStatus('farm_support');
+        const setupStatus = calculateStatus("farm_setup");
+        const supportStatus = calculateStatus("farm_support");
 
         // Fetch Platform Subscription from 'subscriptions' table
         const { data: platformSub } = await supabase
@@ -163,12 +192,15 @@ const Dashboard = () => {
           .limit(1)
           .maybeSingle();
 
-        let platformStatus: { status: 'active' | 'inactive'; expiryDate?: Date } = { status: 'inactive' };
+        let platformStatus: {
+          status: "active" | "inactive";
+          expiryDate?: Date;
+        } = { status: "inactive" };
         if (platformSub?.expires_at) {
           const expiry = new Date(platformSub.expires_at);
           platformStatus = {
-            status: new Date() < expiry ? 'active' : 'inactive',
-            expiryDate: expiry
+            status: new Date() < expiry ? "active" : "inactive",
+            expiryDate: expiry,
           };
         }
 
@@ -178,9 +210,18 @@ const Dashboard = () => {
           platform: platformStatus,
         });
 
-        // Show popup if any are inactive (only for users with slots)
-        if (slotsCount > 0) {
-          if (setupStatus.status === 'inactive' || supportStatus.status === 'inactive' || platformStatus.status === 'inactive') {
+        // Show popup if any are inactive (only for users with slots) AND kin details are complete
+        if (
+          slotsCount > 0 &&
+          kinData?.kin_name &&
+          kinData?.kin_address &&
+          kinData?.kin_number
+        ) {
+          if (
+            setupStatus.status === "inactive" ||
+            supportStatus.status === "inactive" ||
+            platformStatus.status === "inactive"
+          ) {
             setShowSubscriptionPopup(true);
           }
         }
@@ -382,11 +423,11 @@ const Dashboard = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="order-2 lg:order-1 lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 flex flex-col h-full min-h-0 lg:min-h-[calc(100vh-11rem)] overflow-hidden"
           >
-              <div className="flex items-center justify-between mb-5 shrink-0">
-                <h2 className="text-base font-bold text-gray-900">
-                  Your Subscriptions
-                </h2>
-              </div>
+            <div className="flex items-center justify-between mb-5 shrink-0">
+              <h2 className="text-base font-bold text-gray-900">
+                Your Subscriptions
+              </h2>
+            </div>
 
             <div className="flex-1 flex flex-col min-h-0 gap-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-gray-50 border border-gray-100 hover:border-green-200 transition-colors shrink-0 gap-3">
@@ -399,19 +440,21 @@ const Dashboard = () => {
                       Platform Subscription
                     </h3>
                     <p className="text-xs text-gray-500">
-                      {otherSubscriptions.platform.expiryDate 
-                        ? `Expires ${otherSubscriptions.platform.expiryDate.toLocaleDateString()}` 
-                        : 'Access to all courses'}
+                      {otherSubscriptions.platform.expiryDate
+                        ? `Expires ${otherSubscriptions.platform.expiryDate.toLocaleDateString()}`
+                        : "Access to all courses"}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center self-start sm:self-auto gap-2">
-                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full ${
-                    otherSubscriptions.platform.status === 'active' 
-                    ? 'text-green-700 bg-green-50' 
-                    : 'text-red-700 bg-red-50'
-                  }`}>
-                    {otherSubscriptions.platform.status === 'active' ? (
+                  <div
+                    className={`flex items-center gap-1.5 px-3 py-1 rounded-full ${
+                      otherSubscriptions.platform.status === "active"
+                        ? "text-green-700 bg-green-50"
+                        : "text-red-700 bg-red-50"
+                    }`}
+                  >
+                    {otherSubscriptions.platform.status === "active" ? (
                       <CheckCircle className="w-3.5 h-3.5" />
                     ) : (
                       <AlertCircle className="w-3.5 h-3.5" />
@@ -420,8 +463,12 @@ const Dashboard = () => {
                       {otherSubscriptions.platform.status}
                     </span>
                   </div>
-                  {otherSubscriptions.platform.status === 'inactive' && (
-                    <Button asChild size="sm" className="h-8 bg-green-800 hover:bg-green-700 text-xs">
+                  {otherSubscriptions.platform.status === "inactive" && (
+                    <Button
+                      asChild
+                      size="sm"
+                      className="h-8 bg-green-800 hover:bg-green-700 text-xs"
+                    >
                       <Link to="/subscription">Renew</Link>
                     </Button>
                   )}
@@ -440,19 +487,21 @@ const Dashboard = () => {
                           Farm Setup Fee
                         </h3>
                         <p className="text-[10px] sm:text-xs text-gray-500 truncate">
-                          {otherSubscriptions.setup.expiryDate 
-                            ? `Valid until ${otherSubscriptions.setup.expiryDate.toLocaleDateString()}` 
-                            : '5 months setup fee'}
+                          {otherSubscriptions.setup.expiryDate
+                            ? `Valid until ${otherSubscriptions.setup.expiryDate.toLocaleDateString()}`
+                            : "5 months setup fee"}
                         </p>
                       </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-                      <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full shrink-0 ${
-                        otherSubscriptions.setup.status === 'active' 
-                        ? 'text-green-700 bg-green-50' 
-                        : 'text-red-700 bg-red-50'
-                      }`}>
-                        {otherSubscriptions.setup.status === 'active' ? (
+                      <div
+                        className={`flex items-center gap-1.5 px-3 py-1 rounded-full shrink-0 ${
+                          otherSubscriptions.setup.status === "active"
+                            ? "text-green-700 bg-green-50"
+                            : "text-red-700 bg-red-50"
+                        }`}
+                      >
+                        {otherSubscriptions.setup.status === "active" ? (
                           <CheckCircle className="w-3.5 h-3.5" />
                         ) : (
                           <AlertCircle className="w-3.5 h-3.5" />
@@ -461,8 +510,12 @@ const Dashboard = () => {
                           {otherSubscriptions.setup.status}
                         </span>
                       </div>
-                      {otherSubscriptions.setup.status === 'inactive' && (
-                        <Button asChild size="sm" className="h-7 sm:h-8 bg-green-800 hover:bg-green-700 text-[10px] sm:text-xs px-2 sm:px-3">
+                      {otherSubscriptions.setup.status === "inactive" && (
+                        <Button
+                          asChild
+                          size="sm"
+                          className="h-7 sm:h-8 bg-green-800 hover:bg-green-700 text-[10px] sm:text-xs px-2 sm:px-3"
+                        >
                           <Link to="/dashboard/other-payments">Pay Now</Link>
                         </Button>
                       )}
@@ -479,19 +532,21 @@ const Dashboard = () => {
                           Farm Support Fee
                         </h3>
                         <p className="text-[10px] sm:text-xs text-gray-500 truncate">
-                          {otherSubscriptions.support.expiryDate 
-                            ? `Valid until ${otherSubscriptions.support.expiryDate.toLocaleDateString()}` 
-                            : 'Monthly maintenance support'}
+                          {otherSubscriptions.support.expiryDate
+                            ? `Valid until ${otherSubscriptions.support.expiryDate.toLocaleDateString()}`
+                            : "Monthly maintenance support"}
                         </p>
                       </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-                      <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full shrink-0 ${
-                        otherSubscriptions.support.status === 'active' 
-                        ? 'text-green-700 bg-green-50' 
-                        : 'text-red-700 bg-red-50'
-                      }`}>
-                        {otherSubscriptions.support.status === 'active' ? (
+                      <div
+                        className={`flex items-center gap-1.5 px-3 py-1 rounded-full shrink-0 ${
+                          otherSubscriptions.support.status === "active"
+                            ? "text-green-700 bg-green-50"
+                            : "text-red-700 bg-red-50"
+                        }`}
+                      >
+                        {otherSubscriptions.support.status === "active" ? (
                           <CheckCircle className="w-3.5 h-3.5" />
                         ) : (
                           <AlertCircle className="w-3.5 h-3.5" />
@@ -500,8 +555,12 @@ const Dashboard = () => {
                           {otherSubscriptions.support.status}
                         </span>
                       </div>
-                      {otherSubscriptions.support.status === 'inactive' && (
-                        <Button asChild size="sm" className="h-7 sm:h-8 bg-green-800 hover:bg-green-700 text-[10px] sm:text-xs px-2 sm:px-3">
+                      {otherSubscriptions.support.status === "inactive" && (
+                        <Button
+                          asChild
+                          size="sm"
+                          className="h-7 sm:h-8 bg-green-800 hover:bg-green-700 text-[10px] sm:text-xs px-2 sm:px-3"
+                        >
                           <Link to="/dashboard/other-payments">Pay Now</Link>
                         </Button>
                       )}
@@ -667,20 +726,31 @@ const Dashboard = () => {
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <p className="text-green-200 text-xs font-semibold uppercase tracking-wider mb-0.5">Total Earnings</p>
+                      <p className="text-green-200 text-xs font-semibold uppercase tracking-wider mb-0.5">
+                        Total Earnings
+                      </p>
                       <p className="text-3xl font-bold">
-                        ₦{(Number(profile?.referral_earnings ?? 0) + Number(profile?.slot_bonus ?? 0)).toLocaleString()}
+                        ₦
+                        {(
+                          Number(profile?.referral_earnings ?? 0) +
+                          Number(profile?.slot_bonus ?? 0)
+                        ).toLocaleString()}
                       </p>
                     </div>
                     <div className="bg-white/10 rounded-lg px-2 py-1 backdrop-blur-sm border border-white/10">
                       <TrendingUp className="w-4 h-4 text-green-300" />
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2 pt-4 border-t border-white/10">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-green-200">Referral Earnings</span>
-                      <span className="font-semibold font-mono">₦{Number(profile?.referral_earnings ?? 0).toLocaleString()}</span>
+                      <span className="font-semibold font-mono">
+                        ₦
+                        {Number(
+                          profile?.referral_earnings ?? 0,
+                        ).toLocaleString()}
+                      </span>
                     </div>
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-green-200">Slot Bonus</span>
@@ -792,9 +862,20 @@ const Dashboard = () => {
           }}
         />
       )}
+      {showKinModal && profile && kinDetails !== null && (
+        <KinModal
+          userId={profile.id}
+          initialData={kinDetails}
+          onComplete={(updatedData) => {
+            setShowKinModal(false);
+            setKinDetails(updatedData);
+          }}
+          onClose={() => setShowKinModal(false)}
+        />
+      )}
       {showSubscriptionPopup && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl"
@@ -804,54 +885,72 @@ const Dashboard = () => {
                 <AlertCircle className="w-6 h-6 text-red-600" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-gray-900">Subscription Alert</h2>
-                <p className="text-sm text-gray-500">Some of your services are inactive</p>
+                <h2 className="text-lg font-bold text-gray-900">
+                  Subscription Alert
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Some of your services are inactive
+                </p>
               </div>
             </div>
 
             <div className="p-6 space-y-4">
               <p className="text-sm text-gray-600">
-                The following subscriptions require your attention to ensure uninterrupted access:
+                The following subscriptions require your attention to ensure
+                uninterrupted access:
               </p>
-              
+
               <div className="space-y-3">
-                {otherSubscriptions.platform.status === 'inactive' && (
+                {otherSubscriptions.platform.status === "inactive" && (
                   <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
                     <div className="flex items-center gap-3">
                       <BookOpen className="w-4 h-4 text-green-800" />
-                      <span className="text-sm font-medium text-gray-700">Platform Subscription</span>
+                      <span className="text-sm font-medium text-gray-700">
+                        Platform Subscription
+                      </span>
                     </div>
-                    <span className="text-[10px] font-bold text-red-600 uppercase px-2 py-0.5 bg-red-50 rounded-full">Inactive</span>
+                    <span className="text-[10px] font-bold text-red-600 uppercase px-2 py-0.5 bg-red-50 rounded-full">
+                      Inactive
+                    </span>
                   </div>
                 )}
-                {otherSubscriptions.setup.status === 'inactive' && (
+                {otherSubscriptions.setup.status === "inactive" && (
                   <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
                     <div className="flex items-center gap-3">
                       <Sprout className="w-4 h-4 text-green-800" />
-                      <span className="text-sm font-medium text-gray-700">Farm Setup Fee</span>
+                      <span className="text-sm font-medium text-gray-700">
+                        Farm Setup Fee
+                      </span>
                     </div>
-                    <span className="text-[10px] font-bold text-red-600 uppercase px-2 py-0.5 bg-red-50 rounded-full">Inactive</span>
+                    <span className="text-[10px] font-bold text-red-600 uppercase px-2 py-0.5 bg-red-50 rounded-full">
+                      Inactive
+                    </span>
                   </div>
                 )}
-                {otherSubscriptions.support.status === 'inactive' && (
+                {otherSubscriptions.support.status === "inactive" && (
                   <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
                     <div className="flex items-center gap-3">
                       <Users className="w-4 h-4 text-green-800" />
-                      <span className="text-sm font-medium text-gray-700">Farm Support Fee</span>
+                      <span className="text-sm font-medium text-gray-700">
+                        Farm Support Fee
+                      </span>
                     </div>
-                    <span className="text-[10px] font-bold text-red-600 uppercase px-2 py-0.5 bg-red-50 rounded-full">Inactive</span>
+                    <span className="text-[10px] font-bold text-red-600 uppercase px-2 py-0.5 bg-red-50 rounded-full">
+                      Inactive
+                    </span>
                   </div>
                 )}
               </div>
 
               <div className="flex flex-col gap-3 pt-4">
-                <Button asChild className="w-full bg-green-800 hover:bg-green-700 h-11">
-                  <Link to="/dashboard/other-payments">
-                    Make Payment Now
-                  </Link>
+                <Button
+                  asChild
+                  className="w-full bg-green-800 hover:bg-green-700 h-11"
+                >
+                  <Link to="/dashboard/other-payments">Make Payment Now</Link>
                 </Button>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   onClick={() => setShowSubscriptionPopup(false)}
                   className="w-full text-gray-400 hover:text-gray-600 text-sm h-10"
                 >

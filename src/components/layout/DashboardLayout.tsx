@@ -13,6 +13,7 @@ import {
   Leaf,
   ChevronRight,
   BookOpen,
+  Users,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,11 +29,29 @@ const navItems = [
     path: "/dashboard/slots-subscription",
     icon: CreditCard,
   },
-  { label: "Group Farm Accounts", path: "/dashboard/group-farm-accounts", icon: BookOpen },
-  { label: "Other Payments", path: "/dashboard/other-payments", icon: CreditCard },
+  {
+    label: "Group Farm Accounts",
+    path: "/dashboard/group-farm-accounts",
+    icon: BookOpen,
+  },
+  {
+    label: "Other Payments",
+    path: "/dashboard/other-payments",
+    icon: CreditCard,
+  },
+  {
+    label: "Mushroom Village",
+    path: "/dashboard/mushroom-village",
+    icon: Leaf,
+  },
   // { label: "Withdrawals", path: "/dashboard/withdrawals", icon: Wallet }, // Hidden for now
-  { label: "Step-by-Step Guide", path: "/dashboard/roadmap-guide", icon: Route },
+  {
+    label: "Step-by-Step Guide",
+    path: "/dashboard/roadmap-guide",
+    icon: Route,
+  },
   { label: "Legal Agreement", path: "/dashboard/legal", icon: FileText },
+  { label: "Kin or POD", path: "/dashboard/kin", icon: Users },
 ];
 
 const HIDDEN_ROUTES = ["/login", "/signup"];
