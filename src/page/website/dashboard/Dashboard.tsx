@@ -80,11 +80,33 @@ const Dashboard = () => {
         setShowPhoneModal(true);
       }
 
-      const { data: kinData, error: kinError } = await supabase
-        .from("kin_details")
-        .select("kin_name, kin_address, kin_number")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      // Fetch all independent data in parallel
+      const [
+        { data: kinData, error: kinError },
+        { data: referrals },
+        { data: subscriptions },
+        { data: otherPayments },
+      ] = await Promise.all([
+        supabase
+          .from("kin_details")
+          .select("kin_name, kin_address, kin_number")
+          .eq("user_id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("profiles")
+          .select("id, full_name, phone, created_at")
+          .eq("referred_by", user.id),
+        supabase
+          .from("slot_subscriptions")
+          .select("id, slots, amount, last_payment_date")
+          .eq("user_id", user.id),
+        supabase
+          .from("other_payments")
+          .select("payment_type, created_at, months")
+          .eq("user_id", user.id)
+          .eq("status", "success")
+          .order("created_at", { ascending: false }),
+      ]);
 
       if (!kinError) {
         setKinDetails(
@@ -106,6 +128,16 @@ const Dashboard = () => {
         }
       }
 
+      profileData.referrals = referrals || [];
+
+      const slotsCount = (subscriptions || []).reduce((total, item) => {
+        const slotValue = Number(item?.slots ?? 0);
+        return total + (Number.isNaN(slotValue) ? 0 : slotValue);
+      }, 0);
+      setTotalSlotsPurchased(slotsCount);
+      setSlotPaymentHistory((subscriptions || []).slice(0, 5));
+
+      // Handle pending referral code
       const pendingReferral = user.user_metadata?.referral_code;
       if (pendingReferral && !profileData.referred_by) {
         const { data: referrer } = await supabase
@@ -125,24 +157,7 @@ const Dashboard = () => {
         await supabase.auth.updateUser({ data: { referral_code: null } });
       }
 
-      const { data: referrals } = await supabase
-        .from("profiles")
-        .select("id, full_name, phone, created_at")
-        .eq("referred_by", user.id);
-      profileData.referrals = referrals || [];
-
-      const { data: subscriptions } = await supabase
-        .from("slot_subscriptions")
-        .select("id, slots, amount, last_payment_date")
-        .eq("user_id", user.id);
-
-      const slotsCount = (subscriptions || []).reduce((total, item) => {
-        const slotValue = Number(item?.slots ?? 0);
-        return total + (Number.isNaN(slotValue) ? 0 : slotValue);
-      }, 0);
-      setTotalSlotsPurchased(slotsCount);
-      setSlotPaymentHistory((subscriptions || []).slice(0, 5));
-
+      // Fetch referrer data if referral exists
       if (profileData.referred_by) {
         const { data: referrerData } = await supabase
           .from("profiles")
@@ -155,14 +170,7 @@ const Dashboard = () => {
         setReferralNumber(profileData?.referrer_phone);
       }
 
-      // Fetch Other Payments for Setup and Support
-      const { data: otherPayments } = await supabase
-        .from("other_payments")
-        .select("payment_type, created_at, months")
-        .eq("user_id", user.id)
-        .eq("status", "success")
-        .order("created_at", { ascending: false });
-
+      // Handle subscriptions and show subscription popup
       if (otherPayments) {
         const calculateStatus = (type: string) => {
           const latest = otherPayments.find((p) => p.payment_type === type);

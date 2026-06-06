@@ -53,12 +53,7 @@ const PaymentGuidancePopup = () => {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-gray-900 mb-1">
-                        Use two separate devices/phone
-                      </p>
-                      <p className="text-sm text-gray-600 leading-relaxed text-justify">
-                        Use your own phone to login and initiate payment. Once
-                        the account detail appears, use another device (for
-                        example, a friend's phone) to make the transfer.
+                        Make sure your internet connection is good.
                       </p>
                     </div>
                   </div>
@@ -71,11 +66,7 @@ const PaymentGuidancePopup = () => {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-gray-900 mb-1">
-                        Pay immediately when account number appears
-                      </p>
-                      <p className="text-sm text-gray-600 leading-relaxed text-justify">
-                        Do not wait too long and do not close the payment page
-                        after account details are displayed.
+                        Pay immediately when the account number appears
                       </p>
                     </div>
                   </div>
@@ -88,10 +79,8 @@ const PaymentGuidancePopup = () => {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-gray-900 mb-1">
-                        You can use different payment method
-                      </p>
-                      <p className="text-sm text-gray-600 leading-relaxed text-justify">
-                        When you get to the payment section, you can use the Card Option or scroll down the page to 'change payment method' to Bank Transfer, etc.
+                        You can use different payment methods e.g Card, Bank
+                        Transfer etc.
                       </p>
                     </div>
                   </div>
