@@ -51,7 +51,7 @@ const navItems = [
     icon: Route,
   },
   { label: "Legal Agreement", path: "/dashboard/legal", icon: FileText },
-  { label: "Kin or POD", path: "/dashboard/kin", icon: Users },
+  { label: "Next of Kin", path: "/dashboard/kin", icon: Users },
 ];
 
 const HIDDEN_ROUTES = ["/login", "/signup"];
