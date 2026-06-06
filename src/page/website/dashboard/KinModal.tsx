@@ -37,17 +37,17 @@ const KinModal = ({
 
   const handleSubmit = async () => {
     if (!kinName.trim()) {
-      toast.error("Enter a name for Kin or POD");
+      toast.error("Enter a name for Next of Kin");
       return;
     }
 
     if (!kinAddress.trim()) {
-      toast.error("Enter the address for Kin or POD");
+      toast.error("Enter the address for Next of Kin");
       return;
     }
 
     if (!/^[0-9]+$/.test(kinNumber) || kinNumber.length < 7) {
-      toast.error("Enter a valid phone number for Kin or POD");
+      toast.error("Enter a valid phone number for Next of Kin");
       return;
     }
 
@@ -62,7 +62,7 @@ const KinModal = ({
 
     if (fetchError) {
       setLoading(false);
-      toast.error("Failed to check existing Kin or POD details");
+      toast.error("Failed to check existing Next of Kin details");
       return;
     }
 
@@ -94,11 +94,11 @@ const KinModal = ({
     setLoading(false);
 
     if (error) {
-      toast.error("Failed to save Kin or POD details");
+      toast.error("Failed to save Next of Kin details");
       return;
     }
 
-    toast.success("Kin or POD details saved!");
+    toast.success("Next of Kin details saved!");
     onComplete({
       kin_name: kinName.trim(),
       kin_address: kinAddress.trim(),
@@ -122,17 +122,17 @@ const KinModal = ({
             <Users className="w-6 h-6 text-green-800" />
           </div>
           <h2 className="text-lg font-bold text-gray-900">
-            Kin or POD Details
+            NEXT OF KIN DETAILS
           </h2>
           <p className="text-sm text-gray-500 mt-1">
-            Please provide a Next of Kin or POD contact.
+            Please provide a Next of Kin contact.
           </p>
         </div>
 
         <div className="space-y-4">
           <div>
             <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 block">
-              Name of Kin or POD
+              Name of Next of Kin
             </label>
             <input
               type="text"
@@ -150,7 +150,7 @@ const KinModal = ({
             <textarea
               value={kinAddress}
               onChange={(e) => setKinAddress(e.target.value)}
-              placeholder="Address of Kin or POD"
+              placeholder="Address of Next of Kin"
               rows={3}
               className="w-full resize-none rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
             />
@@ -184,7 +184,7 @@ const KinModal = ({
                 Saving...
               </>
             ) : (
-              "Save Kin or POD"
+              "Save Next of Kin"
             )}
           </button>
         </div>

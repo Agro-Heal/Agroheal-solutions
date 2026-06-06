@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   BookOpen,
   Sprout,
@@ -36,6 +36,7 @@ interface SlotPaymentHistoryItem {
 }
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [totalSlotsPurchased, setTotalSlotsPurchased] = useState(0);
   const [slotPaymentHistory, setSlotPaymentHistory] = useState<
@@ -45,6 +46,8 @@ const Dashboard = () => {
   const [profileError, setProfileError] = useState(false);
   const [showPhoneModal, setShowPhoneModal] = useState<boolean>(false);
   const [showKinModal, setShowKinModal] = useState<boolean>(false);
+  const [showSecureSlotModal, setShowSecureSlotModal] =
+    useState<boolean>(false);
   const [kinDetails, setKinDetails] = useState<any>(null);
   const [referralNumber, setReferralNumber] = useState("");
   const [otherSubscriptions, setOtherSubscriptions] = useState<{
@@ -371,23 +374,28 @@ const Dashboard = () => {
                 {stat.value}
               </p>
 
-              {stat.actionTo && (
-                <Button
-                  asChild
-                  variant="outline"
-                  className={`mt-2.5 sm:mt-4 w-full rounded-lg border px-2.5 sm:px-3 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold shadow-sm transition-all duration-200 ${
-                    stat.actionLabel === "Secure Slot"
-                      ? "border-[#d17547] bg-[#d17547] text-white"
-                      : "border-green-800 bg-green-800 text-white"
-                  }`}
-                >
-                  <Link to={stat.actionTo}>
-                    {stat.label === "Start Learning"
-                      ? "View Modules"
-                      : (stat.actionLabel ?? stat.label)}
-                  </Link>
-                </Button>
-              )}
+              {stat.actionTo &&
+                (stat.actionLabel === "Secure Slot" ? (
+                  <Button
+                    onClick={() => setShowSecureSlotModal(true)}
+                    variant="outline"
+                    className="mt-2.5 sm:mt-4 w-full rounded-lg border border-[#d17547] bg-[#d17547] text-white px-2.5 sm:px-3 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold shadow-sm transition-all duration-200"
+                  >
+                    Secure Slot
+                  </Button>
+                ) : (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="mt-2.5 sm:mt-4 w-full rounded-lg border border-green-800 bg-green-800 text-white px-2.5 sm:px-3 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold shadow-sm transition-all duration-200"
+                  >
+                    <Link to={stat.actionTo}>
+                      {stat.label === "Start Learning"
+                        ? "View Modules"
+                        : (stat.actionLabel ?? stat.label)}
+                    </Link>
+                  </Button>
+                ))}
 
               {stat.actionHref && (
                 <Button
@@ -423,6 +431,63 @@ const Dashboard = () => {
             </motion.div>
           ))}
         </div>
+
+        {showSecureSlotModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
+            <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-gray-200">
+              <div className="flex items-start justify-between gap-4 mb-5">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Choose a Project
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Select the project category you want to secure.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowSecureSlotModal(false)}
+                  className="text-gray-400 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSecureSlotModal(false);
+                    navigate("/dashboard/mushroom-village");
+                  }}
+                  className="w-full rounded-2xl border border-green-800 bg-green-800 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-700"
+                >
+                  Mushroom Village
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSecureSlotModal(false);
+                    navigate("/dashboard/slots");
+                  }}
+                  className="w-full rounded-2xl border border-green-800 bg-green-800 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-700"
+                >
+                  Gingertown
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSecureSlotModal(false);
+                    navigate("/dashboard/slots");
+                  }}
+                  className="w-full rounded-2xl border border-green-800 bg-green-800 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-700"
+                >
+                  Organic FoodNation
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-3 gap-6 mb-6 lg:items-stretch">
           <motion.div
