@@ -84,6 +84,8 @@ const FarmAdmin = () => {
   const isOrganicFoodNation =
     selectedFarm?.project_category ===
     "Organic FoodNation (1 Million Hectares against Hunger)";
+  const isMushroomVillage =
+    selectedFarm?.project_category === "Mushroom Village";
 
   const calcSlotFee = (r: Pick<FarmRecord, "farm_slots">) => {
     const slotFeeRate =
@@ -99,6 +101,23 @@ const FarmAdmin = () => {
     calcSupport(r) +
     calcSlotFee(r) +
     (isOrganicFoodNation ? 0 : calcFine(r));
+
+  const farmCategoryOrder = [
+    "Gingertown",
+    "Mushroom Village",
+    "Organic FoodNation (1 Million Hectares against Hunger)",
+  ];
+
+  const sortedFarms = [...farms].sort((a, b) => {
+    const orderA = farmCategoryOrder.indexOf(a.project_category);
+    const orderB = farmCategoryOrder.indexOf(b.project_category);
+    if (orderA !== orderB) {
+      if (orderA === -1) return 1;
+      if (orderB === -1) return -1;
+      return orderA - orderB;
+    }
+    return a.name.localeCompare(b.name);
+  });
   const [records, setRecords] = useState<FarmRecord[]>([]);
   const [expenses, setExpenses] = useState<FarmExpense[]>([]);
   const [loading, setLoading] = useState(true);
@@ -788,7 +807,7 @@ const FarmAdmin = () => {
               <option value="" disabled>
                 -- Choose a farm group --
               </option>
-              {farms.map((farm) => (
+              {sortedFarms.map((farm) => (
                 <option key={farm.id} value={farm.id}>
                   {farm.name} ({farm.project_category || "Gingertown"})
                 </option>
@@ -1053,9 +1072,17 @@ const FarmAdmin = () => {
                             <tr className="border-b bg-gray-50">
                               <th className="text-left p-2">Name</th>
                               <th className="text-left p-2">Farm Slots</th>
-                              <th className="text-left p-2">Slot Fee</th>
+                              {isMushroomVillage ? (
+                                <th className="text-left p-2">
+                                  Slot & Admin Marketing
+                                </th>
+                              ) : (
+                                <th className="text-left p-2">Slot Fee</th>
+                              )}
                               <th className="text-left p-2">Farm Setup</th>
-                              <th className="text-left p-2">Farm Support</th>
+                              {!isMushroomVillage && (
+                                <th className="text-left p-2">Farm Support</th>
+                              )}
                               {!isOrganicFoodNation && (
                                 <th className="text-left p-2">Absentee Fine</th>
                               )}
@@ -1077,9 +1104,18 @@ const FarmAdmin = () => {
                                   {record.name}
                                 </td>
                                 <td className="p-2">{record.farm_slots}</td>
-                                <td className="p-2">
-                                  ₦{calcSlotFee(record).toLocaleString()}
-                                </td>
+                                {isMushroomVillage ? (
+                                  <td className="p-2 font-semibold text-blue-900">
+                                    ₦
+                                    {(
+                                      calcSlotFee(record) + calcSupport(record)
+                                    ).toLocaleString()}
+                                  </td>
+                                ) : (
+                                  <td className="p-2">
+                                    ₦{calcSlotFee(record).toLocaleString()}
+                                  </td>
+                                )}
                                 <td className="p-2">
                                   <div className="font-semibold text-green-900">
                                     ₦{calcSetup(record).toLocaleString()}
@@ -1090,9 +1126,11 @@ const FarmAdmin = () => {
                                     </div>
                                   )}
                                 </td>
-                                <td className="p-2 font-semibold text-blue-900">
-                                  ₦{calcSupport(record).toLocaleString()}
-                                </td>
+                                {!isMushroomVillage && (
+                                  <td className="p-2 font-semibold text-blue-900">
+                                    ₦{calcSupport(record).toLocaleString()}
+                                  </td>
+                                )}
                                 {!isOrganicFoodNation && (
                                   <td className="p-2">
                                     <div className="font-semibold text-orange-900">
@@ -1144,24 +1182,39 @@ const FarmAdmin = () => {
                               <td className="p-2">
                                 {records.reduce((s, r) => s + r.farm_slots, 0)}
                               </td>
-                              <td className="p-2">
-                                ₦
-                                {records
-                                  .reduce((s, r) => s + calcSlotFee(r), 0)
-                                  .toLocaleString()}
-                              </td>
+                              {isMushroomVillage ? (
+                                <td className="p-2">
+                                  ₦
+                                  {records
+                                    .reduce(
+                                      (s, r) =>
+                                        s + calcSlotFee(r) + calcSupport(r),
+                                      0,
+                                    )
+                                    .toLocaleString()}
+                                </td>
+                              ) : (
+                                <td className="p-2">
+                                  ₦
+                                  {records
+                                    .reduce((s, r) => s + calcSlotFee(r), 0)
+                                    .toLocaleString()}
+                                </td>
+                              )}
                               <td className="p-2">
                                 ₦
                                 {records
                                   .reduce((s, r) => s + calcSetup(r), 0)
                                   .toLocaleString()}
                               </td>
-                              <td className="p-2">
-                                ₦
-                                {records
-                                  .reduce((s, r) => s + calcSupport(r), 0)
-                                  .toLocaleString()}
-                              </td>
+                              {!isMushroomVillage && (
+                                <td className="p-2">
+                                  ₦
+                                  {records
+                                    .reduce((s, r) => s + calcSupport(r), 0)
+                                    .toLocaleString()}
+                                </td>
+                              )}
                               {!isOrganicFoodNation && (
                                 <td className="p-2">
                                   ₦
@@ -1320,8 +1373,9 @@ const FarmAdmin = () => {
                               Agroheal Fees
                             </h4>
                             <p className="text-xs text-gray-500 font-medium">
-                              (Farm Slot Admin/Marketing + Agroheal Farm
-                              Support)
+                              {isMushroomVillage
+                                ? "(Slot & Admin Marketing)"
+                                : "(Farm Slot Admin/Marketing + Agroheal Farm Support)"}
                             </p>
                           </div>
                           <span className="text-xl font-bold text-green-800">
@@ -1335,9 +1389,11 @@ const FarmAdmin = () => {
                               {selectedFarm.name} Gross Balance
                             </h4>
                             <p className="text-xs text-gray-500">
-                              {isOrganicFoodNation
-                                ? "((Total Farm Setup)"
-                                : "(Farm Setup + Total Absentee Fine)"}
+                              {isMushroomVillage
+                                ? "(Farm Setup)"
+                                : isOrganicFoodNation
+                                  ? "((Total Farm Setup)"
+                                  : "(Farm Setup + Total Absentee Fine)"}
                             </p>
                           </div>
                           <span className="text-xl font-bold text-green-800">
