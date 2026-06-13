@@ -16,7 +16,7 @@ const MushroomVillage = () => {
   const [slots, setSlots] = useState(1);
   const navigate = useNavigate();
 
-  const TOTAL_PER_SLOT = 100;
+  const TOTAL_PER_SLOT = 5000;
   const SLOT_ADMIN_MARKETING = 1500;
   const SLOT_SUBSCRIPTION_FEE = 1000;
   const FARM_SUPPORT_FEE = 500;
