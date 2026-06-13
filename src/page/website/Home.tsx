@@ -17,6 +17,9 @@ import { AgrohealImages } from "@/constant/Image";
 export default function Home() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [expandedHub, setExpandedHub] = useState<number | null>(null);
+  const [expandedHowItWorks, setExpandedHowItWorks] = useState<number | null>(
+    null,
+  );
 
   const advantages = [
     {
@@ -52,6 +55,10 @@ export default function Home() {
   ];
 
   const featuredHubs = [
+    {
+      name: "Mushroom Village",
+      desc: "Low-Cost Entry to other projects.",
+    },
     {
       name: "Gingertown",
       desc: "No. 1 Global Ginger Exporter",
@@ -216,16 +223,16 @@ export default function Home() {
                 transition={{ duration: 0.8, delay: 0.1 }}
                 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight text-center lg:text-left"
               >
-                #GrowWhatYouEat
+                Community Organic Food Production
               </motion.h1>
 
               <motion.p
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-[#d1ef75] font-semibold text-sm md:text-base tracking-wide text-center lg:text-left"
+                className="text-[#d1ef75] font-semibold text-base md:text-lg tracking-wide text-center lg:text-left"
               >
-                Community-Driven Organic Food Revolution
+                #GrowWhatYouEat
               </motion.p>
             </div>
 
@@ -234,13 +241,12 @@ export default function Home() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="text-gray-200 text-sm md:text-lg leading-relaxed max-w-2xl font-light font-sans text-justify lg:text-left"
+              className="text-gray-200 text-base md:text-lg leading-relaxed max-w-2xl font-light font-sans text-justify lg:text-left"
             >
-              <p>Join the Learn to Earn Agribusiness Platform (LEAP) to:</p>
-              <ul className="list-disc list-outside pl-5 space-y-2 mt-4 text-left">
-                <li>Learn by doing with group farming</li>
+              <ul className="list-disc list-outside pl-5 space-y-2 mt-4 text-left text-base md:text-lg font-semibold">
+                <li>Join in Community Farming</li>
                 <li>
-                  Farm from anywhere with WhatsApp group chat coordination.
+                  Farm from anywhere through WhatsApp group chat coordination
                 </li>
                 <li>Process. Brand. Sell. Prosper.</li>
               </ul>
@@ -257,7 +263,7 @@ export default function Home() {
                 to="/subscribe"
                 className="inline-flex items-center justify-center gap-2 bg-[#2e7d32] hover:bg-[#1b5e20] text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 group text-sm md:text-base shadow-lg shadow-green-950/20"
               >
-                <span>Join the Revolution</span>
+                <span>Join Now</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
 
@@ -265,7 +271,7 @@ export default function Home() {
                 to="/dashboard"
                 className="inline-flex items-center justify-center bg-transparent border-2 border-white text-white hover:bg-white hover:text-green-950 font-bold px-8 py-4 rounded-xl transition-all duration-300 text-sm md:text-base"
               >
-                <span>Login Now</span>
+                <span>Login</span>
               </Link>
 
               <a
@@ -393,12 +399,12 @@ export default function Home() {
             <span className="mx-auto block h-px w-1/2 max-w-[200px] rounded-full bg-gradient-to-r from-transparent via-white/80 to-transparent" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-14">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 justify-items-center gap-8 mb-14">
             {featuredHubs.map((project, idx) => {
               return (
                 <div
                   key={idx}
-                  className="group p-6 md:p-8 rounded-3xl transition-all duration-300 border border-slate-200/70 bg-slate-50/95 flex flex-col md:flex-row items-center gap-6 overflow-hidden shadow-sm hover:shadow-[0_24px_48px_rgba(46,125,50,0.18)] hover:bg-white"
+                  className={`group w-full max-w-[520px] md:max-w-[560px] mx-auto p-6 md:p-8 rounded-3xl transition-all duration-300 border border-slate-200/70 bg-slate-50/95 flex flex-col md:flex-row items-center gap-6 overflow-hidden shadow-sm hover:shadow-[0_24px_48px_rgba(46,125,50,0.18)] hover:bg-white justify-self-center ${idx === 2 ? "md:col-span-2 lg:col-span-2" : ""}`}
                 >
                   <div className="flex-1 flex flex-col justify-center text-center md:text-left">
                     <h3 className="text-base sm:text-xl md:text-3xl font-extrabold mt-0 mb-2 text-slate-900 leading-tight tracking-tight whitespace-nowrap overflow-hidden truncate">
@@ -415,7 +421,9 @@ export default function Home() {
                       src={
                         project.name === "Gingertown"
                           ? AgrohealImages.HowItWorksTwo
-                          : AgrohealImages.HowItWorksOne
+                          : project.name === "Mushroom Village"
+                            ? AgrohealImages.Mushroom
+                            : AgrohealImages.HowItWorksOne
                       }
                       alt={project.name}
                       className="w-full h-full object-cover"
@@ -425,8 +433,108 @@ export default function Home() {
               );
             })}
           </div>
+        </div>
+      </section>
 
-          <div className="text-center max-w-3xl mx-auto mt-16 mb-6">
+      {/* 9. HOW IT WORKS SECTION */}
+      <section className="relative pt-16 md:pt-28 pb-28 bg-[#f9fafb] text-[#072412] overflow-hidden z-10 border-t border-gray-100">
+        <div className="container mx-auto px-6 max-w-7xl relative z-10">
+          {/* Header Title */}
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-4xl md:text-5xl font-black text-[#072412] tracking-tight mb-4">
+              How it works
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            {[
+              {
+                title: "Mushroom Village:",
+                subtitle:
+                  "Double production capacity in the second quarter, earn up to 40% Quarterly Returns from the 6th to 12th Month",
+                description:
+                  "How it Works:\n\nParticipants join Mushroom Group Farms to learn and earn from the production of Oyster Mushrooms.\n\n1. Join the Platform (₦2,000)\nStart with a registration fee of ₦2,000. This gives you access to all our training courses, from composting to crop.\n\n2. Secure Your Farm Slot (₦5,000 per slot)\nEach group farm is one unit of Mushroom Fruiting House, divided into 1000 slots. Secure one slot with a one-time ₦5,000 (inclusive of admin & marketing fee, housing and operations cost and the cost of two Mushroom Substrate Bags). Your slot is permanent once secured.\n\n3. Once you secure your slot, you're officially part of a group farm. Multiple slots, Multiple Returns.\n\n4. The Farm is managed transparently by the Group farm owners in a WhatsApp Group Chat so every naira is accounted for.\n\n5. Harvest & Share the Profits from the 6th Month. Mushrooms are harvested, processed and sold directly to guaranteed Farm to Table iMarts as well as to fulfill export supply contracts.",
+              },
+              {
+                title: "Organic FoodNation",
+                subtitle: "Earn up to 50% Returns Every Six Months",
+                description:
+                  "How it Works:\n\nParticipants are grouped into 5-Hectare (1,000 slots) Integrated Farms to learn and earn from the production of:\n1. Vegetables (Pepper. Tomato. Ugu. Ewedu. Onion. Okra. Cucumber. Watermelon)\n2. Mushroom\n3. Tubers (Cassava. Sweet Potato. Yam)\n4. Grains (Maize. Beans. Soya. Rice. Groundnut)\n5. Tree Crops (Plantain. Oil Palm. Moringa. Orange. Mango. Bananas)\n6. Herbs (Stevia. Basil. Garlic. Turmeric. Thyme. Oregano)\n7. Livestock (Cattle. Poultry. Snailry. Honey Bees. Catfish. Goats. Rams)\n\nTogether, we can fight hunger through mass food production, reduce food prices through scale and efficiency, create a sustainable income stream for participants and build a stronger Nigeria — 5 Hectares at a time.\n\n1. Join the Platform (₦2,000)\nStart with a registration fee of ₦2,000. This gives you access to all our training courses, from composting to crop management, so you understand the basics before stepping onto the farm.\n\n2. Secure Your Farm Slot (₦2,000 per slot)\nEach group farm is five hectares, divided into 1000 slots. Secure one slot with a one-time ₦2,000 admin (& marketing) fee. Once you secure your space, you're officially part of a group farm. Group practicals are scheduled to begin once the slots are filled up.\n\n3. Keep Your Slot Active (₦200 monthly per slot)\nJust like maintaining a house, farmland has monthly utilities. The monthly fee covers Agronomy fee and Agroheal oversight.\n\n4. Build the Farm Together (₦10,000 one time payment per slot)\nFor the farm to start producing, everyone chips in equally to cover setup costs (tools, seeds, land/soil prep, irrigation, and more). This is a one-time contribution that is managed openly by the group so every naira is accounted for.\n\n5. Your Monthly work rotation\nFarming here doesn't take over your life. You may or may not show up at the farm. If you do not show up for your monthly work rotation, you are required to produce compost from kitchen and yard waste and send it to designated pick up points monthly to supplement organic fertilizer needs on your Group farm.\n\n6. Harvest & Share the Profits (up to 50% returns every six months)\nWhen crops/livestock are harvested, they are sold directly to guaranteed Farm to Table iMarts to maximize profits by cutting out needless middlemen profiteering while giving better value to consumers. With low-cost organic inputs produced right on the farm, profitability is guaranteed - such that each farm slot can return up to 50% returns every six months (after full organic integration of crops & livestock).",
+              },
+              {
+                title: "Gingertown",
+                subtitle: "Earn up to 100% Returns Every Six Months",
+                description:
+                  "How it Works:\n\nParticipants are grouped into 1-Hectare (1,000 slots) Integrated Farms to learn and earn from the production of Ginger, Mushroom, Pepper, Sweet corn, Cattle and other beneficial intercrops.\n\n1. Join the Platform (₦2,000)\nStart with a registration fee of ₦2,000. This gives you access to all our training courses, from composting to crop management, so you understand the basics before stepping onto the farm.\n\n2. Secure Your Farm Slot (₦2,000 per slot)\nEach group farm is one hectare, divided into 1000 slots. Secure one slot with a one-time ₦2,000 admin (& marketing) fee. Once you secure your space, you're officially part of a group farm. Group practicals are scheduled to begin once the slots are filled up.\n\n3. Keep Your Slot Active (₦500 monthly per slot)\nJust like maintaining a house, farmland has monthly utilities. The monthly fee covers Agronomy fee and Agroheal oversight.\n\n4. Build the Farm Together (₦5,000 monthly for first 5 months/per slot)\nFor the farm to start producing, everyone chips in equally to cover setup costs (tools, seeds, land/soil prep, irrigation, and more). This contribution is only for the first five months and is managed openly by the group so every naira is accounted for.\n\n5. Your Monthly work rotation (one day per month)\nFarming here doesn't take over your life. You only need to show up one day a month to perform tasks like planting, weeding, nurturing livestock & harvesting. If you can't make it, there's a ₦500 charge (per slot) to pay a substitute to do the work.\n\n6. Harvest & Share the Profits (up to 100% returns every six months)\nWhen the premium Ginger produce are harvested, they are processed and sold directly to premium export markets. With low-cost organic inputs produced right on the farm, profitability is higher - such that each farm slot can return up to 100% returns every six months (after full organic integration of crops & livestock).",
+              },
+            ].map((card, index) => {
+              const words = card.description.split(/\s+/).filter(Boolean);
+              const needsReadMore = words.length > 150;
+              const preview = needsReadMore
+                ? (() => {
+                    const tokens = card.description.match(/(\s+|\S+)/g) ?? [];
+                    let count = 0;
+                    const previewTokens: string[] = [];
+
+                    for (const token of tokens) {
+                      previewTokens.push(token);
+                      if (/\S/.test(token)) {
+                        count += 1;
+                        if (count >= 150) break;
+                      }
+                    }
+
+                    return previewTokens.join("") + "...";
+                  })()
+                : card.description;
+              const isExpanded = expandedHowItWorks === index;
+
+              return (
+                <div
+                  key={card.title}
+                  className="rounded-3xl border border-green-700/30 bg-[#020e06] p-8 shadow-2xl text-center lg:text-left"
+                >
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white leading-tight text-center lg:text-left mb-6">
+                    <span className="text-[#d1ef75]">{card.title}</span>
+                  </h3>
+                  <p className="text-base md:text-lg font-semibold text-[#d1ef75] mb-6">
+                    {card.subtitle}
+                  </p>
+                  <div className="mt-6 text-sm md:text-base text-gray-200 leading-relaxed text-justify mb-8 whitespace-pre-line">
+                    {needsReadMore && !isExpanded ? (
+                      <>
+                        {preview}
+                        <button
+                          type="button"
+                          onClick={() => setExpandedHowItWorks(index)}
+                          className="mt-4 inline-flex text-[#d1ef75] font-semibold text-sm"
+                        >
+                          Read More
+                        </button>
+                      </>
+                    ) : (
+                      card.description
+                    )}
+                  </div>
+                  {needsReadMore && isExpanded ? (
+                    <button
+                      type="button"
+                      onClick={() => setExpandedHowItWorks(null)}
+                      className="text-[#d1ef75] font-semibold text-sm"
+                    >
+                      Show less
+                    </button>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="pt-12 pb-24 bg-[#020e06] text-white relative z-10">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="text-[#d1ef75] border border-[#d1ef75]/25 bg-[#d1ef75]/5 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider inline-block mb-4">
               Processing
             </span>
@@ -503,248 +611,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 9. HOW LEAP WORKS SECTION */}
-      <section className="relative pt-16 md:pt-28 pb-28 bg-[#f9fafb] text-[#072412] overflow-hidden z-10 border-t border-gray-100">
-        <div className="container mx-auto px-6 max-w-7xl relative z-10">
-          {/* Header Title */}
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-4xl md:text-5xl font-black text-[#072412] tracking-tight mb-4">
-              How LEAP works
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div className="rounded-3xl border border-green-700/30 bg-[#020e06] p-8 shadow-2xl text-center lg:text-left">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white leading-tight text-center lg:text-left mb-6">
-                <span className="text-[#d1ef75]">Gingertown</span>: Earn up to
-                100% Returns Every Six Months
-              </h3>
-              <div className="mt-6 space-y-4 text-sm md:text-base text-gray-200 leading-relaxed text-justify mb-8">
-                <p>How it Works:</p>
-                <p>
-                  Participants are grouped into 1-Hectare (1,000 slots)
-                  Integrated Farms to learn and earn from the production of
-                  Ginger, Mushroom, Pepper, Sweet corn, Cattle and other
-                  beneficial intercrops.
-                </p>
-              </div>
-
-              <div className="space-y-6 text-sm md:text-base text-gray-200 leading-relaxed text-justify">
-                <div>
-                  <h4 className="font-bold text-white mb-3">
-                    1. Join the Platform (₦2,000)
-                  </h4>
-                  <p>
-                    Start with a registration fee of ₦2,000. This gives you
-                    access to all our training courses, from composting to crop
-                    management, so you understand the basics before stepping
-                    onto the farm.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-white mb-3">
-                    2. Secure Your Farm Slot (₦2,000 per slot)
-                  </h4>
-                  <p>
-                    Each group farm is one hectare, divided into 1000 slots.
-                    Secure one slot with a one-time ₦2,000 admin (& marketing)
-                    fee. Once you secure your space, you're officially part of a
-                    group farm. Group practicals are scheduled to begin once the
-                    slots are filled up.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-white mb-3">
-                    3. Keep Your Slot Active (₦500 monthly per slot)
-                  </h4>
-                  <p>
-                    Just like maintaining a house, farmland has monthly
-                    utilities. The monthly fee covers Agronomy fee and Agroheal
-                    oversight.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-white mb-3">
-                    4. Build the Farm Together (₦5,000 monthly for first 5
-                    months/per slot)
-                  </h4>
-                  <p>
-                    For the farm to start producing, everyone chips in equally
-                    to cover setup costs (tools, seeds, land/soil prep,
-                    irrigation, and more). This contribution is only for the
-                    first five months and is managed openly by the group so
-                    every naira is accounted for.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-white mb-3">
-                    5. Your Monthly work rotation (one day per month)
-                  </h4>
-                  <p>
-                    Farming here doesn't take over your life. You only need to
-                    show up one day a month to perform tasks like planting,
-                    weeding, nurturing livestock & harvesting. If you can't make
-                    it, there's a ₦500 charge (per slot) to pay a substitute to
-                    do the work.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-white mb-3">
-                    6. Harvest & Share the Profits (up to 100% returns every six
-                    months)
-                  </h4>
-                  <p>
-                    When the premium Ginger produce are harvested, they are
-                    processed and sold directly to premium export markets. With
-                    low-cost organic inputs produced right on the farm,
-                    profitability is higher - such that each farm slot can
-                    return up to 100% returns every six months (after full
-                    organic integration of crops & livestock).
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-green-700/30 bg-[#020e06] p-8 shadow-2xl text-center lg:text-left">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white leading-tight text-center lg:text-left mb-6">
-                <span className="text-[#d1ef75]">Organic FoodNation</span>: Earn
-                up to 50% Returns Every Six Months
-              </h3>
-              <div className="mt-6 space-y-4 text-sm md:text-base text-gray-200 leading-relaxed text-justify mb-8">
-                <p>How it Works:</p>
-                <p>
-                  Participants are grouped into 5-Hectare (1,000 slots)
-                  Integrated Farms to learn and earn from the production of:
-                </p>
-                <ol className="list-decimal list-inside space-y-2 text-gray-300">
-                  <li>
-                    Vegetables (Pepper. Tomato. Ugu. Ewedu. Onion. Okra.
-                    Cucumber. Watermelon)
-                  </li>
-                  <li>Mushroom</li>
-                  <li>Tubers (Cassava. Sweet Potato. Yam)</li>
-                  <li>Grains (Maize. Beans. Soya. Rice. Groundnut)</li>
-                  <li>
-                    Tree Crops (Plantain. Oil Palm. Moringa. Orange. Mango.
-                    Bananas)
-                  </li>
-                  <li>
-                    Herbs (Stevia. Basil. Garlic. Turmeric. Thyme. Oregano)
-                  </li>
-                  <li>
-                    Livestock (Cattle. Poultry. Snailry. Honey Bees. Catfish.
-                    Goats. Rams)
-                  </li>
-                </ol>
-              </div>
-
-              <p className="text-base md:text-lg font-semibold text-[#d1ef75] mb-8">
-                Together, we can fight hunger through mass food production,
-                reduce food prices through scale and efficiency, create a
-                sustainable income stream for participants and build a stronger
-                Nigeria — 5 Hectares at a time.
-              </p>
-
-              <div className="space-y-6 text-sm md:text-base text-gray-200 leading-relaxed text-justify">
-                <div>
-                  <h4 className="font-bold text-white mb-3">
-                    1. Join the Platform (₦2,000)
-                  </h4>
-                  <p>
-                    Start with a registration fee of ₦2,000. This gives you
-                    access to all our training courses, from composting to crop
-                    management, so you understand the basics before stepping
-                    onto the farm.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-white mb-3">
-                    2. Secure Your Farm Slot (₦2,000 per slot)
-                  </h4>
-                  <p>
-                    Each group farm is five hectares, divided into 1000 slots.
-                    Secure one slot with a one-time ₦2,000 admin (& marketing)
-                    fee. Once you secure your space, you're officially part of a
-                    group farm. Group practicals are scheduled to begin once the
-                    slots are filled up.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-white mb-3">
-                    3. Keep Your Slot Active (₦200 monthly per slot)
-                  </h4>
-                  <p>
-                    Just like maintaining a house, farmland has monthly
-                    utilities. The monthly fee covers Agronomy fee and Agroheal
-                    oversight.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-white mb-3">
-                    4. Build the Farm Together (₦10,000 one time payment per
-                    slot)
-                  </h4>
-                  <p>
-                    For the farm to start producing, everyone chips in equally
-                    to cover setup costs (tools, seeds, land/soil prep,
-                    irrigation, and more). This is a one-time contribution that
-                    is managed openly by the group so every naira is accounted
-                    for.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-white mb-3">
-                    5. Your Monthly work rotation
-                  </h4>
-                  <p>
-                    Farming here doesn't take over your life. You may or may not
-                    show up at the farm. If you do not show up for your monthly
-                    work rotation, you are required to produce compost from
-                    kitchen and yard waste and send it to designated pick up
-                    points monthly to supplement organic fertilizer needs on
-                    your Group farm.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-white mb-3">
-                    6. Harvest & Share the Profits (up to 50% returns every six
-                    months)
-                  </h4>
-                  <p>
-                    When crops/livestock are harvested, they are sold directly
-                    to guaranteed Farm to Table iMarts to maximize profits by
-                    cutting out needless middlemen profiteering while giving
-                    better value to consumers. With low-cost organic inputs
-                    produced right on the farm, profitability is guaranteed -
-                    such that each farm slot can return up to 50% returns every
-                    six months (after full organic integration of crops &
-                    livestock).
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Action CTA buttons for seamless signup funnel */}
-          <div className="mt-16 text-center pt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/signup"
-              className="w-full sm:w-auto inline-flex items-center justify-center bg-[#d1ef75] hover:bg-[#c4e55e] text-green-950 font-bold px-8 py-4 rounded-full transition-all duration-300 text-sm shadow-md"
-            >
-              <span>Register Now</span>
-            </Link>
-            <Link
-              to="/subscribe"
-              className="w-full sm:w-auto inline-flex items-center justify-center bg-[#2e7d32] hover:bg-[#1b5e20] text-white font-bold px-8 py-4 rounded-full transition-all duration-300 text-sm shadow-md"
-            >
-              <span>Become A Participant</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* 7. TESTIMONIALS SECTION */}
-      <section className="relative py-28 bg-[#031d0f] text-white overflow-hidden z-10 border-t border-green-950">
+      <section className="relative py-28 bg-[#031d0f] text-white overflow-hidden z-10 border-t-2 border-white/20">
         <div className="container mx-auto px-6 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-20">
             <span className="text-[#d1ef75] border border-[#d1ef75]/25 bg-[#d1ef75]/5 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider inline-block mb-4">

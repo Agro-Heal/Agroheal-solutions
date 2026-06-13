@@ -16,7 +16,7 @@ const MushroomVillage = () => {
   const [slots, setSlots] = useState(1);
   const navigate = useNavigate();
 
-  const TOTAL_PER_SLOT = 5000;
+  const TOTAL_PER_SLOT = 100;
   const SLOT_ADMIN_MARKETING = 1500;
   const SLOT_SUBSCRIPTION_FEE = 1000;
   const FARM_SUPPORT_FEE = 500;
@@ -308,12 +308,13 @@ const MushroomVillage = () => {
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-gray-500">
-                  <span>Slot subscription total</span>
-                  <span>₦{slotSubscriptionAmount.toLocaleString()}</span>
-                </div>
-                <div className="flex items-center justify-between text-gray-500">
-                  <span>Farm support total</span>
-                  <span>₦{farmSupportAmount.toLocaleString()}</span>
+                  <span>Total Slot & Admin Marketing</span>
+                  <span>
+                    ₦
+                    {(
+                      slotSubscriptionAmount + farmSupportAmount
+                    ).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-gray-500">
                   <span>Farm setup total</span>
