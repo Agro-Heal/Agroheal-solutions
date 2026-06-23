@@ -21,6 +21,7 @@ const MushroomVillage = () => {
   const SLOT_SUBSCRIPTION_FEE = 1000;
   const FARM_SUPPORT_FEE = 500;
   const FARM_SETUP_FEE = 3500;
+  const MAX_SLOTS = 100;
   const projectCategory = "Mushroom Village";
 
   const totalAmount = slots * TOTAL_PER_SLOT;
@@ -52,7 +53,8 @@ const MushroomVillage = () => {
     }
   }, []);
 
-  const increaseSlots = () => setSlots((current) => Math.min(20, current + 1));
+  const increaseSlots = () =>
+    setSlots((current) => Math.min(MAX_SLOTS, current + 1));
   const decreaseSlots = () => setSlots((current) => Math.max(1, current - 1));
 
   const handlePayment = async () => {
