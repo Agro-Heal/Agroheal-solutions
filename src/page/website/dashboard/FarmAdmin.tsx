@@ -949,7 +949,7 @@ const FarmAdmin = () => {
                               placeholder="Auto-filled or enter amount"
                             />
                           </div>
-                          {!isOrganicFoodNation && (
+                          {!isMushroomVillage && !isOrganicFoodNation && (
                             <div>
                               <Label>Total Absentee Fine Paid (₦)</Label>
                               <Input
@@ -1083,7 +1083,7 @@ const FarmAdmin = () => {
                               {!isMushroomVillage && (
                                 <th className="text-left p-2">Farm Support</th>
                               )}
-                              {!isOrganicFoodNation && (
+                              {!isMushroomVillage && !isOrganicFoodNation && (
                                 <th className="text-left p-2">Absentee Fine</th>
                               )}
                               <th className="text-left p-2">Total</th>
@@ -1131,7 +1131,7 @@ const FarmAdmin = () => {
                                     ₦{calcSupport(record).toLocaleString()}
                                   </td>
                                 )}
-                                {!isOrganicFoodNation && (
+                                {!isMushroomVillage && !isOrganicFoodNation && (
                                   <td className="p-2">
                                     <div className="font-semibold text-orange-900">
                                       ₦{calcFine(record).toLocaleString()}
@@ -1215,7 +1215,7 @@ const FarmAdmin = () => {
                                     .toLocaleString()}
                                 </td>
                               )}
-                              {!isOrganicFoodNation && (
+                              {!isMushroomVillage && !isOrganicFoodNation && (
                                 <td className="p-2">
                                   ₦
                                   {records
