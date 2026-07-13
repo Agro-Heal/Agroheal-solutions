@@ -35,6 +35,8 @@ import FarmAdmin from "./page/website/dashboard/FarmAdmin";
 import KinDetails from "./page/website/dashboard/KinDetails";
 import OtherPayments from "./page/website/dashboard/OtherPayments";
 import MushroomVillage from "./page/website/dashboard/MushroomVillage";
+import BackendUpload from "./page/website/dashboard/BackendUpload";
+import CompoundReferrals from "./page/website/dashboard/CompoundReferrals";
 import FarmManagement from "./page/group-farm/FarmManagement";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -115,6 +117,8 @@ const route = createBrowserRouter([
           { path: "roadmap-guide", element: <RoadmapGuide /> },
           { path: "other-payments", element: <OtherPayments /> },
           { path: "mushroom-village", element: <MushroomVillage /> },
+          { path: "backend-upload", element: <BackendUpload /> },
+          { path: "compound-referrals", element: <CompoundReferrals /> },
           { path: "kin", element: <KinDetails /> },
           { path: "legal", element: <Legal /> },
         ],

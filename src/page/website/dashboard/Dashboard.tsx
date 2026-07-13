@@ -837,6 +837,16 @@ const Dashboard = () => {
                 <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/5 rounded-full blur-2xl pointer-events-none" />
               </div>
 
+              <div className="pt-2">
+                <Button
+                  className="w-full text-white"
+                  style={{ backgroundColor: "#15803da" }}
+                  onClick={() => navigate("/dashboard/compound-referrals")}
+                >
+                  View Compound Referrals
+                </Button>
+              </div>
+
               {profile?.referred_by && (
                 <div className="space-y-2">
                   <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">

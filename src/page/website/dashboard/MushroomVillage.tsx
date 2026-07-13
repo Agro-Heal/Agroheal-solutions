@@ -108,7 +108,6 @@ const MushroomVillage = () => {
               response.id ||
               response.flw_ref ||
               reference;
-
             try {
               // Insert all records in parallel for speed
               const [slotRes, otherPaymentsRes] = await Promise.all([
@@ -202,7 +201,7 @@ const MushroomVillage = () => {
       setIsProcessing(false);
       showToast({
         title: "Payment Error",
-        description: error.message || "Failed to initialize payment.",
+        description: error.message || "Failed to iniytialize payment.",
         variant: "error",
       });
     }
