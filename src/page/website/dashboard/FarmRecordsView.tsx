@@ -18,6 +18,7 @@ interface FarmRecord {
   name: string;
   email: string;
   phone: string;
+  referral_code?: string;
   farm_slots: number;
   months_farm_setup: string;
   months_farm_support: string;
@@ -155,6 +156,16 @@ const FarmRecordsView = () => {
           target_category: projectCategory,
         },
       );
+      const { data: profilesData } = await supabase
+        .from("profiles")
+        .select("id, referral_code")
+        .in("id", userIds);
+      const referralCodesByUserId = new Map(
+        (profilesData || []).map((profile: any) => [
+          profile.id,
+          profile.referral_code,
+        ]),
+      );
 
       if (payments) {
         return enrichedRecords.map((record) => {
@@ -195,6 +206,9 @@ const FarmRecordsView = () => {
             setup_batches: setup.months,
             support_batches: support.months,
             fine_batches: fine.months,
+            referral_code:
+              referralCodesByUserId.get(authUser.user_id) ||
+              record.referral_code,
           };
         });
       }
@@ -1047,7 +1061,7 @@ const FarmRecordsView = () => {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b bg-gray-50">
-                        <th className="text-left p-2">Name</th>
+                        <th className="text-left p-2">Member ID</th>
                         <th className="text-left p-2">Farm Slots</th>
                         {isMushroomVillage ? (
                           <th className="text-left p-2">
@@ -1066,9 +1080,6 @@ const FarmRecordsView = () => {
                         <th className="text-left p-2">Total</th>
                         <th className="text-left p-2">Email</th>
                         {isCoordinator && (
-                          <th className="text-left p-2">Phone</th>
-                        )}
-                        {isCoordinator && (
                           <th className="text-left p-2">Actions</th>
                         )}
                       </tr>
@@ -1079,7 +1090,11 @@ const FarmRecordsView = () => {
                           key={record.id}
                           className="border-b hover:bg-gray-50"
                         >
-                          <td className="p-2 font-medium">{record.name}</td>
+                          <td className="p-2 font-medium">
+                            {record.referral_code?.toUpperCase() ||
+                              record.name ||
+                              "—"}
+                          </td>
                           <td className="p-2">{record.farm_slots}</td>
                           {isMushroomVillage ? (
                             <td className="p-2 font-semibold text-blue-900">
@@ -1124,11 +1139,6 @@ const FarmRecordsView = () => {
                             ₦{getRecordTotal(record).toLocaleString()}
                           </td>
                           <td className="p-2 text-gray-600">{record.email}</td>
-                          {isCoordinator && (
-                            <td className="p-2 text-gray-600">
-                              {record.phone}
-                            </td>
-                          )}
                           {isCoordinator && (
                             <td className="p-2">
                               <div className="flex gap-1">

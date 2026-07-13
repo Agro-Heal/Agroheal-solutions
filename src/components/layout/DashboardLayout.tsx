@@ -14,6 +14,7 @@ import {
   ChevronRight,
   BookOpen,
   Users,
+  Database,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { motion, AnimatePresence } from "framer-motion";
@@ -38,6 +39,11 @@ const navItems = [
     label: "Other Payments",
     path: "/dashboard/other-payments",
     icon: CreditCard,
+  },
+  {
+    label: "Compound Referrals",
+    path: "/dashboard/compound-referrals",
+    icon: Users,
   },
   {
     label: "Mushroom Village",

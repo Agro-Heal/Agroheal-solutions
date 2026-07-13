@@ -14,6 +14,7 @@ interface FarmRecord {
   name: string;
   email: string;
   phone: string;
+  referral_code?: string;
   farm_slots: number;
   months_farm_setup: string;
   months_farm_support: string;
@@ -183,6 +184,16 @@ const FarmAdmin = () => {
           target_category: projectCategory,
         },
       );
+      const { data: profilesData } = await supabase
+        .from("profiles")
+        .select("id, referral_code")
+        .in("id", userIds);
+      const referralCodesByUserId = new Map(
+        (profilesData || []).map((profile: any) => [
+          profile.id,
+          profile.referral_code,
+        ]),
+      );
 
       if (payments) {
         return enrichedRecords.map((record) => {
@@ -224,6 +235,9 @@ const FarmAdmin = () => {
             setup_batches: setup.months,
             support_batches: support.months,
             fine_batches: fine.months,
+            referral_code:
+              referralCodesByUserId.get(authUser.user_id) ||
+              record.referral_code,
           };
         });
       }
@@ -457,40 +471,32 @@ const FarmAdmin = () => {
     }
 
     if (formData.email) {
-      // Normalize email for comparison
       const emailTrimmed = formData.email.trim().toLowerCase();
 
       const { data: existing, error: checkError } = await supabase
         .from("farm_records")
-        .select("id, farm_id, email")
+        .select("id, farm_id, email, project_category")
         .ilike("email", emailTrimmed);
 
-      if (checkError) console.error("Email check error:", checkError);
+      if (checkError) {
+        console.error("Email check error:", checkError);
+      }
 
-      if (existing && existing.length > 0) {
-        // Find a true duplicate (same email, different record id)
-        const duplicate = existing.find(
-          (r) =>
-            (r.email || "").toLowerCase() === emailTrimmed &&
-            r.id !== editingId,
-        );
-        if (duplicate) {
-          const inSameFarm = duplicate.farm_id === selectedFarm.id;
-          // Only block if the email already exists in THIS farm
-          if (inSameFarm) {
-            showToast({
-              variant: "error",
-              title: "Email already exists",
-              description: "This email is already in this farm group.",
-            });
-            return;
-          }
+      const duplicate = existing?.find(
+        (record) =>
+          (record.email || "").toLowerCase() === emailTrimmed &&
+          (record.project_category || "Gingertown") ===
+            (selectedFarm.project_category || "Gingertown") &&
+          record.id !== editingId,
+      );
 
-          showToast({
-            variant: "warning",
-            title: "Emails may already exist in other farms",
-          });
-        }
+      if (duplicate) {
+        showToast({
+          variant: "error",
+          title: "Member already exists in this category",
+          description: `This member already exists in ${selectedFarm.project_category || "this farm category"}. Duplicate entries are not allowed for the same category.`,
+        });
+        return;
       }
     }
 
@@ -1070,7 +1076,7 @@ const FarmAdmin = () => {
                         <table className="w-full text-sm">
                           <thead>
                             <tr className="border-b bg-gray-50">
-                              <th className="text-left p-2">Name</th>
+                              <th className="text-left p-2">Member ID</th>
                               <th className="text-left p-2">Farm Slots</th>
                               {isMushroomVillage ? (
                                 <th className="text-left p-2">
@@ -1088,7 +1094,6 @@ const FarmAdmin = () => {
                               )}
                               <th className="text-left p-2">Total</th>
                               <th className="text-left p-2">Email</th>
-                              <th className="text-left p-2">Phone</th>
                               <th className="text-left p-2 no-print">
                                 Actions
                               </th>
@@ -1101,7 +1106,9 @@ const FarmAdmin = () => {
                                 className="border-b hover:bg-gray-50"
                               >
                                 <td className="p-2 font-medium">
-                                  {record.name}
+                                  {record.referral_code?.toUpperCase() ||
+                                    record.name ||
+                                    "—"}
                                 </td>
                                 <td className="p-2">{record.farm_slots}</td>
                                 {isMushroomVillage ? (
@@ -1148,9 +1155,6 @@ const FarmAdmin = () => {
                                 </td>
                                 <td className="p-2 text-gray-600">
                                   {record.email}
-                                </td>
-                                <td className="p-2 text-gray-600">
-                                  {record.phone}
                                 </td>
                                 <td className="p-2 no-print">
                                   <div className="flex gap-1">
